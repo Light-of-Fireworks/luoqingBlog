@@ -92,47 +92,6 @@ exec执行
       </tags>
   </entry>
   <entry>
-    <title>Git 裸仓库</title>
-    <url>/2021/11/08/Git%20%E8%A3%B8%E4%BB%93%E5%BA%93/</url>
-    <content><![CDATA[<p>在我们平常的代码提交时，一般会将代码提交到GitHub、gitee、gitlab等等这些仓库中，但是这些操作都是提交到远程仓库的，我们想要提交代码到自己的私服仓库的话就必须自己搭建一个远程仓库，拿gitlab来举例子，在centos中搭建一个gitlab仓库需要占用将近3G左右的内存。但是我们如果只是买一个个人服务器作为学习使用的话那么内存已经远远不够我们后续的使用了，所以我们可以使用Git裸仓库的形式来创建仓库</p>
-<span id="more"></span>
-
-<p>我们都知道git创建一个默认的仓库的命令为 <code>git init</code> 但是我们这样创建的仓库只能在我们的本地使用，如果我们想要将这个仓库分享给他人一起协作提交代码就无法实现了，这时候我们可以搭建一个Git裸仓库</p>
-<p>Git裸仓库可以作为一个远程仓库，可以支持其他人拉代码和推代码，这样就解决了使用 <code>git init</code>初始化一个本地仓库的局限性，但是裸仓库仅仅只有推和拉的功能，并没有切换分支的功能，那么你可以将它看作是一个Master分支的Git仓库，但是不能切换分支罢了</p>
-<p>初始化一个Git库仓库的命令为：<code>git init --bare 仓库名</code></p>
-<p>下面介绍一下裸仓库的常用命令：</p>
-<p>提交文件还是一样的命令：<code>git add .</code></p>
-<p>假设我们现在有一个192.168.148.2的远程服务器</p>
-<p>我们在服务器上创建好一个test裸仓库</p>
-<p>然后我们进行克隆，这里一定是先克隆，因为直接拉是拉取不下来的</p>
-<p>拉取：<code>git clone ssh://root@192.168.148.2/root/test</code></p>
-<p>添加文件：<code>git add .</code></p>
-<p>提交更改：<code>git commit -m &quot;更新readme&quot;</code></p>
-<p>推送到远程：git push origin master</p>
-<p>可以看出，裸库的操作和普通的git并没有什么不同，仅仅是没有分支这个概念而已</p>
-]]></content>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>IDEA完全卸载删除残留和注册表</title>
-    <url>/2021/11/07/IDEA%E5%AE%8C%E5%85%A8%E5%8D%B8%E8%BD%BD%E5%88%A0%E9%99%A4%E6%AE%8B%E7%95%99%E5%92%8C%E6%B3%A8%E5%86%8C%E8%A1%A8/</url>
-    <content><![CDATA[<p>首先我们卸载完成idea后还有一些残留的文件夹和注册表没有被清除掉，可能会影响我们下一次的使用，我们现在来清除所有的残留</p>
-<h2 id="首先清除一下文件夹"><a href="#首先清除一下文件夹" class="headerlink" title="首先清除一下文件夹"></a>首先清除一下文件夹</h2><p>C:\user${用户名称}\ideaProjects\</p>
-<p>C:\Users${用户名称}\AppData\Roaming\JetBrains</p>
-<p>C:\Users\Public.jetbrains</p>
-<p>C:\Program Files\JetBrains</p>
-<p>C:\ProgramData\Microsoft\Windows\Start Menu\Programs\JetBrains</p>
-<h2 id="然后我们再清除所有注册表"><a href="#然后我们再清除所有注册表" class="headerlink" title="然后我们再清除所有注册表"></a>然后我们再清除所有注册表</h2><p><strong>windows + R 输入regedit进入注册表，右键一级菜单</strong>HKEY_CURRENT_USER， 右键查找，输入idea，会找到jetbrains，然后，右键删除。</p>
-<p>删除完成所有与jetbrains相关的注册表后，重新安装idea就和刚开始安装一样了</p>
-<p>如果中途遇到无法删除注册表的报错那么可能是你权限不够，右键选择权限然后将你的账户设置为完全控制即可。</p>
-]]></content>
-      <tags>
-        <tag>idea</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>fcrackzip破解zip</title>
     <url>/2021/03/28/FcrackzipForZip/</url>
     <content><![CDATA[<h2 id="fcrackzip破解zip"><a href="#fcrackzip破解zip" class="headerlink" title="fcrackzip破解zip"></a>fcrackzip破解zip</h2><p>前言：fcrackzip只能破解zip文件，如果遇到其他的压缩格式破解不了，那么就有人问了可不可以把后缀改成zip然后破解密码呢，答案是不行，我创建了一个7z的压缩包然后把.7z改成.zip，结果直接报错：<code>found id afbc7a37, &#39;test.zip&#39; is not a zipfile ver 2.xx, skipping no usable files found</code></p>
@@ -198,6 +157,23 @@ fcrackzip <span class="token parameter variable">-b</span> <span class="token pa
       </tags>
   </entry>
   <entry>
+    <title>IDEA完全卸载删除残留和注册表</title>
+    <url>/2021/11/07/IDEA%E5%AE%8C%E5%85%A8%E5%8D%B8%E8%BD%BD%E5%88%A0%E9%99%A4%E6%AE%8B%E7%95%99%E5%92%8C%E6%B3%A8%E5%86%8C%E8%A1%A8/</url>
+    <content><![CDATA[<p>首先我们卸载完成idea后还有一些残留的文件夹和注册表没有被清除掉，可能会影响我们下一次的使用，我们现在来清除所有的残留</p>
+<h2 id="首先清除一下文件夹"><a href="#首先清除一下文件夹" class="headerlink" title="首先清除一下文件夹"></a>首先清除一下文件夹</h2><p>C:\user${用户名称}\ideaProjects\</p>
+<p>C:\Users${用户名称}\AppData\Roaming\JetBrains</p>
+<p>C:\Users\Public.jetbrains</p>
+<p>C:\Program Files\JetBrains</p>
+<p>C:\ProgramData\Microsoft\Windows\Start Menu\Programs\JetBrains</p>
+<h2 id="然后我们再清除所有注册表"><a href="#然后我们再清除所有注册表" class="headerlink" title="然后我们再清除所有注册表"></a>然后我们再清除所有注册表</h2><p><strong>windows + R 输入regedit进入注册表，右键一级菜单</strong>HKEY_CURRENT_USER， 右键查找，输入idea，会找到jetbrains，然后，右键删除。</p>
+<p>删除完成所有与jetbrains相关的注册表后，重新安装idea就和刚开始安装一样了</p>
+<p>如果中途遇到无法删除注册表的报错那么可能是你权限不够，右键选择权限然后将你的账户设置为完全控制即可。</p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>trim()方法和strip()方法之间的区别</title>
     <url>/2021/10/02/Java%20trim()%E6%96%B9%E6%B3%95%E5%92%8Cstrip()%E6%96%B9%E6%B3%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<p>Java在JDK11中的String类中引入strip方法，trim()和strip()功能类似，主要区别是:</p>
@@ -231,6 +207,30 @@ fcrackzip <span class="token parameter variable">-b</span> <span class="token pa
 ]]></content>
       <tags>
         <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git 裸仓库</title>
+    <url>/2021/11/08/Git%20%E8%A3%B8%E4%BB%93%E5%BA%93/</url>
+    <content><![CDATA[<p>在我们平常的代码提交时，一般会将代码提交到GitHub、gitee、gitlab等等这些仓库中，但是这些操作都是提交到远程仓库的，我们想要提交代码到自己的私服仓库的话就必须自己搭建一个远程仓库，拿gitlab来举例子，在centos中搭建一个gitlab仓库需要占用将近3G左右的内存。但是我们如果只是买一个个人服务器作为学习使用的话那么内存已经远远不够我们后续的使用了，所以我们可以使用Git裸仓库的形式来创建仓库</p>
+<span id="more"></span>
+
+<p>我们都知道git创建一个默认的仓库的命令为 <code>git init</code> 但是我们这样创建的仓库只能在我们的本地使用，如果我们想要将这个仓库分享给他人一起协作提交代码就无法实现了，这时候我们可以搭建一个Git裸仓库</p>
+<p>Git裸仓库可以作为一个远程仓库，可以支持其他人拉代码和推代码，这样就解决了使用 <code>git init</code>初始化一个本地仓库的局限性，但是裸仓库仅仅只有推和拉的功能，并没有切换分支的功能，那么你可以将它看作是一个Master分支的Git仓库，但是不能切换分支罢了</p>
+<p>初始化一个Git库仓库的命令为：<code>git init --bare 仓库名</code></p>
+<p>下面介绍一下裸仓库的常用命令：</p>
+<p>提交文件还是一样的命令：<code>git add .</code></p>
+<p>假设我们现在有一个192.168.148.2的远程服务器</p>
+<p>我们在服务器上创建好一个test裸仓库</p>
+<p>然后我们进行克隆，这里一定是先克隆，因为直接拉是拉取不下来的</p>
+<p>拉取：<code>git clone ssh://root@192.168.148.2/root/test</code></p>
+<p>添加文件：<code>git add .</code></p>
+<p>提交更改：<code>git commit -m &quot;更新readme&quot;</code></p>
+<p>推送到远程：git push origin master</p>
+<p>可以看出，裸库的操作和普通的git并没有什么不同，仅仅是没有分支这个概念而已</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -541,6 +541,58 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
+    <title>String isEmpty()和isBank()的区别</title>
+    <url>/2021/10/02/String%20isEmpty()%E5%92%8CisBank()%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>1 public static boolean isEmpty(String str)</p>
+<p>   判断某字符串是否为空，为空的标准是 str&#x3D;&#x3D;null 或 str.length()&#x3D;&#x3D;0</p>
+<p>   　　下面是 StringUtils 判断是否为空的示例：</p>
+<p>   　　StringUtils.isEmpty(null) &#x3D; true</p>
+<p>   　　StringUtils.isEmpty(“”) &#x3D; true</p>
+<p>   　　StringUtils.isEmpty(“ “) &#x3D; false &#x2F;&#x2F;注意在 StringUtils 中空格作非空处理</p>
+<p>   　　StringUtils.isEmpty(“   “) &#x3D; false</p>
+<p>   　　StringUtils.isEmpty(“bob”) &#x3D; false</p>
+<p>   　　StringUtils.isEmpty(“ bob “) &#x3D; false</p>
+   <span id="more"></span>
+
+<p>2 public static boolean isNotEmpty(String str)</p>
+<p>　　判断某字符串是否非空，等于 !isEmpty(String str)</p>
+<p>　　下面是示例：</p>
+<p>　　StringUtils.isNotEmpty(null) &#x3D; false</p>
+<p>　　StringUtils.isNotEmpty(“”) &#x3D; false</p>
+<p>　　StringUtils.isNotEmpty(“ “) &#x3D; true</p>
+<p>　　StringUtils.isNotEmpty(“         “) &#x3D; true</p>
+<p>　　StringUtils.isNotEmpty(“bob”) &#x3D; true</p>
+<p>　　StringUtils.isNotEmpty(“ bob “) &#x3D; true</p>
+<p>3 public static boolean isBlank(String str)</p>
+<p>　　判断某字符串是否为空或长度为0或由空白符(whitespace) 构成</p>
+<p>　　下面是示例：</p>
+<p>　　StringUtils.isBlank(null) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“”) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“ “) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“        “) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“\t \n \f \r”) &#x3D; true   &#x2F;&#x2F;对于制表符、换行符、换页符和回车符</p>
+<p>　　StringUtils.isBlank()   &#x2F;&#x2F;均识为空白符</p>
+<p>　　StringUtils.isBlank(“\b”) &#x3D; false   &#x2F;&#x2F;“\b”为单词边界符</p>
+<p>　　StringUtils.isBlank(“bob”) &#x3D; false</p>
+<p>　　StringUtils.isBlank(“ bob “) &#x3D; false</p>
+<p>4 public static boolean isNotBlank(String str)</p>
+<p>　　判断某字符串是否不为空且长度不为0且不由空白符(whitespace) 构成，等于 !isBlank(String str)</p>
+<p>　　下面是示例：</p>
+<p>　　StringUtils.isNotBlank(null) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“”) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“ “) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“         “) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“\t \n \f \r”) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“\b”) &#x3D; true</p>
+<p>　　StringUtils.isNotBlank(“bob”) &#x3D; true</p>
+<p>　　StringUtils.isNotBlank(“ bob “) &#x3D; true</p>
+<p>总结：isEmpty()会判断null或者空字符串，但是isBank()会多判断字符串里面是否有空格或者换行符等特殊字符，如果有那么将这些字符也看作是空的，如果全是空格则也认为是空字符串，所以一般来说用的比较多的应该是isEmpty()</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot整合Quartz定时任务</title>
     <url>/2021/09/25/SpringBoot%E6%95%B4%E5%90%88Quartz%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<p>首先导入quartz依赖，这里我就不演示导入springboot，自己随意导入一个版本就好了</p>
@@ -660,105 +712,6 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
-    <title>SpringBoot 程序启动或退出时执行操作</title>
-    <url>/2021/09/25/SpringBoot%20%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommandLineRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">CommandLineRunner</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试CommandLineRunner的示例。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-<span id="more"></span>
-<h4 id="2-实现ApplicationRunner接口"><a href="#2-实现ApplicationRunner接口" class="headerlink" title="2.实现ApplicationRunner接口"></a>2.实现ApplicationRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">ApplicationRunner</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">ApplicationArguments</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试ApplicationRunner接口"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>@Order注解：如果有多个实现类，而你需要他们按一定顺序执行的话，可以在实现类上加上@Order注解。@Order(value&#x3D;整数值)。SpringBoot会按照@Order中的value值从小到大依次执行。也就是先执行 1 再执行 2</p>
-<p>@Component注解：把普通pojo实例化到spring容器中，泛指各种组件，就是说当我们的类不属于各种归类的时候（@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。</p>
-<h3 id="结束时"><a href="#结束时" class="headerlink" title="结束时"></a>结束时</h3><h4 id="1-实现DisposableBean接口"><a href="#1-实现DisposableBean接口" class="headerlink" title="1.实现DisposableBean接口"></a>1.实现DisposableBean接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DisposableBeanTest</span> <span class="token keyword">implements</span> <span class="token class-name">DisposableBean</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束  implements DisposableBean "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<h4 id="2-通过-PreDistroy注解"><a href="#2-通过-PreDistroy注解" class="headerlink" title="2.通过@PreDistroy注解"></a>2.通过@PreDistroy注解</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ExitCode</span><span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@PreDestroy</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束 执行@PreDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>SpringBoot</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>String isEmpty()和isBank()的区别</title>
-    <url>/2021/10/02/String%20isEmpty()%E5%92%8CisBank()%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>1 public static boolean isEmpty(String str)</p>
-<p>   判断某字符串是否为空，为空的标准是 str&#x3D;&#x3D;null 或 str.length()&#x3D;&#x3D;0</p>
-<p>   　　下面是 StringUtils 判断是否为空的示例：</p>
-<p>   　　StringUtils.isEmpty(null) &#x3D; true</p>
-<p>   　　StringUtils.isEmpty(“”) &#x3D; true</p>
-<p>   　　StringUtils.isEmpty(“ “) &#x3D; false &#x2F;&#x2F;注意在 StringUtils 中空格作非空处理</p>
-<p>   　　StringUtils.isEmpty(“   “) &#x3D; false</p>
-<p>   　　StringUtils.isEmpty(“bob”) &#x3D; false</p>
-<p>   　　StringUtils.isEmpty(“ bob “) &#x3D; false</p>
-   <span id="more"></span>
-
-<p>2 public static boolean isNotEmpty(String str)</p>
-<p>　　判断某字符串是否非空，等于 !isEmpty(String str)</p>
-<p>　　下面是示例：</p>
-<p>　　StringUtils.isNotEmpty(null) &#x3D; false</p>
-<p>　　StringUtils.isNotEmpty(“”) &#x3D; false</p>
-<p>　　StringUtils.isNotEmpty(“ “) &#x3D; true</p>
-<p>　　StringUtils.isNotEmpty(“         “) &#x3D; true</p>
-<p>　　StringUtils.isNotEmpty(“bob”) &#x3D; true</p>
-<p>　　StringUtils.isNotEmpty(“ bob “) &#x3D; true</p>
-<p>3 public static boolean isBlank(String str)</p>
-<p>　　判断某字符串是否为空或长度为0或由空白符(whitespace) 构成</p>
-<p>　　下面是示例：</p>
-<p>　　StringUtils.isBlank(null) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“”) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“ “) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“        “) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“\t \n \f \r”) &#x3D; true   &#x2F;&#x2F;对于制表符、换行符、换页符和回车符</p>
-<p>　　StringUtils.isBlank()   &#x2F;&#x2F;均识为空白符</p>
-<p>　　StringUtils.isBlank(“\b”) &#x3D; false   &#x2F;&#x2F;“\b”为单词边界符</p>
-<p>　　StringUtils.isBlank(“bob”) &#x3D; false</p>
-<p>　　StringUtils.isBlank(“ bob “) &#x3D; false</p>
-<p>4 public static boolean isNotBlank(String str)</p>
-<p>　　判断某字符串是否不为空且长度不为0且不由空白符(whitespace) 构成，等于 !isBlank(String str)</p>
-<p>　　下面是示例：</p>
-<p>　　StringUtils.isNotBlank(null) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“”) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“ “) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“         “) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“\t \n \f \r”) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“\b”) &#x3D; true</p>
-<p>　　StringUtils.isNotBlank(“bob”) &#x3D; true</p>
-<p>　　StringUtils.isNotBlank(“ bob “) &#x3D; true</p>
-<p>总结：isEmpty()会判断null或者空字符串，但是isBank()会多判断字符串里面是否有空格或者换行符等特殊字符，如果有那么将这些字符也看作是空的，如果全是空格则也认为是空字符串，所以一般来说用的比较多的应该是isEmpty()</p>
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>centos7安装docker</title>
     <url>/2021/06/03/centos7%E5%AE%89%E8%A3%85docker/</url>
     <content><![CDATA[<p>centos7安装docker</p>
@@ -837,6 +790,53 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
+    <title>SpringBoot 程序启动或退出时执行操作</title>
+    <url>/2021/09/25/SpringBoot%20%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommandLineRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">CommandLineRunner</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试CommandLineRunner的示例。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+<span id="more"></span>
+<h4 id="2-实现ApplicationRunner接口"><a href="#2-实现ApplicationRunner接口" class="headerlink" title="2.实现ApplicationRunner接口"></a>2.实现ApplicationRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">ApplicationRunner</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">ApplicationArguments</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试ApplicationRunner接口"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>@Order注解：如果有多个实现类，而你需要他们按一定顺序执行的话，可以在实现类上加上@Order注解。@Order(value&#x3D;整数值)。SpringBoot会按照@Order中的value值从小到大依次执行。也就是先执行 1 再执行 2</p>
+<p>@Component注解：把普通pojo实例化到spring容器中，泛指各种组件，就是说当我们的类不属于各种归类的时候（@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。</p>
+<h3 id="结束时"><a href="#结束时" class="headerlink" title="结束时"></a>结束时</h3><h4 id="1-实现DisposableBean接口"><a href="#1-实现DisposableBean接口" class="headerlink" title="1.实现DisposableBean接口"></a>1.实现DisposableBean接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DisposableBeanTest</span> <span class="token keyword">implements</span> <span class="token class-name">DisposableBean</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束  implements DisposableBean "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h4 id="2-通过-PreDistroy注解"><a href="#2-通过-PreDistroy注解" class="headerlink" title="2.通过@PreDistroy注解"></a>2.通过@PreDistroy注解</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ExitCode</span><span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@PreDestroy</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束 执行@PreDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>centos7安装jdk8</title>
     <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85jdk8/</url>
     <content><![CDATA[<p>首先到官网下载好jdk1.8的tar.gz的压缩包，然后上传到服务器的任意目录，我们这里上传到系统的&#x2F;usr&#x2F;local下</p>
@@ -860,125 +860,6 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
 ]]></content>
       <tags>
         <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>centos7安装python3</title>
-    <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
-    <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
-<span id="more"></span>
-
-<h2 id="1、下载python3源码"><a href="#1、下载python3源码" class="headerlink" title="1、下载python3源码"></a>1、下载python3源码</h2><p>源码有两种压缩格式，两种源码都是一样的，只不过是压缩的格式不一样</p>
-<p>源码一：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz</a></p>
-<p>源码二：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz</a></p>
-<h2 id="2、上传压缩包至服务器"><a href="#2、上传压缩包至服务器" class="headerlink" title="2、上传压缩包至服务器"></a>2、上传压缩包至服务器</h2><p>可以使用finalshell等工具将下载好的源码包上传至服务器的&#x2F;usr&#x2F;local目录下</p>
-<h2 id="3、解压源码"><a href="#3、解压源码" class="headerlink" title="3、解压源码"></a>3、解压源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> Python-3.9.0.tar.xz</code></pre>
-
-<h2 id="4、安装python所需环境依赖"><a href="#4、安装python所需环境依赖" class="headerlink" title="4、安装python所需环境依赖"></a>4、安装python所需环境依赖</h2><pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc <span class="token function">make</span></code></pre>
-
-<h2 id="5、进入源码目录指定编译安装目录"><a href="#5、进入源码目录指定编译安装目录" class="headerlink" title="5、进入源码目录指定编译安装目录"></a>5、进入源码目录指定编译安装目录</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mkdir</span> python3</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> Python-3.9.0</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash">./configure <span class="token parameter variable">--prefix</span><span class="token operator">=</span>/usr/local/python3</code></pre>
-
-<p>注：这里创建的&#x2F;usr&#x2F;local&#x2F;python3目录就是后面编译好源码后安装python3.9的目录</p>
-<h2 id="6、编译源码"><a href="#6、编译源码" class="headerlink" title="6、编译源码"></a>6、编译源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token parameter variable">-j</span> <span class="token number">4</span></code></pre>
-
-<p>注：-j 4 代表使用cpu的4个核心进行多线程编译源码，可以加快编译速度，可以按照自己cpu的实际配置来，我的cpu是i5-3475s 四核心四线程  所以这里使用-j 4 指定四个核心，如果你的配置较低请自行调整，调太高会报错</p>
-<h2 id="7、安装"><a href="#7、安装" class="headerlink" title="7、安装"></a>7、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token function">install</span></code></pre>
-
-
-
-<h2 id="8、配置环境变量"><a href="#8、配置环境变量" class="headerlink" title="8、配置环境变量"></a>8、配置环境变量</h2><p>编译好源码后可以看到&#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin已经有python可以使用了，我们只需要将python3目录添加到系统环境变量即可</p>
-<h3 id="8-1编辑-x2F-etc-x2F-profile文件"><a href="#8-1编辑-x2F-etc-x2F-profile文件" class="headerlink" title="8.1编辑&#x2F;etc&#x2F;profile文件"></a>8.1编辑&#x2F;etc&#x2F;profile文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
-
-<h3 id="8-2添加环境变量"><a href="#8-2添加环境变量" class="headerlink" title="8.2添加环境变量"></a>8.2添加环境变量</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">PYTHON_HOME</span><span class="token operator">=</span>/usr/local/python3
-<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span>/usr/local/bin:<span class="token variable">$PYTHON_HOME</span>/bin:<span class="token environment constant">$PATH</span></code></pre>
-
-<h3 id="8-3使环境变量生效"><a href="#8-3使环境变量生效" class="headerlink" title="8.3使环境变量生效"></a>8.3使环境变量生效</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> /etc/profile</code></pre>
-
-]]></content>
-      <tags>
-        <tag>centos</tag>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>centos7安装mysql5.7</title>
-    <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85mysql5.7/</url>
-    <content><![CDATA[<p>centos7安装mysql5.7</p>
-<p>第一步下载mysql5.7安装包</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> http://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm</code></pre>
-
-<p>第二步安装mysql源</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">yum localinstall mysql57-community-release-el7-11.noarch.rpm</code></pre>
-<span id="more"></span>
-<p>查看是否安装成功</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">yum repolist enabled <span class="token operator">|</span> <span class="token function">grep</span> <span class="token string">"mysql.*-community.*"</span></code></pre>
-
-<p>安装mysql</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token function">install</span> mysql-community-server</code></pre>
-
-<p>​	启动mysql</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl start mysqld</code></pre>
-
-<p>查看mysql是否启动</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl status mysqld</code></pre>
-
-<p>设置mysql开机自启动</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl <span class="token builtin class-name">enable</span> mysqld</code></pre>
-
-<p>查看mysql初始root密码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">grep</span> <span class="token string">'temporary password'</span> /var/log/mysqld.log</code></pre>
-
-<p>进入mysql</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">mysql <span class="token parameter variable">-u</span> root <span class="token parameter variable">-p</span></code></pre>
-
-<p>设置允许使用简单密码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">set</span> global <span class="token assign-left variable">validate_password_policy</span><span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span></code></pre>
-
-<p>设置允许使用密码长度</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">set</span> global <span class="token assign-left variable">validate_password_length</span><span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span></code></pre>
-
-<p>修改密码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">set</span> password <span class="token keyword">for</span> <span class="token string">'root'</span>@<span class="token string">'localhost'</span><span class="token operator">=</span>password<span class="token punctuation">(</span><span class="token string">'123456'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
-
-<p>允许root远程连接</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">GRANT ALL PRIVILEGES ON *.* TO <span class="token string">'root'</span>@<span class="token string">'%'</span> IDENTIFIED BY <span class="token string">'1234456'</span> WITH GRANT OPTION<span class="token punctuation">;</span>FLUSH PRIVILEGES<span class="token punctuation">;</span></code></pre>
-
-<p>设置mysql数据库为utf-8编码</p>
-<p>编辑&#x2F;etc&#x2F;my.cnf文件 </p>
-<p>因为my.cnf中没有[client]标签，所以我们添加一个</p>
-<p>然后在这地下添加</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">default-character-set<span class="token operator">=</span>utf8</code></pre>
-
-<p>在[mysqld]下添加</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>mysqld<span class="token punctuation">]</span>default-storage-engine<span class="token operator">=</span>INNODBcharacter-set-server<span class="token operator">=</span>utf8collation-server<span class="token operator">=</span>utf8_general_ci</code></pre>
-
-<p>[client]一定要写在[mysqld]上面 否则会报错</p>
-<p>最终配置为</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>client<span class="token punctuation">]</span>default-character-set<span class="token operator">=</span>utf8<span class="token punctuation">[</span>mysqld<span class="token punctuation">]</span>default-storage-engine<span class="token operator">=</span>INNODBcharacter-set-server<span class="token operator">=</span>utf8collation-server<span class="token operator">=</span>utf8_general_ci</code></pre>
-
-
-
-<p>重启mysql</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl restart mysqld</code></pre>
-
-<p>进入mysql查看字符编码是否修改成功</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">show variables like <span class="token string">'%character%'</span><span class="token punctuation">;</span></code></pre>
-
-
-
-
-
-<p>配置文件：&#x2F;etc&#x2F;my.cnf </p>
-<p>日志文件：&#x2F;var&#x2F;log&#x2F;&#x2F;var&#x2F;log&#x2F;mysqld.log </p>
-<p>服务启动脚本：&#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;mysqld.service </p>
-<p>socket文件：&#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.pid </p>
-]]></content>
-      <tags>
-        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -1094,6 +975,125 @@ collation-server&#x3D;utf8_general_ci</code></pre>
       <tags>
         <tag>centos</tag>
         <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos7安装mysql5.7</title>
+    <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85mysql5.7/</url>
+    <content><![CDATA[<p>centos7安装mysql5.7</p>
+<p>第一步下载mysql5.7安装包</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> http://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm</code></pre>
+
+<p>第二步安装mysql源</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">yum localinstall mysql57-community-release-el7-11.noarch.rpm</code></pre>
+<span id="more"></span>
+<p>查看是否安装成功</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">yum repolist enabled <span class="token operator">|</span> <span class="token function">grep</span> <span class="token string">"mysql.*-community.*"</span></code></pre>
+
+<p>安装mysql</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token function">install</span> mysql-community-server</code></pre>
+
+<p>​	启动mysql</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl start mysqld</code></pre>
+
+<p>查看mysql是否启动</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl status mysqld</code></pre>
+
+<p>设置mysql开机自启动</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl <span class="token builtin class-name">enable</span> mysqld</code></pre>
+
+<p>查看mysql初始root密码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">grep</span> <span class="token string">'temporary password'</span> /var/log/mysqld.log</code></pre>
+
+<p>进入mysql</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">mysql <span class="token parameter variable">-u</span> root <span class="token parameter variable">-p</span></code></pre>
+
+<p>设置允许使用简单密码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">set</span> global <span class="token assign-left variable">validate_password_policy</span><span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span></code></pre>
+
+<p>设置允许使用密码长度</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">set</span> global <span class="token assign-left variable">validate_password_length</span><span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span></code></pre>
+
+<p>修改密码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">set</span> password <span class="token keyword">for</span> <span class="token string">'root'</span>@<span class="token string">'localhost'</span><span class="token operator">=</span>password<span class="token punctuation">(</span><span class="token string">'123456'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>允许root远程连接</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">GRANT ALL PRIVILEGES ON *.* TO <span class="token string">'root'</span>@<span class="token string">'%'</span> IDENTIFIED BY <span class="token string">'1234456'</span> WITH GRANT OPTION<span class="token punctuation">;</span>FLUSH PRIVILEGES<span class="token punctuation">;</span></code></pre>
+
+<p>设置mysql数据库为utf-8编码</p>
+<p>编辑&#x2F;etc&#x2F;my.cnf文件 </p>
+<p>因为my.cnf中没有[client]标签，所以我们添加一个</p>
+<p>然后在这地下添加</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">default-character-set<span class="token operator">=</span>utf8</code></pre>
+
+<p>在[mysqld]下添加</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>mysqld<span class="token punctuation">]</span>default-storage-engine<span class="token operator">=</span>INNODBcharacter-set-server<span class="token operator">=</span>utf8collation-server<span class="token operator">=</span>utf8_general_ci</code></pre>
+
+<p>[client]一定要写在[mysqld]上面 否则会报错</p>
+<p>最终配置为</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>client<span class="token punctuation">]</span>default-character-set<span class="token operator">=</span>utf8<span class="token punctuation">[</span>mysqld<span class="token punctuation">]</span>default-storage-engine<span class="token operator">=</span>INNODBcharacter-set-server<span class="token operator">=</span>utf8collation-server<span class="token operator">=</span>utf8_general_ci</code></pre>
+
+
+
+<p>重启mysql</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">systemctl restart mysqld</code></pre>
+
+<p>进入mysql查看字符编码是否修改成功</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">show variables like <span class="token string">'%character%'</span><span class="token punctuation">;</span></code></pre>
+
+
+
+
+
+<p>配置文件：&#x2F;etc&#x2F;my.cnf </p>
+<p>日志文件：&#x2F;var&#x2F;log&#x2F;&#x2F;var&#x2F;log&#x2F;mysqld.log </p>
+<p>服务启动脚本：&#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;mysqld.service </p>
+<p>socket文件：&#x2F;var&#x2F;run&#x2F;mysqld&#x2F;mysqld.pid </p>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos7安装python3</title>
+    <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
+    <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
+<span id="more"></span>
+
+<h2 id="1、下载python3源码"><a href="#1、下载python3源码" class="headerlink" title="1、下载python3源码"></a>1、下载python3源码</h2><p>源码有两种压缩格式，两种源码都是一样的，只不过是压缩的格式不一样</p>
+<p>源码一：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz</a></p>
+<p>源码二：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz</a></p>
+<h2 id="2、上传压缩包至服务器"><a href="#2、上传压缩包至服务器" class="headerlink" title="2、上传压缩包至服务器"></a>2、上传压缩包至服务器</h2><p>可以使用finalshell等工具将下载好的源码包上传至服务器的&#x2F;usr&#x2F;local目录下</p>
+<h2 id="3、解压源码"><a href="#3、解压源码" class="headerlink" title="3、解压源码"></a>3、解压源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> Python-3.9.0.tar.xz</code></pre>
+
+<h2 id="4、安装python所需环境依赖"><a href="#4、安装python所需环境依赖" class="headerlink" title="4、安装python所需环境依赖"></a>4、安装python所需环境依赖</h2><pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc <span class="token function">make</span></code></pre>
+
+<h2 id="5、进入源码目录指定编译安装目录"><a href="#5、进入源码目录指定编译安装目录" class="headerlink" title="5、进入源码目录指定编译安装目录"></a>5、进入源码目录指定编译安装目录</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mkdir</span> python3</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> Python-3.9.0</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">./configure <span class="token parameter variable">--prefix</span><span class="token operator">=</span>/usr/local/python3</code></pre>
+
+<p>注：这里创建的&#x2F;usr&#x2F;local&#x2F;python3目录就是后面编译好源码后安装python3.9的目录</p>
+<h2 id="6、编译源码"><a href="#6、编译源码" class="headerlink" title="6、编译源码"></a>6、编译源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token parameter variable">-j</span> <span class="token number">4</span></code></pre>
+
+<p>注：-j 4 代表使用cpu的4个核心进行多线程编译源码，可以加快编译速度，可以按照自己cpu的实际配置来，我的cpu是i5-3475s 四核心四线程  所以这里使用-j 4 指定四个核心，如果你的配置较低请自行调整，调太高会报错</p>
+<h2 id="7、安装"><a href="#7、安装" class="headerlink" title="7、安装"></a>7、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token function">install</span></code></pre>
+
+
+
+<h2 id="8、配置环境变量"><a href="#8、配置环境变量" class="headerlink" title="8、配置环境变量"></a>8、配置环境变量</h2><p>编译好源码后可以看到&#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin已经有python可以使用了，我们只需要将python3目录添加到系统环境变量即可</p>
+<h3 id="8-1编辑-x2F-etc-x2F-profile文件"><a href="#8-1编辑-x2F-etc-x2F-profile文件" class="headerlink" title="8.1编辑&#x2F;etc&#x2F;profile文件"></a>8.1编辑&#x2F;etc&#x2F;profile文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
+
+<h3 id="8-2添加环境变量"><a href="#8-2添加环境变量" class="headerlink" title="8.2添加环境变量"></a>8.2添加环境变量</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">PYTHON_HOME</span><span class="token operator">=</span>/usr/local/python3
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span>/usr/local/bin:<span class="token variable">$PYTHON_HOME</span>/bin:<span class="token environment constant">$PATH</span></code></pre>
+
+<h3 id="8-3使环境变量生效"><a href="#8-3使环境变量生效" class="headerlink" title="8.3使环境变量生效"></a>8.3使环境变量生效</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> /etc/profile</code></pre>
+
+]]></content>
+      <tags>
+        <tag>centos</tag>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -1712,6 +1712,36 @@ db.password 配置你的数据库的登录密码</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>git配置ssh</title>
+    <url>/2023/06/30/git%E9%85%8D%E7%BD%AEssh/</url>
+    <content><![CDATA[<p>git是现在代码管理的一个常用工具，采用两种传输方式 http ssh </p>
+<p>SSH 比较安全可靠，也不需要每次都输入账号密码，所以我们在使用git时一般采用ssh,下面介绍ssh简单的配置</p>
+<span id="more"></span>
+
+<h2 id="1、生成公钥私钥"><a href="#1、生成公钥私钥" class="headerlink" title="1、生成公钥私钥"></a>1、生成公钥私钥</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"your_email@example.com"</span></code></pre>
+
+<p>-t 指定生成的密钥类型</p>
+<p>-C 注释</p>
+<h2 id="2、上传公钥"><a href="#2、上传公钥" class="headerlink" title="2、上传公钥"></a>2、上传公钥</h2><p>如果是windows则密钥放在C:\Users\你的用户名\.ssh</p>
+<p>如果是liunx则密钥放在 &#x2F;home&#x2F;你的用户名&#x2F;.ssh</p>
+<p>将id_rsa.pub里面的内容复制后粘贴到github或者gitee仓库配置中</p>
+<h2 id="3、配置账户信息"><a href="#3、配置账户信息" class="headerlink" title="3、配置账户信息"></a>3、配置账户信息</h2><p>如果我们需要上传文件到远程仓库中则必须配置邮箱和用户名，否则无法进行git上传操作</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户邮箱（填自己的邮箱）
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.email “your_email@example.com”</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户名
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.name “yourname”</code></pre>
+
+<h2 id="4、访问服务器测试配置是否正常"><a href="#4、访问服务器测试配置是否正常" class="headerlink" title="4、访问服务器测试配置是否正常"></a>4、访问服务器测试配置是否正常</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com</code></pre>
+
+<p>如果你的地址不是github则将后面的github.com替换成你想测试的地址，比如gitee.com</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
+        <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hexo+git搭建个人博客</title>
     <url>/2021/11/22/hexo+git%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<p>首先要搭建好node，如果搭建node可以参照哦nvm管理node的教程</p>
@@ -1853,6 +1883,21 @@ db.password 配置你的数据库的登录密码</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>idea安装后无法打开解决方案</title>
+    <url>/2021/10/01/idea%E5%AE%89%E8%A3%85%E5%90%8E%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p>首先可以尝试安装完成后双击打不开就重启电脑，如果还是不行可以尝试以下方案。</p>
+<p>C:\Users\你的用户名\AppData\idea目录</p>
+<p>然后找到idea64.exe.vmoptions</p>
+<p>编辑，这里最好使用notepad++这样的专业工具编辑，防止出现使用记事本而编码不同步的问题</p>
+<p>然后在这个文件里应该在最后一行可以找到一个-javaagent:开头的</p>
+<p>例如：-javaagent:D:\01.Software\IntelliJIDEA\JetbrainsCrack-2.8-release-enc.jar</p>
+<p>删除这一行，然后保存就可以打开idea了，这是因为之前在电脑上使用过破解包，但是还是不清楚为什么安装新版idea会有这一行，删掉破解就可以了</p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mac如何设置环境变量关机不失效</title>
     <url>/2021/03/18/huanjingbianliang/</url>
     <content><![CDATA[<h1 id="mac如何设置环境变量关机不失效"><a href="#mac如何设置环境变量关机不失效" class="headerlink" title="mac如何设置环境变量关机不失效"></a>mac如何设置环境变量关机不失效</h1><p>mac在10.15版本之前使用的是.bash_profile这个文件，但是从10.15版本开始则采用了新的文件设置环境变量。</p>
@@ -1913,21 +1958,6 @@ db.password 配置你的数据库的登录密码</code></pre>
 ]]></content>
       <tags>
         <tag>mac</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>idea安装后无法打开解决方案</title>
-    <url>/2021/10/01/idea%E5%AE%89%E8%A3%85%E5%90%8E%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
-    <content><![CDATA[<p>首先可以尝试安装完成后双击打不开就重启电脑，如果还是不行可以尝试以下方案。</p>
-<p>C:\Users\你的用户名\AppData\idea目录</p>
-<p>然后找到idea64.exe.vmoptions</p>
-<p>编辑，这里最好使用notepad++这样的专业工具编辑，防止出现使用记事本而编码不同步的问题</p>
-<p>然后在这个文件里应该在最后一行可以找到一个-javaagent:开头的</p>
-<p>例如：-javaagent:D:\01.Software\IntelliJIDEA\JetbrainsCrack-2.8-release-enc.jar</p>
-<p>删除这一行，然后保存就可以打开idea了，这是因为之前在电脑上使用过破解包，但是还是不清楚为什么安装新版idea会有这一行，删掉破解就可以了</p>
-]]></content>
-      <tags>
-        <tag>idea</tag>
       </tags>
   </entry>
   <entry>
@@ -2463,48 +2493,6 @@ resp <span class="token operator">=</span> session<span class="token punctuation
       </tags>
   </entry>
   <entry>
-    <title>mac启动springboot项目慢解决方案</title>
-    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
-    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
-<p>下面就是你的电脑地址.local</p>
-<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
-<span id="more"></span>
-
-<p>然后复制这段地址包括.local</p>
-<p><code>luoqingdeMacBook-Pro.local</code></p>
-<p>再打开本机的hosts，准备修改本地ip映射</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
-
-<p>原内容如下：</p>
-<pre class="language-none"><code class="language-none">##
-# Host Database
-#
-# localhost is used to configure the loopback interface
-# when the system is booting.  Do not change this entry.
-##
-127.0.0.1             localhost
-255.255.255.255     broadcasthost
-::1                 localhost </code></pre>
-
-<p>修改成如下：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
-<span class="token comment"># Host Database</span>
-<span class="token comment">#</span>
-<span class="token comment"># localhost is used to configure the loopback interface</span>
-<span class="token comment"># when the system is booting.  Do not change this entry.</span>
-<span class="token comment">##</span>
-<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
-<span class="token number">255.255</span>.255.255     broadcasthost
-::1                 localhost 你的机器名.local</code></pre>
-
-<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>springboot</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mac、windows配置maven</title>
     <url>/2021/05/11/mac%E3%80%81windows%E9%85%8D%E7%BD%AEmaven/</url>
     <content><![CDATA[<p>mac、windows配置maven</p>
@@ -2570,6 +2558,48 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
 ]]></content>
       <tags>
         <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mac启动springboot项目慢解决方案</title>
+    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
+<p>下面就是你的电脑地址.local</p>
+<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
+<span id="more"></span>
+
+<p>然后复制这段地址包括.local</p>
+<p><code>luoqingdeMacBook-Pro.local</code></p>
+<p>再打开本机的hosts，准备修改本地ip映射</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
+
+<p>原内容如下：</p>
+<pre class="language-none"><code class="language-none">##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1             localhost
+255.255.255.255     broadcasthost
+::1                 localhost </code></pre>
+
+<p>修改成如下：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
+<span class="token comment"># Host Database</span>
+<span class="token comment">#</span>
+<span class="token comment"># localhost is used to configure the loopback interface</span>
+<span class="token comment"># when the system is booting.  Do not change this entry.</span>
+<span class="token comment">##</span>
+<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
+<span class="token number">255.255</span>.255.255     broadcasthost
+::1                 localhost 你的机器名.local</code></pre>
+
+<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>springboot</tag>
       </tags>
   </entry>
   <entry>
@@ -2695,43 +2725,6 @@ collation-server&#x3D;utf8_general_ci</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>mysql忘记密码</title>
-    <url>/2021/10/05/mysql%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<p>首先我们先停止mysql服务</p>
-<p>windows</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">net stop mysql</code></pre>
-
-<p>liunx</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">service</span> mysql stop</code></pre>
-
-<p>如果是docker容器那么直接将这个mysql容器停止就好了，但是记住创建容器的时候要将&#x2F;etc&#x2F;mysql这个文件夹映射为数据卷，因为我们要对其配置文件进行修改</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> stop mysql</code></pre>
-
-<p>mac可以直接在设置里的可视化界面中停止</p>
-<p>然后我们找到mysql的配置文件my.cnf进行修改</p>
-   <span id="more"></span>
-
-<p>在[mysqld]这个标签下添加如下内容</p>
-<pre class="language-cnf" data-language="cnf"><code class="language-cnf">skip-host-cache
-skip-name-resolve
-skip-grant-tables</code></pre>
-
-<p>记住，这里一定要停止之后再修改配置文件，不然有可能会导致无法启动</p>
-<p>修改完成后就可以再启动mysql服务了，然后再登录mysql直接不用输入密码就可以进入，当然我们不可能长久使用这样无密码登录的环境，我们再使用如下命令进行密码的修改，各个版本修改密码的命令可能会有不同，下面提供mysql5.7版本修改密码的命令，其他版本自己百度找就好了</p>
-<pre class="language-mysql" data-language="mysql"><code class="language-mysql">mysql&gt; use mysql;
-mysql&gt; update user set authentication_string&#x3D;password(&#39;这里填密码&#39;) where user&#x3D;&#39;root&#39;;
-mysql&gt; flush privileges;
-mysql&gt; exit;</code></pre>
-
-
-
-<p>修尬完成密码后关闭mysql服务，然后去配置文件中将上面添加的三行跳过密码的配置删除然后重启mysql服务就可以使用新密码登录了</p>
-]]></content>
-      <tags>
-        <tag>mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mysql解决乱码</title>
     <url>/2021/09/05/mysql%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/</url>
     <content><![CDATA[<h2 id="mysql解决乱码问题"><a href="#mysql解决乱码问题" class="headerlink" title="mysql解决乱码问题"></a>mysql解决乱码问题</h2><p>首先我们要知道编码都是在mysql的my.ini配置文件中配置的，所以我们可以在安装好mysql后就对其配置文件进行更改，也可以后期更改，但是要注意，改配置文件之前请先关闭mysql服务，然后再更改my.ini，最后启动服务，如果你在mysql服务还在运行中的时候就修改配置文件就会导致你的mysql无法关闭以及重新启动，这里切记！</p>
@@ -2772,6 +2765,43 @@ mysql&gt; exit;</code></pre>
 <p>最后再重启服务就可以了</p>
 <p>然后还是像上面一样使用status查看状态，如果都是utf8那么就生效了</p>
 <h2 id="liunx"><a href="#liunx" class="headerlink" title="liunx"></a>liunx</h2><p>liunx的教程跟mac是一样的，配置文件也是放在&#x2F;etc&#x2F;my.cnf下，如果没有则自己创建一个</p>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mysql忘记密码</title>
+    <url>/2021/10/05/mysql%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<p>首先我们先停止mysql服务</p>
+<p>windows</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">net stop mysql</code></pre>
+
+<p>liunx</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">service</span> mysql stop</code></pre>
+
+<p>如果是docker容器那么直接将这个mysql容器停止就好了，但是记住创建容器的时候要将&#x2F;etc&#x2F;mysql这个文件夹映射为数据卷，因为我们要对其配置文件进行修改</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> stop mysql</code></pre>
+
+<p>mac可以直接在设置里的可视化界面中停止</p>
+<p>然后我们找到mysql的配置文件my.cnf进行修改</p>
+   <span id="more"></span>
+
+<p>在[mysqld]这个标签下添加如下内容</p>
+<pre class="language-cnf" data-language="cnf"><code class="language-cnf">skip-host-cache
+skip-name-resolve
+skip-grant-tables</code></pre>
+
+<p>记住，这里一定要停止之后再修改配置文件，不然有可能会导致无法启动</p>
+<p>修改完成后就可以再启动mysql服务了，然后再登录mysql直接不用输入密码就可以进入，当然我们不可能长久使用这样无密码登录的环境，我们再使用如下命令进行密码的修改，各个版本修改密码的命令可能会有不同，下面提供mysql5.7版本修改密码的命令，其他版本自己百度找就好了</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">mysql&gt; use mysql;
+mysql&gt; update user set authentication_string&#x3D;password(&#39;这里填密码&#39;) where user&#x3D;&#39;root&#39;;
+mysql&gt; flush privileges;
+mysql&gt; exit;</code></pre>
+
+
+
+<p>修尬完成密码后关闭mysql服务，然后去配置文件中将上面添加的三行跳过密码的配置删除然后重启mysql服务就可以使用新密码登录了</p>
 ]]></content>
       <tags>
         <tag>mysql</tag>
@@ -3154,6 +3184,33 @@ nginx: configuration <span class="token function">file</span> /usr/local/nginx//
       </tags>
   </entry>
   <entry>
+    <title>nginx部署vue项目</title>
+    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
+<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
+
+<p>然后安装运行所需要的依赖</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
+
+<p>安装完成后本地运行查看</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
+
+<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
+<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
+<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
+<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
+
+<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
+<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
+]]></content>
+      <tags>
+        <tag>nginx</tag>
+        <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>rarcrack破解多种格式压缩包</title>
     <url>/2021/03/28/rarcrack/</url>
     <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
@@ -3191,33 +3248,6 @@ nginx: configuration <span class="token function">file</span> /usr/local/nginx//
       <tags>
         <tag>rarcrack</tag>
         <tag>zip</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>nginx部署vue项目</title>
-    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
-    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
-<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
-
-<p>然后安装运行所需要的依赖</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
-
-<p>安装完成后本地运行查看</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
-
-<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
-<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
-<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
-<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
-
-<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
-<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
-]]></content>
-      <tags>
-        <tag>nginx</tag>
-        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
@@ -3406,72 +3436,6 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>typora移除过期提示</title>
-    <url>/2023/04/04/typora%E7%A7%BB%E9%99%A4%E8%BF%87%E6%9C%9F%E6%8F%90%E7%A4%BA/</url>
-    <content><![CDATA[<p>前言：由于typora在1.0版本正式推出后以前的beta版本都会弹出错误提示“This beta version of Typora is expired, please download and install a newer version.”导致必须升级正式版本付费使用，本次内容教大家如何跳过beta版本的提示信息继续使用typora</p>
-<span id="more"></span>
-
-<h2 id="1、下载beta版本typroa并安装"><a href="#1、下载beta版本typroa并安装" class="headerlink" title="1、下载beta版本typroa并安装"></a>1、下载beta版本typroa并安装</h2><p>地址：<a href="https://github.com/Light-of-Fireworks/typroa_bata_0.11">https://github.com/Light-of-Fireworks/typroa_bata_0.11</a></p>
-<h2 id="2、下载typoraCracker解包-x2F-打包工具"><a href="#2、下载typoraCracker解包-x2F-打包工具" class="headerlink" title="2、下载typoraCracker解包&#x2F;打包工具"></a>2、下载typoraCracker解包&#x2F;打包工具</h2><p>注意：typoraCracker使用python语言编写，请提前安装好python3环境</p>
-<p>地址：<a href="https://github.com/Light-of-Fireworks/typoraCracker">https://github.com/Light-of-Fireworks/typoraCracker</a></p>
-<h2 id="3、解压typoraCracker，并在typoraCracker根目录下打开cmd"><a href="#3、解压typoraCracker，并在typoraCracker根目录下打开cmd" class="headerlink" title="3、解压typoraCracker，并在typoraCracker根目录下打开cmd"></a>3、解压typoraCracker，并在typoraCracker根目录下打开cmd</h2><h2 id="4、解压typora资源"><a href="#4、解压typora资源" class="headerlink" title="4、解压typora资源"></a>4、解压typora资源</h2><pre class="language-bash" data-language="bash"><code class="language-bash">python typora.py C:/Users/Administrator/AppData/Local/Programs/Typora/resources/app.asar ./out</code></pre>
-
-<p>注：C:&#x2F;Users&#x2F;Administrator&#x2F;AppData&#x2F;Local&#x2F;Programs&#x2F;Typora代表的是你安装typora的路径，不清楚的可以右键typora图标选择打开文件所在位置即可 .&#x2F;out意思是解压至当前目录的out目录下，即会在当前目录下创建一个名为out的目录并解码app.asar文件</p>
-<p><strong><font color="red">注意！！！ app.asar的位置必须是你typroa安装位置，不可以将app.asar复制到其他地方进行解码，必须解码typroa安装位置的app.asar，因为需要解码的不止是app.asar，还有其他拓展文件</font></strong></p>
-<h2 id="5、修改License-js"><a href="#5、修改License-js" class="headerlink" title="5、修改License.js"></a>5、修改License.js</h2><p>打开刚刚生成的out\dec_app目录，可以看到一个License.js文件，使用文本编辑器进行编辑，可以使用idea等工具进行格式化后查看源代码。</p>
-<p>其中可以使用Ctrl+F搜索”This beta version of Typora is expired, please download and install a newer version.”就可以看到如下代码</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token function-variable function">firstValidateLicense</span> <span class="token operator">=</span> <span class="token parameter">e</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
-    licenseInitialed <span class="token operator">=</span> <span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">const</span> t <span class="token operator">=</span> <span class="token function">readLicenseInfo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span><span class="token literal-property property">license</span><span class="token operator">:</span> n<span class="token punctuation">,</span> <span class="token literal-property property">email</span><span class="token operator">:</span> i<span class="token punctuation">&#125;</span> <span class="token operator">=</span> t <span class="token operator">||</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-    n <span class="token operator">&amp;&amp;</span> i <span class="token operator">?</span> <span class="token punctuation">(</span><span class="token function">fillLicense</span><span class="token punctuation">(</span>i<span class="token punctuation">,</span> n<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">renewLicense</span><span class="token punctuation">(</span>t<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">:</span> <span class="token function">unfillLicense</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token function-variable function">showDialog</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">e<span class="token punctuation">,</span> t</span><span class="token punctuation">)</span> <span class="token operator">=></span> electron<span class="token punctuation">.</span>dialog<span class="token punctuation">.</span><span class="token function">showMessageBox</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>
-    <span class="token literal-property property">type</span><span class="token operator">:</span> <span class="token string">"error"</span><span class="token punctuation">,</span>
-    <span class="token literal-property property">buttons</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"OK"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token literal-property property">defaultId</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
-    <span class="token literal-property property">cancelId</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
-    <span class="token literal-property property">title</span><span class="token operator">:</span> e<span class="token punctuation">,</span>
-    <span class="token literal-property property">message</span><span class="token operator">:</span> t
-<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function-variable function">endDevTest</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    app<span class="token punctuation">.</span>expired <span class="token operator">=</span> <span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token function">showDialog</span><span class="token punctuation">(</span>Dict<span class="token punctuation">.</span><span class="token function">getPanelString</span><span class="token punctuation">(</span><span class="token string">"Error"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> Dict<span class="token punctuation">.</span><span class="token function">getPanelString</span><span class="token punctuation">(</span><span class="token string">"This beta version of Typora is expired, please download and install a newer version."</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
-        shell<span class="token punctuation">.</span><span class="token function">openExternal</span><span class="token punctuation">(</span><span class="token string">"https://typora.io/#download"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
-            process<span class="token punctuation">.</span><span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">1e3</span><span class="token punctuation">)</span>
-    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token function-variable function">validateDevTest</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>hasLicense <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>isLinux <span class="token operator">&amp;&amp;</span> global<span class="token punctuation">.</span>devVersion <span class="token operator">&amp;&amp;</span> global<span class="token punctuation">.</span><span class="token constant">PRODUCTION_MODE</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">var</span> e <span class="token operator">=</span> <span class="token function">getInstallDate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> t <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">;</span>
-        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"buildTime is 1637125121389"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token function">isNaN</span><span class="token punctuation">(</span><span class="token number">1637125121389</span><span class="token punctuation">)</span> <span class="token operator">||</span> t <span class="token operator">-</span> <span class="token number">1637125121389</span> <span class="token operator">></span> <span class="token number">20736e6</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token function">endDevTest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e <span class="token operator">-=</span> <span class="token number">0</span><span class="token punctuation">,</span> console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"verInitTime is "</span> <span class="token operator">+</span> e<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">!</span><span class="token function">isNaN</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> t <span class="token operator">-</span> e <span class="token operator">></span> <span class="token number">1728e7</span> <span class="token operator">&amp;&amp;</span> <span class="token function">endDevTest</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token function-variable function">showLicensePanelIfNeeded</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token function">shouldShowNoLicenseHint</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>app<span class="token punctuation">.</span>setting<span class="token punctuation">.</span>inFirstShow <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>isLinux <span class="token operator">&amp;&amp;</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">.95</span> <span class="token operator">||</span> <span class="token punctuation">(</span><span class="token operator">!</span>lastShown <span class="token operator">||</span> <span class="token keyword">new</span> <span class="token class-name">Date</span> <span class="token operator">-</span> lastShown <span class="token operator">></span> <span class="token number">18e6</span> <span class="token operator">||</span> <span class="token function">getTrailRemains</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">30</span><span class="token punctuation">)</span> <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token function">showLicensePanel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
-
-<p>其中validateDevTest方法会验证版本是否过期</p>
-<h3 id="5-1函数释义："><a href="#5-1函数释义：" class="headerlink" title="5.1函数释义："></a>5.1函数释义：</h3><p>endDevTest 函数用于显示一个对话框，提示用户下载并安装更新版本。然后，它会打开 Typora 的下载页面，并在 1 秒后退出程序。</p>
-<p>validateDevTest 函数用于检查开发版本的有效性。如果没有许可证且不是 Linux 系统，则会检查安装日期和构建时间。如果超过了指定时间，则调用 endDevTest 函数。</p>
-<h3 id="5-2代码释义（validateDevTest-）："><a href="#5-2代码释义（validateDevTest-）：" class="headerlink" title="5.2代码释义（validateDevTest ）："></a>5.2代码释义（validateDevTest ）：</h3><p>console.log(“buildTime is 1637125121389”)：打印typora构建日期</p>
-<p>(isNaN(1637125121389) || t - 1637125121389 &gt; 20736e6) &amp;&amp; endDevTest()：查构建时间是否为数字（使用 isNaN 函数），并检查当前时间与构建时间之差是否大于 20736e6 毫秒（约 240 天）。如果满足这些条件之一，则调用 endDevTest 函数。</p>
-<p>20736e6 是科学计数法的表示方法，它等于 20736 * 10^6，也就是 20736000000约 240 天。</p>
-<p>console.log(“verInitTime is “ + e), !isNaN(e) &amp;&amp; t - e &gt; 1728e7 &amp;&amp; endDevTest()：使用 console.log 函数打印安装日期 e，然后检查安装日期是否为数字（使用 isNaN 函数），并检查当前时间 t 与安装日期之差是否大于 1728e7 毫秒（约 200 天）。如果满足这些条件，则调用 endDevTest 函数。</p>
-<p>1728e7 是科学计数法的表示方法，它等于 1728 * 10^7，也就是 17280000000约 200 天。</p>
-<p>根据如上代码我们仅需要修改一处地方即可，即将validateDevTest函数返回true即可，这样endDevTest函数就不会被调用也就不会有提示框了。</p>
-<p>修改代码如下：</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token function-variable function">validateDevTest</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<h2 id="6、回编译"><a href="#6、回编译" class="headerlink" title="6、回编译"></a>6、回编译</h2><p>将我们修改好的dec_app目录重新打包为app.asar，命令如下（在typoraCracker根目录执行）:</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">python typora.py <span class="token parameter variable">-u</span> ./out/dec_app <span class="token builtin class-name">.</span></code></pre>
-
-<p>注意最后面有一个小数点不要漏了，代表将dec_app回编译后的文件放置typoraCracker根目录</p>
-<h2 id="7、替换app-asar"><a href="#7、替换app-asar" class="headerlink" title="7、替换app.asar"></a>7、替换app.asar</h2><p>将编译好的typoraCracker&#x2F;app.asar替换C:&#x2F;Users&#x2F;Administrator&#x2F;AppData&#x2F;Local&#x2F;Programs&#x2F;Typora&#x2F;resources&#x2F;app.asar后重新打开typora即可使用</p>
-]]></content>
-      <tags>
-        <tag>python</tag>
-        <tag>typora</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>swagger</title>
     <url>/2021/10/17/swagger/</url>
     <content><![CDATA[<p>首先导入对应的swagger依赖</p>
@@ -3656,6 +3620,72 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>typora移除过期提示</title>
+    <url>/2023/04/04/typora%E7%A7%BB%E9%99%A4%E8%BF%87%E6%9C%9F%E6%8F%90%E7%A4%BA/</url>
+    <content><![CDATA[<p>前言：由于typora在1.0版本正式推出后以前的beta版本都会弹出错误提示“This beta version of Typora is expired, please download and install a newer version.”导致必须升级正式版本付费使用，本次内容教大家如何跳过beta版本的提示信息继续使用typora</p>
+<span id="more"></span>
+
+<h2 id="1、下载beta版本typroa并安装"><a href="#1、下载beta版本typroa并安装" class="headerlink" title="1、下载beta版本typroa并安装"></a>1、下载beta版本typroa并安装</h2><p>地址：<a href="https://github.com/Light-of-Fireworks/typroa_bata_0.11">https://github.com/Light-of-Fireworks/typroa_bata_0.11</a></p>
+<h2 id="2、下载typoraCracker解包-x2F-打包工具"><a href="#2、下载typoraCracker解包-x2F-打包工具" class="headerlink" title="2、下载typoraCracker解包&#x2F;打包工具"></a>2、下载typoraCracker解包&#x2F;打包工具</h2><p>注意：typoraCracker使用python语言编写，请提前安装好python3环境</p>
+<p>地址：<a href="https://github.com/Light-of-Fireworks/typoraCracker">https://github.com/Light-of-Fireworks/typoraCracker</a></p>
+<h2 id="3、解压typoraCracker，并在typoraCracker根目录下打开cmd"><a href="#3、解压typoraCracker，并在typoraCracker根目录下打开cmd" class="headerlink" title="3、解压typoraCracker，并在typoraCracker根目录下打开cmd"></a>3、解压typoraCracker，并在typoraCracker根目录下打开cmd</h2><h2 id="4、解压typora资源"><a href="#4、解压typora资源" class="headerlink" title="4、解压typora资源"></a>4、解压typora资源</h2><pre class="language-bash" data-language="bash"><code class="language-bash">python typora.py C:/Users/Administrator/AppData/Local/Programs/Typora/resources/app.asar ./out</code></pre>
+
+<p>注：C:&#x2F;Users&#x2F;Administrator&#x2F;AppData&#x2F;Local&#x2F;Programs&#x2F;Typora代表的是你安装typora的路径，不清楚的可以右键typora图标选择打开文件所在位置即可 .&#x2F;out意思是解压至当前目录的out目录下，即会在当前目录下创建一个名为out的目录并解码app.asar文件</p>
+<p><strong><font color="red">注意！！！ app.asar的位置必须是你typroa安装位置，不可以将app.asar复制到其他地方进行解码，必须解码typroa安装位置的app.asar，因为需要解码的不止是app.asar，还有其他拓展文件</font></strong></p>
+<h2 id="5、修改License-js"><a href="#5、修改License-js" class="headerlink" title="5、修改License.js"></a>5、修改License.js</h2><p>打开刚刚生成的out\dec_app目录，可以看到一个License.js文件，使用文本编辑器进行编辑，可以使用idea等工具进行格式化后查看源代码。</p>
+<p>其中可以使用Ctrl+F搜索”This beta version of Typora is expired, please download and install a newer version.”就可以看到如下代码</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token function-variable function">firstValidateLicense</span> <span class="token operator">=</span> <span class="token parameter">e</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+    licenseInitialed <span class="token operator">=</span> <span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> t <span class="token operator">=</span> <span class="token function">readLicenseInfo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span><span class="token literal-property property">license</span><span class="token operator">:</span> n<span class="token punctuation">,</span> <span class="token literal-property property">email</span><span class="token operator">:</span> i<span class="token punctuation">&#125;</span> <span class="token operator">=</span> t <span class="token operator">||</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+    n <span class="token operator">&amp;&amp;</span> i <span class="token operator">?</span> <span class="token punctuation">(</span><span class="token function">fillLicense</span><span class="token punctuation">(</span>i<span class="token punctuation">,</span> n<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">renewLicense</span><span class="token punctuation">(</span>t<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">:</span> <span class="token function">unfillLicense</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token function-variable function">showDialog</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">e<span class="token punctuation">,</span> t</span><span class="token punctuation">)</span> <span class="token operator">=></span> electron<span class="token punctuation">.</span>dialog<span class="token punctuation">.</span><span class="token function">showMessageBox</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>
+    <span class="token literal-property property">type</span><span class="token operator">:</span> <span class="token string">"error"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">buttons</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"OK"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">defaultId</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">cancelId</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">title</span><span class="token operator">:</span> e<span class="token punctuation">,</span>
+    <span class="token literal-property property">message</span><span class="token operator">:</span> t
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function-variable function">endDevTest</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    app<span class="token punctuation">.</span>expired <span class="token operator">=</span> <span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token function">showDialog</span><span class="token punctuation">(</span>Dict<span class="token punctuation">.</span><span class="token function">getPanelString</span><span class="token punctuation">(</span><span class="token string">"Error"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> Dict<span class="token punctuation">.</span><span class="token function">getPanelString</span><span class="token punctuation">(</span><span class="token string">"This beta version of Typora is expired, please download and install a newer version."</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+        shell<span class="token punctuation">.</span><span class="token function">openExternal</span><span class="token punctuation">(</span><span class="token string">"https://typora.io/#download"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+            process<span class="token punctuation">.</span><span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">1e3</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token function-variable function">validateDevTest</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>hasLicense <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>isLinux <span class="token operator">&amp;&amp;</span> global<span class="token punctuation">.</span>devVersion <span class="token operator">&amp;&amp;</span> global<span class="token punctuation">.</span><span class="token constant">PRODUCTION_MODE</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">var</span> e <span class="token operator">=</span> <span class="token function">getInstallDate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> t <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">;</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"buildTime is 1637125121389"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token function">isNaN</span><span class="token punctuation">(</span><span class="token number">1637125121389</span><span class="token punctuation">)</span> <span class="token operator">||</span> t <span class="token operator">-</span> <span class="token number">1637125121389</span> <span class="token operator">></span> <span class="token number">20736e6</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token function">endDevTest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e <span class="token operator">-=</span> <span class="token number">0</span><span class="token punctuation">,</span> console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"verInitTime is "</span> <span class="token operator">+</span> e<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">!</span><span class="token function">isNaN</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> t <span class="token operator">-</span> e <span class="token operator">></span> <span class="token number">1728e7</span> <span class="token operator">&amp;&amp;</span> <span class="token function">endDevTest</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token function-variable function">showLicensePanelIfNeeded</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">shouldShowNoLicenseHint</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>app<span class="token punctuation">.</span>setting<span class="token punctuation">.</span>inFirstShow <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>isLinux <span class="token operator">&amp;&amp;</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">.95</span> <span class="token operator">||</span> <span class="token punctuation">(</span><span class="token operator">!</span>lastShown <span class="token operator">||</span> <span class="token keyword">new</span> <span class="token class-name">Date</span> <span class="token operator">-</span> lastShown <span class="token operator">></span> <span class="token number">18e6</span> <span class="token operator">||</span> <span class="token function">getTrailRemains</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">30</span><span class="token punctuation">)</span> <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token function">showLicensePanel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
+
+<p>其中validateDevTest方法会验证版本是否过期</p>
+<h3 id="5-1函数释义："><a href="#5-1函数释义：" class="headerlink" title="5.1函数释义："></a>5.1函数释义：</h3><p>endDevTest 函数用于显示一个对话框，提示用户下载并安装更新版本。然后，它会打开 Typora 的下载页面，并在 1 秒后退出程序。</p>
+<p>validateDevTest 函数用于检查开发版本的有效性。如果没有许可证且不是 Linux 系统，则会检查安装日期和构建时间。如果超过了指定时间，则调用 endDevTest 函数。</p>
+<h3 id="5-2代码释义（validateDevTest-）："><a href="#5-2代码释义（validateDevTest-）：" class="headerlink" title="5.2代码释义（validateDevTest ）："></a>5.2代码释义（validateDevTest ）：</h3><p>console.log(“buildTime is 1637125121389”)：打印typora构建日期</p>
+<p>(isNaN(1637125121389) || t - 1637125121389 &gt; 20736e6) &amp;&amp; endDevTest()：查构建时间是否为数字（使用 isNaN 函数），并检查当前时间与构建时间之差是否大于 20736e6 毫秒（约 240 天）。如果满足这些条件之一，则调用 endDevTest 函数。</p>
+<p>20736e6 是科学计数法的表示方法，它等于 20736 * 10^6，也就是 20736000000约 240 天。</p>
+<p>console.log(“verInitTime is “ + e), !isNaN(e) &amp;&amp; t - e &gt; 1728e7 &amp;&amp; endDevTest()：使用 console.log 函数打印安装日期 e，然后检查安装日期是否为数字（使用 isNaN 函数），并检查当前时间 t 与安装日期之差是否大于 1728e7 毫秒（约 200 天）。如果满足这些条件，则调用 endDevTest 函数。</p>
+<p>1728e7 是科学计数法的表示方法，它等于 1728 * 10^7，也就是 17280000000约 200 天。</p>
+<p>根据如上代码我们仅需要修改一处地方即可，即将validateDevTest函数返回true即可，这样endDevTest函数就不会被调用也就不会有提示框了。</p>
+<p>修改代码如下：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token function-variable function">validateDevTest</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h2 id="6、回编译"><a href="#6、回编译" class="headerlink" title="6、回编译"></a>6、回编译</h2><p>将我们修改好的dec_app目录重新打包为app.asar，命令如下（在typoraCracker根目录执行）:</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">python typora.py <span class="token parameter variable">-u</span> ./out/dec_app <span class="token builtin class-name">.</span></code></pre>
+
+<p>注意最后面有一个小数点不要漏了，代表将dec_app回编译后的文件放置typoraCracker根目录</p>
+<h2 id="7、替换app-asar"><a href="#7、替换app-asar" class="headerlink" title="7、替换app.asar"></a>7、替换app.asar</h2><p>将编译好的typoraCracker&#x2F;app.asar替换C:&#x2F;Users&#x2F;Administrator&#x2F;AppData&#x2F;Local&#x2F;Programs&#x2F;Typora&#x2F;resources&#x2F;app.asar后重新打开typora即可使用</p>
+]]></content>
+      <tags>
+        <tag>python</tag>
+        <tag>typora</tag>
+      </tags>
+  </entry>
+  <entry>
     <title></title>
     <url>/2023/04/03/%E4%BD%BF%E7%94%A8python%E6%97%A0%E5%A4%B4%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<hr>
@@ -3715,6 +3745,17 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
 ]]></content>
   </entry>
   <entry>
+    <title>如何删除 Mac 上的 Office 许可证文件</title>
+    <url>/2021/11/07/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%20Mac%20%E4%B8%8A%E7%9A%84%20Office%20%E8%AE%B8%E5%8F%AF%E8%AF%81%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>我们平常在使用office时会使用批量许可证的软件，但是我们当我们卸载掉Office全家桶后再进行安装，发现还是显示已经使用了批量许可证激活，这时我们就要进行许可证的移除来保证可以使用我们购买的新的许可证进行激活</p>
+<p>首先我们可以在官网<a href="https://support.microsoft.com/zh-cn">https://support.microsoft.com/zh-cn</a> 搜索“如何删除 Mac 上的 Office 许可证文件”，然后第一个搜索结果就是了，我们将网页向下移动就可以发现有一个标题是“下载并运行许可证删除工具”，我们下载下来然后安装即可清除，这个安装是不会安装其他软件的，只会清除一次许可证。</p>
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>office</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>免密登录ssh</title>
     <url>/2023/04/04/%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95ssh/</url>
     <content><![CDATA[<p>前言：SSH是目前比较可靠的专为远程登录会话和其他网络服务提供安全的协议。不同主机之间在进行通信时，一般都是需要输入密码进行验证， ssh免密码之后，只要通过指定主机地址和端口号就可以实现不同的计算机之间访问时，不需要密码实现直接访问。</p>
@@ -3753,17 +3794,6 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
 ]]></content>
       <tags>
         <tag>ssh</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何删除 Mac 上的 Office 许可证文件</title>
-    <url>/2021/11/07/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%20Mac%20%E4%B8%8A%E7%9A%84%20Office%20%E8%AE%B8%E5%8F%AF%E8%AF%81%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>我们平常在使用office时会使用批量许可证的软件，但是我们当我们卸载掉Office全家桶后再进行安装，发现还是显示已经使用了批量许可证激活，这时我们就要进行许可证的移除来保证可以使用我们购买的新的许可证进行激活</p>
-<p>首先我们可以在官网<a href="https://support.microsoft.com/zh-cn">https://support.microsoft.com/zh-cn</a> 搜索“如何删除 Mac 上的 Office 许可证文件”，然后第一个搜索结果就是了，我们将网页向下移动就可以发现有一个标题是“下载并运行许可证删除工具”，我们下载下来然后安装即可清除，这个安装是不会安装其他软件的，只会清除一次许可证。</p>
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>office</tag>
       </tags>
   </entry>
   <entry>
