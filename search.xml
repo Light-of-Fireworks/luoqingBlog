@@ -541,6 +541,53 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
+    <title>SpringBoot 程序启动或退出时执行操作</title>
+    <url>/2021/09/25/SpringBoot%20%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommandLineRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">CommandLineRunner</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试CommandLineRunner的示例。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+<span id="more"></span>
+<h4 id="2-实现ApplicationRunner接口"><a href="#2-实现ApplicationRunner接口" class="headerlink" title="2.实现ApplicationRunner接口"></a>2.实现ApplicationRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">ApplicationRunner</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">ApplicationArguments</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试ApplicationRunner接口"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>@Order注解：如果有多个实现类，而你需要他们按一定顺序执行的话，可以在实现类上加上@Order注解。@Order(value&#x3D;整数值)。SpringBoot会按照@Order中的value值从小到大依次执行。也就是先执行 1 再执行 2</p>
+<p>@Component注解：把普通pojo实例化到spring容器中，泛指各种组件，就是说当我们的类不属于各种归类的时候（@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。</p>
+<h3 id="结束时"><a href="#结束时" class="headerlink" title="结束时"></a>结束时</h3><h4 id="1-实现DisposableBean接口"><a href="#1-实现DisposableBean接口" class="headerlink" title="1.实现DisposableBean接口"></a>1.实现DisposableBean接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DisposableBeanTest</span> <span class="token keyword">implements</span> <span class="token class-name">DisposableBean</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束  implements DisposableBean "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h4 id="2-通过-PreDistroy注解"><a href="#2-通过-PreDistroy注解" class="headerlink" title="2.通过@PreDistroy注解"></a>2.通过@PreDistroy注解</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ExitCode</span><span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@PreDestroy</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束 执行@PreDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot整合Quartz定时任务</title>
     <url>/2021/09/25/SpringBoot%E6%95%B4%E5%90%88Quartz%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<p>首先导入quartz依赖，这里我就不演示导入springboot，自己随意导入一个版本就好了</p>
@@ -660,53 +707,6 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
-    <title>SpringBoot 程序启动或退出时执行操作</title>
-    <url>/2021/09/25/SpringBoot%20%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommandLineRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">CommandLineRunner</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试CommandLineRunner的示例。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-<span id="more"></span>
-<h4 id="2-实现ApplicationRunner接口"><a href="#2-实现ApplicationRunner接口" class="headerlink" title="2.实现ApplicationRunner接口"></a>2.实现ApplicationRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">ApplicationRunner</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">ApplicationArguments</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试ApplicationRunner接口"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>@Order注解：如果有多个实现类，而你需要他们按一定顺序执行的话，可以在实现类上加上@Order注解。@Order(value&#x3D;整数值)。SpringBoot会按照@Order中的value值从小到大依次执行。也就是先执行 1 再执行 2</p>
-<p>@Component注解：把普通pojo实例化到spring容器中，泛指各种组件，就是说当我们的类不属于各种归类的时候（@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。</p>
-<h3 id="结束时"><a href="#结束时" class="headerlink" title="结束时"></a>结束时</h3><h4 id="1-实现DisposableBean接口"><a href="#1-实现DisposableBean接口" class="headerlink" title="1.实现DisposableBean接口"></a>1.实现DisposableBean接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DisposableBeanTest</span> <span class="token keyword">implements</span> <span class="token class-name">DisposableBean</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束  implements DisposableBean "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<h4 id="2-通过-PreDistroy注解"><a href="#2-通过-PreDistroy注解" class="headerlink" title="2.通过@PreDistroy注解"></a>2.通过@PreDistroy注解</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ExitCode</span><span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@PreDestroy</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束 执行@PreDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>SpringBoot</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>String isEmpty()和isBank()的区别</title>
     <url>/2021/10/02/String%20isEmpty()%E5%92%8CisBank()%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<p>1 public static boolean isEmpty(String str)</p>
@@ -782,48 +782,6 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
 ]]></content>
       <tags>
         <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>centos7安装python3</title>
-    <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
-    <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
-<span id="more"></span>
-
-<h2 id="1、下载python3源码"><a href="#1、下载python3源码" class="headerlink" title="1、下载python3源码"></a>1、下载python3源码</h2><p>源码有两种压缩格式，两种源码都是一样的，只不过是压缩的格式不一样</p>
-<p>源码一：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz</a></p>
-<p>源码二：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz</a></p>
-<h2 id="2、上传压缩包至服务器"><a href="#2、上传压缩包至服务器" class="headerlink" title="2、上传压缩包至服务器"></a>2、上传压缩包至服务器</h2><p>可以使用finalshell等工具将下载好的源码包上传至服务器的&#x2F;usr&#x2F;local目录下</p>
-<h2 id="3、解压源码"><a href="#3、解压源码" class="headerlink" title="3、解压源码"></a>3、解压源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> Python-3.9.0.tar.xz</code></pre>
-
-<h2 id="4、安装python所需环境依赖"><a href="#4、安装python所需环境依赖" class="headerlink" title="4、安装python所需环境依赖"></a>4、安装python所需环境依赖</h2><pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc <span class="token function">make</span></code></pre>
-
-<h2 id="5、进入源码目录指定编译安装目录"><a href="#5、进入源码目录指定编译安装目录" class="headerlink" title="5、进入源码目录指定编译安装目录"></a>5、进入源码目录指定编译安装目录</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mkdir</span> python3</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> Python-3.9.0</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash">./configure <span class="token parameter variable">--prefix</span><span class="token operator">=</span>/usr/local/python3</code></pre>
-
-<p>注：这里创建的&#x2F;usr&#x2F;local&#x2F;python3目录就是后面编译好源码后安装python3.9的目录</p>
-<h2 id="6、编译源码"><a href="#6、编译源码" class="headerlink" title="6、编译源码"></a>6、编译源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token parameter variable">-j</span> <span class="token number">4</span></code></pre>
-
-<p>注：-j 4 代表使用cpu的4个核心进行多线程编译源码，可以加快编译速度，可以按照自己cpu的实际配置来，我的cpu是i5-3475s 四核心四线程  所以这里使用-j 4 指定四个核心，如果你的配置较低请自行调整，调太高会报错</p>
-<h2 id="7、安装"><a href="#7、安装" class="headerlink" title="7、安装"></a>7、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token function">install</span></code></pre>
-
-
-
-<h2 id="8、配置环境变量"><a href="#8、配置环境变量" class="headerlink" title="8、配置环境变量"></a>8、配置环境变量</h2><p>编译好源码后可以看到&#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin已经有python可以使用了，我们只需要将python3目录添加到系统环境变量即可</p>
-<h3 id="8-1编辑-x2F-etc-x2F-profile文件"><a href="#8-1编辑-x2F-etc-x2F-profile文件" class="headerlink" title="8.1编辑&#x2F;etc&#x2F;profile文件"></a>8.1编辑&#x2F;etc&#x2F;profile文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
-
-<h3 id="8-2添加环境变量"><a href="#8-2添加环境变量" class="headerlink" title="8.2添加环境变量"></a>8.2添加环境变量</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">PYTHON_HOME</span><span class="token operator">=</span>/usr/local/python3
-<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span>/usr/local/bin:<span class="token variable">$PYTHON_HOME</span>/bin:<span class="token environment constant">$PATH</span></code></pre>
-
-<h3 id="8-3使环境变量生效"><a href="#8-3使环境变量生效" class="headerlink" title="8.3使环境变量生效"></a>8.3使环境变量生效</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> /etc/profile</code></pre>
-
-]]></content>
-      <tags>
-        <tag>centos</tag>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -979,6 +937,48 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
 ]]></content>
       <tags>
         <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos7安装python3</title>
+    <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
+    <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
+<span id="more"></span>
+
+<h2 id="1、下载python3源码"><a href="#1、下载python3源码" class="headerlink" title="1、下载python3源码"></a>1、下载python3源码</h2><p>源码有两种压缩格式，两种源码都是一样的，只不过是压缩的格式不一样</p>
+<p>源码一：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz</a></p>
+<p>源码二：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz</a></p>
+<h2 id="2、上传压缩包至服务器"><a href="#2、上传压缩包至服务器" class="headerlink" title="2、上传压缩包至服务器"></a>2、上传压缩包至服务器</h2><p>可以使用finalshell等工具将下载好的源码包上传至服务器的&#x2F;usr&#x2F;local目录下</p>
+<h2 id="3、解压源码"><a href="#3、解压源码" class="headerlink" title="3、解压源码"></a>3、解压源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> Python-3.9.0.tar.xz</code></pre>
+
+<h2 id="4、安装python所需环境依赖"><a href="#4、安装python所需环境依赖" class="headerlink" title="4、安装python所需环境依赖"></a>4、安装python所需环境依赖</h2><pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc <span class="token function">make</span></code></pre>
+
+<h2 id="5、进入源码目录指定编译安装目录"><a href="#5、进入源码目录指定编译安装目录" class="headerlink" title="5、进入源码目录指定编译安装目录"></a>5、进入源码目录指定编译安装目录</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mkdir</span> python3</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> Python-3.9.0</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">./configure <span class="token parameter variable">--prefix</span><span class="token operator">=</span>/usr/local/python3</code></pre>
+
+<p>注：这里创建的&#x2F;usr&#x2F;local&#x2F;python3目录就是后面编译好源码后安装python3.9的目录</p>
+<h2 id="6、编译源码"><a href="#6、编译源码" class="headerlink" title="6、编译源码"></a>6、编译源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token parameter variable">-j</span> <span class="token number">4</span></code></pre>
+
+<p>注：-j 4 代表使用cpu的4个核心进行多线程编译源码，可以加快编译速度，可以按照自己cpu的实际配置来，我的cpu是i5-3475s 四核心四线程  所以这里使用-j 4 指定四个核心，如果你的配置较低请自行调整，调太高会报错</p>
+<h2 id="7、安装"><a href="#7、安装" class="headerlink" title="7、安装"></a>7、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token function">install</span></code></pre>
+
+
+
+<h2 id="8、配置环境变量"><a href="#8、配置环境变量" class="headerlink" title="8、配置环境变量"></a>8、配置环境变量</h2><p>编译好源码后可以看到&#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin已经有python可以使用了，我们只需要将python3目录添加到系统环境变量即可</p>
+<h3 id="8-1编辑-x2F-etc-x2F-profile文件"><a href="#8-1编辑-x2F-etc-x2F-profile文件" class="headerlink" title="8.1编辑&#x2F;etc&#x2F;profile文件"></a>8.1编辑&#x2F;etc&#x2F;profile文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
+
+<h3 id="8-2添加环境变量"><a href="#8-2添加环境变量" class="headerlink" title="8.2添加环境变量"></a>8.2添加环境变量</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">PYTHON_HOME</span><span class="token operator">=</span>/usr/local/python3
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span>/usr/local/bin:<span class="token variable">$PYTHON_HOME</span>/bin:<span class="token environment constant">$PATH</span></code></pre>
+
+<h3 id="8-3使环境变量生效"><a href="#8-3使环境变量生效" class="headerlink" title="8.3使环境变量生效"></a>8.3使环境变量生效</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> /etc/profile</code></pre>
+
+]]></content>
+      <tags>
+        <tag>centos</tag>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -1350,20 +1350,25 @@ collation-server<span class="token operator">=</span>utf8_general_ci</code></pre
 <p>最终mysql的配置文件如下：</p>
 <pre class="language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">'3.1'</span>
 <span class="token key atrule">services</span><span class="token punctuation">:</span>
-  <span class="token key atrule">mysql</span><span class="token punctuation">:</span>
-    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always
-    <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.24
-    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> mysql
+  <span class="token key atrule">mysql</span><span class="token punctuation">:</span>           <span class="token comment"># 服务的名称</span>
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always   <span class="token comment"># 代表只要docker启动，那么这个容器就跟着一起启动</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> mysql<span class="token punctuation">:</span>5.7.24  <span class="token comment"># 指定镜像路径可以是网络路径</span>
+    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> mysql  <span class="token comment"># 指定容器名称：--name</span>
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> 3306<span class="token punctuation">:</span><span class="token number">3306</span>   <span class="token comment">#  指定端口号的映射</span>
     <span class="token key atrule">networks</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> mysql_network
-    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> mysql<span class="token punctuation">:</span>/etc/mysql
+      <span class="token punctuation">-</span> mysql_default  <span class="token comment">#指定网桥</span>
     <span class="token key atrule">environment</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> <span class="token string">"MYSQL_ROOT_PASSWORD=123456"</span>
-      <span class="token punctuation">-</span> <span class="token string">"TZ=Asia/Shanghai"</span>
+      <span class="token key atrule">MYSQL_ROOT_PASSWORD</span><span class="token punctuation">:</span> <span class="token number">123456</span>   <span class="token comment"># 指定MySQL的ROOT用户登录密码</span>
+      <span class="token key atrule">TZ</span><span class="token punctuation">:</span> Asia/Shanghai        <span class="token comment"># 指定时区</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> mysql_data<span class="token punctuation">:</span>/var/lib/mysql   <span class="token comment"># 映射数据卷</span>
+<span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+  <span class="token key atrule">mysql_data</span><span class="token punctuation">:</span>
+    <span class="token key atrule">external</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
 <span class="token key atrule">networks</span><span class="token punctuation">:</span>
-  <span class="token key atrule">mysql_default</span><span class="token punctuation">:</span>
-    <span class="token key atrule">external</span><span class="token punctuation">:</span> <span class="token boolean important">true</span></code></pre>
+    <span class="token key atrule">mysql_default</span><span class="token punctuation">:</span>
+      <span class="token key atrule">external</span><span class="token punctuation">:</span> <span class="token boolean important">true</span></code></pre>
 
 <p>搭建好mysql后我们还需要导入nacos需要的表，具体的表内容也可以参照官方的GitHub</p>
 <p><a href="https://github.com/alibaba/nacos/blob/develop/distribution/conf/nacos-mysql.sql">https://github.com/alibaba/nacos/blob/develop/distribution/conf/nacos-mysql.sql</a></p>
@@ -1681,36 +1686,6 @@ db.password 配置你的数据库的登录密码</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>git配置ssh</title>
-    <url>/2023/06/30/git%E9%85%8D%E7%BD%AEssh/</url>
-    <content><![CDATA[<p>git是现在代码管理的一个常用工具，采用两种传输方式 http ssh </p>
-<p>SSH 比较安全可靠，也不需要每次都输入账号密码，所以我们在使用git时一般采用ssh,下面介绍ssh简单的配置</p>
-<span id="more"></span>
-
-<h2 id="1、生成公钥私钥"><a href="#1、生成公钥私钥" class="headerlink" title="1、生成公钥私钥"></a>1、生成公钥私钥</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"your_email@example.com"</span></code></pre>
-
-<p>-t 指定生成的密钥类型</p>
-<p>-C 注释</p>
-<h2 id="2、上传公钥"><a href="#2、上传公钥" class="headerlink" title="2、上传公钥"></a>2、上传公钥</h2><p>如果是windows则密钥放在C:\Users\你的用户名\.ssh</p>
-<p>如果是liunx则密钥放在 &#x2F;home&#x2F;你的用户名&#x2F;.ssh</p>
-<p>将id_rsa.pub里面的内容复制后粘贴到github或者gitee仓库配置中</p>
-<h2 id="3、配置账户信息"><a href="#3、配置账户信息" class="headerlink" title="3、配置账户信息"></a>3、配置账户信息</h2><p>如果我们需要上传文件到远程仓库中则必须配置邮箱和用户名，否则无法进行git上传操作</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户邮箱（填自己的邮箱）
-<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.email “your_email@example.com”</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户名
-<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.name “yourname”</code></pre>
-
-<h2 id="4、访问服务器测试配置是否正常"><a href="#4、访问服务器测试配置是否正常" class="headerlink" title="4、访问服务器测试配置是否正常"></a>4、访问服务器测试配置是否正常</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com</code></pre>
-
-<p>如果你的地址不是github则将后面的github.com替换成你想测试的地址，比如gitee.com</p>
-]]></content>
-      <tags>
-        <tag>git</tag>
-        <tag>ssh</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>docker数据卷</title>
     <url>/2021/06/03/docker%E6%95%B0%E6%8D%AE%E5%8D%B7/</url>
     <content><![CDATA[<p>数据卷可以用来指定容器内部的某个文件夹映射到外部的某个文件夹，外部访问文件夹修改内容后内部容器的文件会自动同步内容</p>
@@ -1739,6 +1714,36 @@ db.password 配置你的数据库的登录密码</code></pre>
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>git配置ssh</title>
+    <url>/2023/06/30/git%E9%85%8D%E7%BD%AEssh/</url>
+    <content><![CDATA[<p>git是现在代码管理的一个常用工具，采用两种传输方式 http ssh </p>
+<p>SSH 比较安全可靠，也不需要每次都输入账号密码，所以我们在使用git时一般采用ssh,下面介绍ssh简单的配置</p>
+<span id="more"></span>
+
+<h2 id="1、生成公钥私钥"><a href="#1、生成公钥私钥" class="headerlink" title="1、生成公钥私钥"></a>1、生成公钥私钥</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"your_email@example.com"</span></code></pre>
+
+<p>-t 指定生成的密钥类型</p>
+<p>-C 注释</p>
+<h2 id="2、上传公钥"><a href="#2、上传公钥" class="headerlink" title="2、上传公钥"></a>2、上传公钥</h2><p>如果是windows则密钥放在C:\Users\你的用户名\.ssh</p>
+<p>如果是liunx则密钥放在 &#x2F;home&#x2F;你的用户名&#x2F;.ssh</p>
+<p>将id_rsa.pub里面的内容复制后粘贴到github或者gitee仓库配置中</p>
+<h2 id="3、配置账户信息"><a href="#3、配置账户信息" class="headerlink" title="3、配置账户信息"></a>3、配置账户信息</h2><p>如果我们需要上传文件到远程仓库中则必须配置邮箱和用户名，否则无法进行git上传操作</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户邮箱（填自己的邮箱）
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.email “your_email@example.com”</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户名
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.name “yourname”</code></pre>
+
+<h2 id="4、访问服务器测试配置是否正常"><a href="#4、访问服务器测试配置是否正常" class="headerlink" title="4、访问服务器测试配置是否正常"></a>4、访问服务器测试配置是否正常</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com</code></pre>
+
+<p>如果你的地址不是github则将后面的github.com替换成你想测试的地址，比如gitee.com</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
+        <tag>ssh</tag>
       </tags>
   </entry>
   <entry>
@@ -2748,43 +2753,6 @@ collation-server&#x3D;utf8_general_ci</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>mysql忘记密码</title>
-    <url>/2021/10/05/mysql%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81/</url>
-    <content><![CDATA[<p>首先我们先停止mysql服务</p>
-<p>windows</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">net stop mysql</code></pre>
-
-<p>liunx</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">service</span> mysql stop</code></pre>
-
-<p>如果是docker容器那么直接将这个mysql容器停止就好了，但是记住创建容器的时候要将&#x2F;etc&#x2F;mysql这个文件夹映射为数据卷，因为我们要对其配置文件进行修改</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> stop mysql</code></pre>
-
-<p>mac可以直接在设置里的可视化界面中停止</p>
-<p>然后我们找到mysql的配置文件my.cnf进行修改</p>
-   <span id="more"></span>
-
-<p>在[mysqld]这个标签下添加如下内容</p>
-<pre class="language-cnf" data-language="cnf"><code class="language-cnf">skip-host-cache
-skip-name-resolve
-skip-grant-tables</code></pre>
-
-<p>记住，这里一定要停止之后再修改配置文件，不然有可能会导致无法启动</p>
-<p>修改完成后就可以再启动mysql服务了，然后再登录mysql直接不用输入密码就可以进入，当然我们不可能长久使用这样无密码登录的环境，我们再使用如下命令进行密码的修改，各个版本修改密码的命令可能会有不同，下面提供mysql5.7版本修改密码的命令，其他版本自己百度找就好了</p>
-<pre class="language-mysql" data-language="mysql"><code class="language-mysql">mysql&gt; use mysql;
-mysql&gt; update user set authentication_string&#x3D;password(&#39;这里填密码&#39;) where user&#x3D;&#39;root&#39;;
-mysql&gt; flush privileges;
-mysql&gt; exit;</code></pre>
-
-
-
-<p>修尬完成密码后关闭mysql服务，然后去配置文件中将上面添加的三行跳过密码的配置删除然后重启mysql服务就可以使用新密码登录了</p>
-]]></content>
-      <tags>
-        <tag>mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mysql解决乱码</title>
     <url>/2021/09/05/mysql%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/</url>
     <content><![CDATA[<h2 id="mysql解决乱码问题"><a href="#mysql解决乱码问题" class="headerlink" title="mysql解决乱码问题"></a>mysql解决乱码问题</h2><p>首先我们要知道编码都是在mysql的my.ini配置文件中配置的，所以我们可以在安装好mysql后就对其配置文件进行更改，也可以后期更改，但是要注意，改配置文件之前请先关闭mysql服务，然后再更改my.ini，最后启动服务，如果你在mysql服务还在运行中的时候就修改配置文件就会导致你的mysql无法关闭以及重新启动，这里切记！</p>
@@ -2825,6 +2793,43 @@ mysql&gt; exit;</code></pre>
 <p>最后再重启服务就可以了</p>
 <p>然后还是像上面一样使用status查看状态，如果都是utf8那么就生效了</p>
 <h2 id="liunx"><a href="#liunx" class="headerlink" title="liunx"></a>liunx</h2><p>liunx的教程跟mac是一样的，配置文件也是放在&#x2F;etc&#x2F;my.cnf下，如果没有则自己创建一个</p>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mysql忘记密码</title>
+    <url>/2021/10/05/mysql%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81/</url>
+    <content><![CDATA[<p>首先我们先停止mysql服务</p>
+<p>windows</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">net stop mysql</code></pre>
+
+<p>liunx</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">service</span> mysql stop</code></pre>
+
+<p>如果是docker容器那么直接将这个mysql容器停止就好了，但是记住创建容器的时候要将&#x2F;etc&#x2F;mysql这个文件夹映射为数据卷，因为我们要对其配置文件进行修改</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> stop mysql</code></pre>
+
+<p>mac可以直接在设置里的可视化界面中停止</p>
+<p>然后我们找到mysql的配置文件my.cnf进行修改</p>
+   <span id="more"></span>
+
+<p>在[mysqld]这个标签下添加如下内容</p>
+<pre class="language-cnf" data-language="cnf"><code class="language-cnf">skip-host-cache
+skip-name-resolve
+skip-grant-tables</code></pre>
+
+<p>记住，这里一定要停止之后再修改配置文件，不然有可能会导致无法启动</p>
+<p>修改完成后就可以再启动mysql服务了，然后再登录mysql直接不用输入密码就可以进入，当然我们不可能长久使用这样无密码登录的环境，我们再使用如下命令进行密码的修改，各个版本修改密码的命令可能会有不同，下面提供mysql5.7版本修改密码的命令，其他版本自己百度找就好了</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">mysql&gt; use mysql;
+mysql&gt; update user set authentication_string&#x3D;password(&#39;这里填密码&#39;) where user&#x3D;&#39;root&#39;;
+mysql&gt; flush privileges;
+mysql&gt; exit;</code></pre>
+
+
+
+<p>修尬完成密码后关闭mysql服务，然后去配置文件中将上面添加的三行跳过密码的配置删除然后重启mysql服务就可以使用新密码登录了</p>
 ]]></content>
       <tags>
         <tag>mysql</tag>
@@ -2984,33 +2989,6 @@ location / <span class="token punctuation">&#123;</span>
       <tags>
         <tag>docker</tag>
         <tag>nginx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>nginx部署vue项目</title>
-    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
-    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
-<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
-
-<p>然后安装运行所需要的依赖</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
-
-<p>安装完成后本地运行查看</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
-
-<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
-<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
-<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
-<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
-
-<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
-<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
-]]></content>
-      <tags>
-        <tag>nginx</tag>
-        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
@@ -3231,6 +3209,33 @@ nginx: configuration <span class="token function">file</span> /usr/local/nginx//
         <tag>centos</tag>
         <tag>nginx</tag>
         <tag>mkcert</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nginx部署vue项目</title>
+    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
+<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
+
+<p>然后安装运行所需要的依赖</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
+
+<p>安装完成后本地运行查看</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
+
+<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
+<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
+<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
+<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
+
+<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
+<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
+]]></content>
+      <tags>
+        <tag>nginx</tag>
+        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
