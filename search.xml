@@ -1,71 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>fcrackzip破解zip</title>
-    <url>/2021/03/28/FcrackzipForZip/</url>
-    <content><![CDATA[<h2 id="fcrackzip破解zip"><a href="#fcrackzip破解zip" class="headerlink" title="fcrackzip破解zip"></a>fcrackzip破解zip</h2><p>前言：fcrackzip只能破解zip文件，如果遇到其他的压缩格式破解不了，那么就有人问了可不可以把后缀改成zip然后破解密码呢，答案是不行，我创建了一个7z的压缩包然后把.7z改成.zip，结果直接报错：<code>found id afbc7a37, &#39;test.zip&#39; is not a zipfile ver 2.xx, skipping no usable files found</code></p>
-<p>并且压缩包的名字不能太过复杂，如果有请改为简单的名字，比如test.zip </p>
-<p>如果比较复杂可能会不开始破解</p>
-<p>如果要破解rar、7z等格式可以尝试rarcrack或者john哈希破解</p>
-<span id="more"></span>
-
-<p>教程开始</p>
-<p>首先我们先创建一个有密码的压缩包，然后安装fcrackzip</p>
-<p>安装：</p>
-<p>mac可以通过brew安装，ubuntu可以通过apt-get安装</p>
-<p>如果mac没有安装<strong>brew</strong>可以通过如下命令安装<strong>brew</strong></p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">/bin/zsh <span class="token parameter variable">-c</span> <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-fsSL</span> https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh<span class="token variable">)</span></span>"</span></code></pre>
-
-<p>这里使用的是国内的gitee的源，所以会比较快</p>
-<p>然后我们就可以开始安装了</p>
-<p><strong>MAC</strong>安装指令：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">brew <span class="token function">install</span> fcrackzip</code></pre>
-
-<p><strong>Linux Ubuntu</strong>安装指令：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> fcrackzip</code></pre>
-
-<p><strong>Windows安装包：</strong></p>
-<p><a href="http://blog.rubypdf.com/2008/10/15/fcrackzip-10-windows-version-releases/">http://blog.rubypdf.com/2008/10/15/fcrackzip-10-windows-version-releases/</a> </p>
-<p><strong>部分重要参数说明</strong> </p>
-<blockquote>
-<dl><dt>-c 指定字符集，字符集 格式只能为 -c ‘aA1!:’<br>a 表示小写字母[a-z]<br>A 表示大写字母[A-Z]<br>1 表示阿拉伯数字[0-9]<br>! 感叹号表示特殊字符[!:$%&amp;&#x2F;()&#x3D;?{[]}+*~#]</dt><dd>表示包含冒号之后的字符（不能为二进制的空字符），例如  a1:$%  表示 字符集包含小写字母、数字、$字符和%百分号</dd></dl></blockquote>
-<p>破解zip：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">1</span>-10 <span class="token parameter variable">-u</span> test.zip</code></pre>
-
-<p><strong>参数解释</strong></p>
-<blockquote>
-<ul>
-<li>-b 表示使用暴利破解的方式</li>
-<li>-c ‘aA1’ 表示使用大小写字母和数字混合破解的方式</li>
-<li>-l 1-10 表示需要破解的密码长度为1到10位</li>
-<li>-u 表示只显示破解出来的密码，其他错误的密码不显示出</li>
-</ul>
-</blockquote>
-<p> 使用字典破解</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">fcrackzip <span class="token parameter variable">-D</span> <span class="token parameter variable">-p</span> pwd.txt <span class="token parameter variable">-u</span> test.zip</code></pre>
-
-<blockquote>
-<p>-D 表示要使用字典破解</p>
-<p>-p 表示要使用哪个字典破解</p>
-<p>注：Kali linux自带了一些字典在&#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;文件夹下。</p>
-</blockquote>
-<p>这里注意：fcrackzip只会开启一个线程破解，那么我们可以开启多个fcrackzip去破解，也就相当于多线程。比如我们将破解的区间分成三个</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">1</span>-3 <span class="token parameter variable">-u</span> test.zip
-
-fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">4</span>-6 <span class="token parameter variable">-u</span> test.zip
-
-fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">7</span>-10 <span class="token parameter variable">-u</span> test.zip</code></pre>
-
-<p>开启三个命令行窗口。然后分别输入以上命令就可以相当于三个线程进行破解了</p>
-<p>如果你想分的更细一些也可以，但是1-6的区间破解的很快，所以我们只需要细分后面的区间即可</p>
-<p>实测直接执行<code>fcrackzip -b -c &#39;1&#39; -l 1-10 -u test.zip</code>也就是从存数字的一位破解到十位，然后我设置的密码是七位，用时2分54秒左右，而当我像上面分成三个区间的时候只用时2分35秒，这样可以节省很多的时间，存密码比较好破解，如果密码是数字英文混合的话那就要难很多了，更别提有字符的情况。</p>
-]]></content>
-      <tags>
-        <tag>fcrackzip</tag>
-        <tag>kali</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Dockerfile</title>
     <url>/2021/06/03/Dockerfile/</url>
     <content><![CDATA[<h1 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h1><p>首先要创建一个名为Dockerfile的普通的文件 然后在里面编辑命令</p>
@@ -157,6 +92,88 @@ exec执行
       </tags>
   </entry>
   <entry>
+    <title>IDEA完全卸载删除残留和注册表</title>
+    <url>/2021/11/07/IDEA%E5%AE%8C%E5%85%A8%E5%8D%B8%E8%BD%BD%E5%88%A0%E9%99%A4%E6%AE%8B%E7%95%99%E5%92%8C%E6%B3%A8%E5%86%8C%E8%A1%A8/</url>
+    <content><![CDATA[<p>首先我们卸载完成idea后还有一些残留的文件夹和注册表没有被清除掉，可能会影响我们下一次的使用，我们现在来清除所有的残留</p>
+<h2 id="首先清除一下文件夹"><a href="#首先清除一下文件夹" class="headerlink" title="首先清除一下文件夹"></a>首先清除一下文件夹</h2><p>C:\user${用户名称}\ideaProjects\</p>
+<p>C:\Users${用户名称}\AppData\Roaming\JetBrains</p>
+<p>C:\Users\Public.jetbrains</p>
+<p>C:\Program Files\JetBrains</p>
+<p>C:\ProgramData\Microsoft\Windows\Start Menu\Programs\JetBrains</p>
+<h2 id="然后我们再清除所有注册表"><a href="#然后我们再清除所有注册表" class="headerlink" title="然后我们再清除所有注册表"></a>然后我们再清除所有注册表</h2><p><strong>windows + R 输入regedit进入注册表，右键一级菜单</strong>HKEY_CURRENT_USER， 右键查找，输入idea，会找到jetbrains，然后，右键删除。</p>
+<p>删除完成所有与jetbrains相关的注册表后，重新安装idea就和刚开始安装一样了</p>
+<p>如果中途遇到无法删除注册表的报错那么可能是你权限不够，右键选择权限然后将你的账户设置为完全控制即可。</p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>fcrackzip破解zip</title>
+    <url>/2021/03/28/FcrackzipForZip/</url>
+    <content><![CDATA[<h2 id="fcrackzip破解zip"><a href="#fcrackzip破解zip" class="headerlink" title="fcrackzip破解zip"></a>fcrackzip破解zip</h2><p>前言：fcrackzip只能破解zip文件，如果遇到其他的压缩格式破解不了，那么就有人问了可不可以把后缀改成zip然后破解密码呢，答案是不行，我创建了一个7z的压缩包然后把.7z改成.zip，结果直接报错：<code>found id afbc7a37, &#39;test.zip&#39; is not a zipfile ver 2.xx, skipping no usable files found</code></p>
+<p>并且压缩包的名字不能太过复杂，如果有请改为简单的名字，比如test.zip </p>
+<p>如果比较复杂可能会不开始破解</p>
+<p>如果要破解rar、7z等格式可以尝试rarcrack或者john哈希破解</p>
+<span id="more"></span>
+
+<p>教程开始</p>
+<p>首先我们先创建一个有密码的压缩包，然后安装fcrackzip</p>
+<p>安装：</p>
+<p>mac可以通过brew安装，ubuntu可以通过apt-get安装</p>
+<p>如果mac没有安装<strong>brew</strong>可以通过如下命令安装<strong>brew</strong></p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">/bin/zsh <span class="token parameter variable">-c</span> <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-fsSL</span> https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh<span class="token variable">)</span></span>"</span></code></pre>
+
+<p>这里使用的是国内的gitee的源，所以会比较快</p>
+<p>然后我们就可以开始安装了</p>
+<p><strong>MAC</strong>安装指令：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">brew <span class="token function">install</span> fcrackzip</code></pre>
+
+<p><strong>Linux Ubuntu</strong>安装指令：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> fcrackzip</code></pre>
+
+<p><strong>Windows安装包：</strong></p>
+<p><a href="http://blog.rubypdf.com/2008/10/15/fcrackzip-10-windows-version-releases/">http://blog.rubypdf.com/2008/10/15/fcrackzip-10-windows-version-releases/</a> </p>
+<p><strong>部分重要参数说明</strong> </p>
+<blockquote>
+<dl><dt>-c 指定字符集，字符集 格式只能为 -c ‘aA1!:’<br>a 表示小写字母[a-z]<br>A 表示大写字母[A-Z]<br>1 表示阿拉伯数字[0-9]<br>! 感叹号表示特殊字符[!:$%&amp;&#x2F;()&#x3D;?{[]}+*~#]</dt><dd>表示包含冒号之后的字符（不能为二进制的空字符），例如  a1:$%  表示 字符集包含小写字母、数字、$字符和%百分号</dd></dl></blockquote>
+<p>破解zip：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">1</span>-10 <span class="token parameter variable">-u</span> test.zip</code></pre>
+
+<p><strong>参数解释</strong></p>
+<blockquote>
+<ul>
+<li>-b 表示使用暴利破解的方式</li>
+<li>-c ‘aA1’ 表示使用大小写字母和数字混合破解的方式</li>
+<li>-l 1-10 表示需要破解的密码长度为1到10位</li>
+<li>-u 表示只显示破解出来的密码，其他错误的密码不显示出</li>
+</ul>
+</blockquote>
+<p> 使用字典破解</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">fcrackzip <span class="token parameter variable">-D</span> <span class="token parameter variable">-p</span> pwd.txt <span class="token parameter variable">-u</span> test.zip</code></pre>
+
+<blockquote>
+<p>-D 表示要使用字典破解</p>
+<p>-p 表示要使用哪个字典破解</p>
+<p>注：Kali linux自带了一些字典在&#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;文件夹下。</p>
+</blockquote>
+<p>这里注意：fcrackzip只会开启一个线程破解，那么我们可以开启多个fcrackzip去破解，也就相当于多线程。比如我们将破解的区间分成三个</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">1</span>-3 <span class="token parameter variable">-u</span> test.zip
+
+fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">4</span>-6 <span class="token parameter variable">-u</span> test.zip
+
+fcrackzip <span class="token parameter variable">-b</span> <span class="token parameter variable">-c</span> <span class="token string">'1'</span> <span class="token parameter variable">-l</span> <span class="token number">7</span>-10 <span class="token parameter variable">-u</span> test.zip</code></pre>
+
+<p>开启三个命令行窗口。然后分别输入以上命令就可以相当于三个线程进行破解了</p>
+<p>如果你想分的更细一些也可以，但是1-6的区间破解的很快，所以我们只需要细分后面的区间即可</p>
+<p>实测直接执行<code>fcrackzip -b -c &#39;1&#39; -l 1-10 -u test.zip</code>也就是从存数字的一位破解到十位，然后我设置的密码是七位，用时2分54秒左右，而当我像上面分成三个区间的时候只用时2分35秒，这样可以节省很多的时间，存密码比较好破解，如果密码是数字英文混合的话那就要难很多了，更别提有字符的情况。</p>
+]]></content>
+      <tags>
+        <tag>fcrackzip</tag>
+        <tag>kali</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git 裸仓库</title>
     <url>/2021/11/08/Git%20%E8%A3%B8%E4%BB%93%E5%BA%93/</url>
     <content><![CDATA[<p>在我们平常的代码提交时，一般会将代码提交到GitHub、gitee、gitlab等等这些仓库中，但是这些操作都是提交到远程仓库的，我们想要提交代码到自己的私服仓库的话就必须自己搭建一个远程仓库，拿gitlab来举例子，在centos中搭建一个gitlab仓库需要占用将近3G左右的内存。但是我们如果只是买一个个人服务器作为学习使用的话那么内存已经远远不够我们后续的使用了，所以我们可以使用Git裸仓库的形式来创建仓库</p>
@@ -178,23 +195,6 @@ exec执行
 ]]></content>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>IDEA完全卸载删除残留和注册表</title>
-    <url>/2021/11/07/IDEA%E5%AE%8C%E5%85%A8%E5%8D%B8%E8%BD%BD%E5%88%A0%E9%99%A4%E6%AE%8B%E7%95%99%E5%92%8C%E6%B3%A8%E5%86%8C%E8%A1%A8/</url>
-    <content><![CDATA[<p>首先我们卸载完成idea后还有一些残留的文件夹和注册表没有被清除掉，可能会影响我们下一次的使用，我们现在来清除所有的残留</p>
-<h2 id="首先清除一下文件夹"><a href="#首先清除一下文件夹" class="headerlink" title="首先清除一下文件夹"></a>首先清除一下文件夹</h2><p>C:\user${用户名称}\ideaProjects\</p>
-<p>C:\Users${用户名称}\AppData\Roaming\JetBrains</p>
-<p>C:\Users\Public.jetbrains</p>
-<p>C:\Program Files\JetBrains</p>
-<p>C:\ProgramData\Microsoft\Windows\Start Menu\Programs\JetBrains</p>
-<h2 id="然后我们再清除所有注册表"><a href="#然后我们再清除所有注册表" class="headerlink" title="然后我们再清除所有注册表"></a>然后我们再清除所有注册表</h2><p><strong>windows + R 输入regedit进入注册表，右键一级菜单</strong>HKEY_CURRENT_USER， 右键查找，输入idea，会找到jetbrains，然后，右键删除。</p>
-<p>删除完成所有与jetbrains相关的注册表后，重新安装idea就和刚开始安装一样了</p>
-<p>如果中途遇到无法删除注册表的报错那么可能是你权限不够，右键选择权限然后将你的账户设置为完全控制即可。</p>
-]]></content>
-      <tags>
-        <tag>idea</tag>
       </tags>
   </entry>
   <entry>
@@ -703,6 +703,105 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
+    <title>SpringBoot 程序启动或退出时执行操作</title>
+    <url>/2021/09/25/SpringBoot%20%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommandLineRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">CommandLineRunner</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试CommandLineRunner的示例。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+<span id="more"></span>
+<h4 id="2-实现ApplicationRunner接口"><a href="#2-实现ApplicationRunner接口" class="headerlink" title="2.实现ApplicationRunner接口"></a>2.实现ApplicationRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">ApplicationRunner</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">ApplicationArguments</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试ApplicationRunner接口"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>@Order注解：如果有多个实现类，而你需要他们按一定顺序执行的话，可以在实现类上加上@Order注解。@Order(value&#x3D;整数值)。SpringBoot会按照@Order中的value值从小到大依次执行。也就是先执行 1 再执行 2</p>
+<p>@Component注解：把普通pojo实例化到spring容器中，泛指各种组件，就是说当我们的类不属于各种归类的时候（@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。</p>
+<h3 id="结束时"><a href="#结束时" class="headerlink" title="结束时"></a>结束时</h3><h4 id="1-实现DisposableBean接口"><a href="#1-实现DisposableBean接口" class="headerlink" title="1.实现DisposableBean接口"></a>1.实现DisposableBean接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DisposableBeanTest</span> <span class="token keyword">implements</span> <span class="token class-name">DisposableBean</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束  implements DisposableBean "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h4 id="2-通过-PreDistroy注解"><a href="#2-通过-PreDistroy注解" class="headerlink" title="2.通过@PreDistroy注解"></a>2.通过@PreDistroy注解</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ExitCode</span><span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@PreDestroy</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束 执行@PreDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>String isEmpty()和isBank()的区别</title>
+    <url>/2021/10/02/String%20isEmpty()%E5%92%8CisBank()%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>1 public static boolean isEmpty(String str)</p>
+<p>   判断某字符串是否为空，为空的标准是 str&#x3D;&#x3D;null 或 str.length()&#x3D;&#x3D;0</p>
+<p>   　　下面是 StringUtils 判断是否为空的示例：</p>
+<p>   　　StringUtils.isEmpty(null) &#x3D; true</p>
+<p>   　　StringUtils.isEmpty(“”) &#x3D; true</p>
+<p>   　　StringUtils.isEmpty(“ “) &#x3D; false &#x2F;&#x2F;注意在 StringUtils 中空格作非空处理</p>
+<p>   　　StringUtils.isEmpty(“   “) &#x3D; false</p>
+<p>   　　StringUtils.isEmpty(“bob”) &#x3D; false</p>
+<p>   　　StringUtils.isEmpty(“ bob “) &#x3D; false</p>
+   <span id="more"></span>
+
+<p>2 public static boolean isNotEmpty(String str)</p>
+<p>　　判断某字符串是否非空，等于 !isEmpty(String str)</p>
+<p>　　下面是示例：</p>
+<p>　　StringUtils.isNotEmpty(null) &#x3D; false</p>
+<p>　　StringUtils.isNotEmpty(“”) &#x3D; false</p>
+<p>　　StringUtils.isNotEmpty(“ “) &#x3D; true</p>
+<p>　　StringUtils.isNotEmpty(“         “) &#x3D; true</p>
+<p>　　StringUtils.isNotEmpty(“bob”) &#x3D; true</p>
+<p>　　StringUtils.isNotEmpty(“ bob “) &#x3D; true</p>
+<p>3 public static boolean isBlank(String str)</p>
+<p>　　判断某字符串是否为空或长度为0或由空白符(whitespace) 构成</p>
+<p>　　下面是示例：</p>
+<p>　　StringUtils.isBlank(null) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“”) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“ “) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“        “) &#x3D; true</p>
+<p>　　StringUtils.isBlank(“\t \n \f \r”) &#x3D; true   &#x2F;&#x2F;对于制表符、换行符、换页符和回车符</p>
+<p>　　StringUtils.isBlank()   &#x2F;&#x2F;均识为空白符</p>
+<p>　　StringUtils.isBlank(“\b”) &#x3D; false   &#x2F;&#x2F;“\b”为单词边界符</p>
+<p>　　StringUtils.isBlank(“bob”) &#x3D; false</p>
+<p>　　StringUtils.isBlank(“ bob “) &#x3D; false</p>
+<p>4 public static boolean isNotBlank(String str)</p>
+<p>　　判断某字符串是否不为空且长度不为0且不由空白符(whitespace) 构成，等于 !isBlank(String str)</p>
+<p>　　下面是示例：</p>
+<p>　　StringUtils.isNotBlank(null) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“”) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“ “) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“         “) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“\t \n \f \r”) &#x3D; false</p>
+<p>　　StringUtils.isNotBlank(“\b”) &#x3D; true</p>
+<p>　　StringUtils.isNotBlank(“bob”) &#x3D; true</p>
+<p>　　StringUtils.isNotBlank(“ bob “) &#x3D; true</p>
+<p>总结：isEmpty()会判断null或者空字符串，但是isBank()会多判断字符串里面是否有空格或者换行符等特殊字符，如果有那么将这些字符也看作是空的，如果全是空格则也认为是空字符串，所以一般来说用的比较多的应该是isEmpty()</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>centos7安装docker</title>
     <url>/2021/06/03/centos7%E5%AE%89%E8%A3%85docker/</url>
     <content><![CDATA[<p>centos7安装docker</p>
@@ -781,58 +880,6 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
-    <title>String isEmpty()和isBank()的区别</title>
-    <url>/2021/10/02/String%20isEmpty()%E5%92%8CisBank()%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>1 public static boolean isEmpty(String str)</p>
-<p>   判断某字符串是否为空，为空的标准是 str&#x3D;&#x3D;null 或 str.length()&#x3D;&#x3D;0</p>
-<p>   　　下面是 StringUtils 判断是否为空的示例：</p>
-<p>   　　StringUtils.isEmpty(null) &#x3D; true</p>
-<p>   　　StringUtils.isEmpty(“”) &#x3D; true</p>
-<p>   　　StringUtils.isEmpty(“ “) &#x3D; false &#x2F;&#x2F;注意在 StringUtils 中空格作非空处理</p>
-<p>   　　StringUtils.isEmpty(“   “) &#x3D; false</p>
-<p>   　　StringUtils.isEmpty(“bob”) &#x3D; false</p>
-<p>   　　StringUtils.isEmpty(“ bob “) &#x3D; false</p>
-   <span id="more"></span>
-
-<p>2 public static boolean isNotEmpty(String str)</p>
-<p>　　判断某字符串是否非空，等于 !isEmpty(String str)</p>
-<p>　　下面是示例：</p>
-<p>　　StringUtils.isNotEmpty(null) &#x3D; false</p>
-<p>　　StringUtils.isNotEmpty(“”) &#x3D; false</p>
-<p>　　StringUtils.isNotEmpty(“ “) &#x3D; true</p>
-<p>　　StringUtils.isNotEmpty(“         “) &#x3D; true</p>
-<p>　　StringUtils.isNotEmpty(“bob”) &#x3D; true</p>
-<p>　　StringUtils.isNotEmpty(“ bob “) &#x3D; true</p>
-<p>3 public static boolean isBlank(String str)</p>
-<p>　　判断某字符串是否为空或长度为0或由空白符(whitespace) 构成</p>
-<p>　　下面是示例：</p>
-<p>　　StringUtils.isBlank(null) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“”) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“ “) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“        “) &#x3D; true</p>
-<p>　　StringUtils.isBlank(“\t \n \f \r”) &#x3D; true   &#x2F;&#x2F;对于制表符、换行符、换页符和回车符</p>
-<p>　　StringUtils.isBlank()   &#x2F;&#x2F;均识为空白符</p>
-<p>　　StringUtils.isBlank(“\b”) &#x3D; false   &#x2F;&#x2F;“\b”为单词边界符</p>
-<p>　　StringUtils.isBlank(“bob”) &#x3D; false</p>
-<p>　　StringUtils.isBlank(“ bob “) &#x3D; false</p>
-<p>4 public static boolean isNotBlank(String str)</p>
-<p>　　判断某字符串是否不为空且长度不为0且不由空白符(whitespace) 构成，等于 !isBlank(String str)</p>
-<p>　　下面是示例：</p>
-<p>　　StringUtils.isNotBlank(null) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“”) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“ “) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“         “) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“\t \n \f \r”) &#x3D; false</p>
-<p>　　StringUtils.isNotBlank(“\b”) &#x3D; true</p>
-<p>　　StringUtils.isNotBlank(“bob”) &#x3D; true</p>
-<p>　　StringUtils.isNotBlank(“ bob “) &#x3D; true</p>
-<p>总结：isEmpty()会判断null或者空字符串，但是isBank()会多判断字符串里面是否有空格或者换行符等特殊字符，如果有那么将这些字符也看作是空的，如果全是空格则也认为是空字符串，所以一般来说用的比较多的应该是isEmpty()</p>
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>centos7安装jdk8</title>
     <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85jdk8/</url>
     <content><![CDATA[<p>首先到官网下载好jdk1.8的tar.gz的压缩包，然后上传到服务器的任意目录，我们这里上传到系统的&#x2F;usr&#x2F;local下</p>
@@ -856,53 +903,6 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
 ]]></content>
       <tags>
         <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SpringBoot 程序启动或退出时执行操作</title>
-    <url>/2021/09/25/SpringBoot%20%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommandLineRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">CommandLineRunner</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试CommandLineRunner的示例。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-<span id="more"></span>
-<h4 id="2-实现ApplicationRunner接口"><a href="#2-实现ApplicationRunner接口" class="headerlink" title="2.实现ApplicationRunner接口"></a>2.实现ApplicationRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token annotation punctuation">@Order</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationRunnerTest</span> <span class="token keyword">implements</span> <span class="token class-name">ApplicationRunner</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">ApplicationArguments</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"这是测试ApplicationRunner接口"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>@Order注解：如果有多个实现类，而你需要他们按一定顺序执行的话，可以在实现类上加上@Order注解。@Order(value&#x3D;整数值)。SpringBoot会按照@Order中的value值从小到大依次执行。也就是先执行 1 再执行 2</p>
-<p>@Component注解：把普通pojo实例化到spring容器中，泛指各种组件，就是说当我们的类不属于各种归类的时候（@Controller、@Services等的时候），我们就可以使用@Component来标注这个类。</p>
-<h3 id="结束时"><a href="#结束时" class="headerlink" title="结束时"></a>结束时</h3><h4 id="1-实现DisposableBean接口"><a href="#1-实现DisposableBean接口" class="headerlink" title="1.实现DisposableBean接口"></a>1.实现DisposableBean接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DisposableBeanTest</span> <span class="token keyword">implements</span> <span class="token class-name">DisposableBean</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束  implements DisposableBean "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<h4 id="2-通过-PreDistroy注解"><a href="#2-通过-PreDistroy注解" class="headerlink" title="2.通过@PreDistroy注解"></a>2.通过@PreDistroy注解</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ExitCode</span><span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@PreDestroy</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">exit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"springboot程序结束 执行@PreDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>SpringBoot</tag>
       </tags>
   </entry>
   <entry>
@@ -983,48 +983,6 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>centos7安装python3</title>
-    <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
-    <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
-<span id="more"></span>
-
-<h2 id="1、下载python3源码"><a href="#1、下载python3源码" class="headerlink" title="1、下载python3源码"></a>1、下载python3源码</h2><p>源码有两种压缩格式，两种源码都是一样的，只不过是压缩的格式不一样</p>
-<p>源码一：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz</a></p>
-<p>源码二：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz</a></p>
-<h2 id="2、上传压缩包至服务器"><a href="#2、上传压缩包至服务器" class="headerlink" title="2、上传压缩包至服务器"></a>2、上传压缩包至服务器</h2><p>可以使用finalshell等工具将下载好的源码包上传至服务器的&#x2F;usr&#x2F;local目录下</p>
-<h2 id="3、解压源码"><a href="#3、解压源码" class="headerlink" title="3、解压源码"></a>3、解压源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> Python-3.9.0.tar.xz</code></pre>
-
-<h2 id="4、安装python所需环境依赖"><a href="#4、安装python所需环境依赖" class="headerlink" title="4、安装python所需环境依赖"></a>4、安装python所需环境依赖</h2><pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc <span class="token function">make</span></code></pre>
-
-<h2 id="5、进入源码目录指定编译安装目录"><a href="#5、进入源码目录指定编译安装目录" class="headerlink" title="5、进入源码目录指定编译安装目录"></a>5、进入源码目录指定编译安装目录</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mkdir</span> python3</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> Python-3.9.0</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash">./configure <span class="token parameter variable">--prefix</span><span class="token operator">=</span>/usr/local/python3</code></pre>
-
-<p>注：这里创建的&#x2F;usr&#x2F;local&#x2F;python3目录就是后面编译好源码后安装python3.9的目录</p>
-<h2 id="6、编译源码"><a href="#6、编译源码" class="headerlink" title="6、编译源码"></a>6、编译源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token parameter variable">-j</span> <span class="token number">4</span></code></pre>
-
-<p>注：-j 4 代表使用cpu的4个核心进行多线程编译源码，可以加快编译速度，可以按照自己cpu的实际配置来，我的cpu是i5-3475s 四核心四线程  所以这里使用-j 4 指定四个核心，如果你的配置较低请自行调整，调太高会报错</p>
-<h2 id="7、安装"><a href="#7、安装" class="headerlink" title="7、安装"></a>7、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token function">install</span></code></pre>
-
-
-
-<h2 id="8、配置环境变量"><a href="#8、配置环境变量" class="headerlink" title="8、配置环境变量"></a>8、配置环境变量</h2><p>编译好源码后可以看到&#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin已经有python可以使用了，我们只需要将python3目录添加到系统环境变量即可</p>
-<h3 id="8-1编辑-x2F-etc-x2F-profile文件"><a href="#8-1编辑-x2F-etc-x2F-profile文件" class="headerlink" title="8.1编辑&#x2F;etc&#x2F;profile文件"></a>8.1编辑&#x2F;etc&#x2F;profile文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
-
-<h3 id="8-2添加环境变量"><a href="#8-2添加环境变量" class="headerlink" title="8.2添加环境变量"></a>8.2添加环境变量</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">PYTHON_HOME</span><span class="token operator">=</span>/usr/local/python3
-<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span>/usr/local/bin:<span class="token variable">$PYTHON_HOME</span>/bin:<span class="token environment constant">$PATH</span></code></pre>
-
-<h3 id="8-3使环境变量生效"><a href="#8-3使环境变量生效" class="headerlink" title="8.3使环境变量生效"></a>8.3使环境变量生效</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> /etc/profile</code></pre>
-
-]]></content>
-      <tags>
-        <tag>centos</tag>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>centos7新建分区</title>
     <url>/2023/05/03/centos7%E6%96%B0%E5%BB%BA%E5%88%86%E5%8C%BA/</url>
     <content><![CDATA[<p>前言：由于在安装centos7的时候默认选择的是自动分区，导致默认会给root分区50G，然后剩下的空间会全部划分给home。而我们在使用docker容器时并不能限制容器使用分区容量的大小，这就会导致我们如果将docker缓存在root目录，当缓存越来越大时会将root的50G空间全部占用满。</p>
@@ -1086,44 +1044,45 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>centos7通过nvm安装并管理node</title>
-    <url>/2021/11/22/centos7%E9%80%9A%E8%BF%87nvm%E5%AE%89%E8%A3%85%E5%B9%B6%E7%AE%A1%E7%90%86node/</url>
-    <content><![CDATA[<p>官方地址：<a href="https://github.com/nvm-sh/nvm">https://github.com/nvm-sh/nvm</a></p>
-<p>我们安装官方说的步骤一步一步来</p>
-<p>首先下载并执行nvm安装文件</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh <span class="token operator">|</span> <span class="token function">bash</span></code></pre>
+    <title>centos7安装python3</title>
+    <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
+    <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
+<span id="more"></span>
 
-<p>运行完成后在环境变量中添加如下代码即可</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">NVM_DIR</span><span class="token operator">=</span><span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME-&#125;</span>"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;<span class="token environment constant">HOME</span>&#125;</span>/.nvm"</span> <span class="token operator">||</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME&#125;</span>/nvm"</span><span class="token variable">)</span></span>"</span>
-<span class="token punctuation">[</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>. <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span> <span class="token comment"># This loads nvm</span></code></pre>
+<h2 id="1、下载python3源码"><a href="#1、下载python3源码" class="headerlink" title="1、下载python3源码"></a>1、下载python3源码</h2><p>源码有两种压缩格式，两种源码都是一样的，只不过是压缩的格式不一样</p>
+<p>源码一：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz</a></p>
+<p>源码二：<a href="https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz">https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz</a></p>
+<h2 id="2、上传压缩包至服务器"><a href="#2、上传压缩包至服务器" class="headerlink" title="2、上传压缩包至服务器"></a>2、上传压缩包至服务器</h2><p>可以使用finalshell等工具将下载好的源码包上传至服务器的&#x2F;usr&#x2F;local目录下</p>
+<h2 id="3、解压源码"><a href="#3、解压源码" class="headerlink" title="3、解压源码"></a>3、解压源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> Python-3.9.0.tar.xz</code></pre>
 
-<p>然后使用版本命令验证是否安装成功</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">nvm <span class="token parameter variable">-v</span></code></pre>
+<h2 id="4、安装python所需环境依赖"><a href="#4、安装python所需环境依赖" class="headerlink" title="4、安装python所需环境依赖"></a>4、安装python所需环境依赖</h2><pre class="language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc <span class="token function">make</span></code></pre>
 
-<p>安装完成nvm后我们再通过官方文档的提示继续安装node即可</p>
-<p>我们可以指定nodejs的版本，因为有时候最新的版本安装某些依赖会报错，导致项目无法启动，而nvm可以随意切换nodejs的版本，所以这才是我们想要的</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">$ nvm use <span class="token number">16</span>
-Now using <span class="token function">node</span> v16.9.1 <span class="token punctuation">(</span>npm v7.21.1<span class="token punctuation">)</span>
-$ <span class="token function">node</span> <span class="token parameter variable">-v</span>
-v16.9.1
-$ nvm use <span class="token number">14</span>
-Now using <span class="token function">node</span> v14.18.0 <span class="token punctuation">(</span>npm v6.14.15<span class="token punctuation">)</span>
-$ <span class="token function">node</span> <span class="token parameter variable">-v</span>
-v14.18.0
-$ nvm <span class="token function">install</span> <span class="token number">12</span>
-Now using <span class="token function">node</span> v12.22.6 <span class="token punctuation">(</span>npm v6.14.5<span class="token punctuation">)</span>
-$ <span class="token function">node</span> <span class="token parameter variable">-v</span>
-v12.22.6</code></pre>
+<h2 id="5、进入源码目录指定编译安装目录"><a href="#5、进入源码目录指定编译安装目录" class="headerlink" title="5、进入源码目录指定编译安装目录"></a>5、进入源码目录指定编译安装目录</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mkdir</span> python3</code></pre>
 
-<p>上面是官方文档列出来的安装例子，我现在需要安装12.14版本，所以直接执行</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">node</span> <span class="token function">install</span> <span class="token number">12</span></code></pre>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> Python-3.9.0</code></pre>
 
-<p>因为都是12版本，小版本之间的差异不大，所以安装12.22版本也是可以的</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">./configure <span class="token parameter variable">--prefix</span><span class="token operator">=</span>/usr/local/python3</code></pre>
+
+<p>注：这里创建的&#x2F;usr&#x2F;local&#x2F;python3目录就是后面编译好源码后安装python3.9的目录</p>
+<h2 id="6、编译源码"><a href="#6、编译源码" class="headerlink" title="6、编译源码"></a>6、编译源码</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token parameter variable">-j</span> <span class="token number">4</span></code></pre>
+
+<p>注：-j 4 代表使用cpu的4个核心进行多线程编译源码，可以加快编译速度，可以按照自己cpu的实际配置来，我的cpu是i5-3475s 四核心四线程  所以这里使用-j 4 指定四个核心，如果你的配置较低请自行调整，调太高会报错</p>
+<h2 id="7、安装"><a href="#7、安装" class="headerlink" title="7、安装"></a>7、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span> <span class="token function">install</span></code></pre>
+
+
+
+<h2 id="8、配置环境变量"><a href="#8、配置环境变量" class="headerlink" title="8、配置环境变量"></a>8、配置环境变量</h2><p>编译好源码后可以看到&#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin已经有python可以使用了，我们只需要将python3目录添加到系统环境变量即可</p>
+<h3 id="8-1编辑-x2F-etc-x2F-profile文件"><a href="#8-1编辑-x2F-etc-x2F-profile文件" class="headerlink" title="8.1编辑&#x2F;etc&#x2F;profile文件"></a>8.1编辑&#x2F;etc&#x2F;profile文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
+
+<h3 id="8-2添加环境变量"><a href="#8-2添加环境变量" class="headerlink" title="8.2添加环境变量"></a>8.2添加环境变量</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">PYTHON_HOME</span><span class="token operator">=</span>/usr/local/python3
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span>/usr/local/bin:<span class="token variable">$PYTHON_HOME</span>/bin:<span class="token environment constant">$PATH</span></code></pre>
+
+<h3 id="8-3使环境变量生效"><a href="#8-3使环境变量生效" class="headerlink" title="8.3使环境变量生效"></a>8.3使环境变量生效</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> /etc/profile</code></pre>
+
 ]]></content>
       <tags>
         <tag>centos</tag>
-        <tag>nvm</tag>
-        <tag>node</tag>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -1245,6 +1204,54 @@ services:
       </tags>
   </entry>
   <entry>
+    <title>docker安装mysql5.7</title>
+    <url>/2021/06/03/docker%E5%AE%89%E8%A3%85mysql5.7/</url>
+    <content><![CDATA[<p>docker安装mysql5.7</p>
+<p>这里已经配置好了docker的阿里云加速器</p>
+<p>然后我们直接通过命令拉取5.7版本的mysql，这里以5.7.24版本为例</p>
+<p>如果是5.7.4版本没有在&#x2F;etc下生成一个mysql文件夹那么就需要自己通过命令创建并创建my.cnf配置文件</p>
+<p>拉取镜像</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull mysql:5.7.24</code></pre>
+
+<p>拉取完成后可以查看一下是否拉取成功</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> images</code></pre>
+<span id="more"></span>
+<p>拉取成功镜像后我们就可以通过命令来使用镜像来创建并运行一个mysql容器</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> run <span class="token parameter variable">-d</span> <span class="token parameter variable">-p</span> <span class="token number">3306</span>:3306 <span class="token parameter variable">--name</span> mysql <span class="token parameter variable">-e</span> <span class="token assign-left variable">MYSQL_ROOT_PASSWORD</span><span class="token operator">=</span><span class="token number">123456</span> mysql:5.7.24</code></pre>
+
+<p>如果出现容器号码没有报错就成功了</p>
+<p>然后我们就可以查看一下容器是否成功运行</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> <span class="token function">ps</span></code></pre>
+
+<p>安装完成后我们还要设置一下字符编码，而docker中的mysql是默认root用户是可以远程访问的这里就不需要再进行设置了</p>
+<p>要更改配置首先要进入容器内</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-it</span> 容器名或容器id <span class="token function">bash</span></code></pre>
+
+<p>然后我们可以修改&#x2F;etc&#x2F;mysql&#x2F;my.cnf这个配置文件</p>
+<p>如果存在像mysql5.7.4这样的没有这个文件夹的话那么就自己先创建一个就好了</p>
+<p>然后改为如下配置</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>client<span class="token punctuation">]</span>
+default-character-set<span class="token operator">=</span>utf8
+
+<span class="token punctuation">[</span>mysqld<span class="token punctuation">]</span>
+default-storage-engine<span class="token operator">=</span>INNODB
+character-set-server<span class="token operator">=</span>utf8
+collation-server<span class="token operator">=</span>utf8_general_ci</code></pre>
+
+<p>client的配置一定要在上方，否则会报错</p>
+<p>配置好后重启docker容器即可</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> restart 容器名或id</code></pre>
+
+<p>查看mysql数据库编码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">show variables like <span class="token string">'%character%'</span><span class="token punctuation">;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>centos7普通用户安装mysql</title>
     <url>/2023/05/25/centos7%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E5%AE%89%E8%A3%85mysql/</url>
     <content><![CDATA[<p>前言：由于公司的服务器默认都给的是普通用户的权限不能将软件上传至&#x2F;usr&#x2F;local下，又想在测试服务器中安装一个mysql玩一玩，所以需要使用普通用户权限对mysql进行配置及启动，这里我们选择将mysql上传至普通用户的home目录进行启动及安装.</p>
@@ -1299,82 +1306,138 @@ collation-server&#x3D;utf8_general_ci</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>docker安装mysql5.7</title>
-    <url>/2021/06/03/docker%E5%AE%89%E8%A3%85mysql5.7/</url>
-    <content><![CDATA[<p>docker安装mysql5.7</p>
-<p>这里已经配置好了docker的阿里云加速器</p>
-<p>然后我们直接通过命令拉取5.7版本的mysql，这里以5.7.24版本为例</p>
-<p>如果是5.7.4版本没有在&#x2F;etc下生成一个mysql文件夹那么就需要自己通过命令创建并创建my.cnf配置文件</p>
-<p>拉取镜像</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull mysql:5.7.24</code></pre>
+    <title>centos7通过nvm安装并管理node</title>
+    <url>/2021/11/22/centos7%E9%80%9A%E8%BF%87nvm%E5%AE%89%E8%A3%85%E5%B9%B6%E7%AE%A1%E7%90%86node/</url>
+    <content><![CDATA[<p>官方地址：<a href="https://github.com/nvm-sh/nvm">https://github.com/nvm-sh/nvm</a></p>
+<p>我们安装官方说的步骤一步一步来</p>
+<p>首先下载并执行nvm安装文件</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh <span class="token operator">|</span> <span class="token function">bash</span></code></pre>
 
-<p>拉取完成后可以查看一下是否拉取成功</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> images</code></pre>
-<span id="more"></span>
-<p>拉取成功镜像后我们就可以通过命令来使用镜像来创建并运行一个mysql容器</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> run <span class="token parameter variable">-d</span> <span class="token parameter variable">-p</span> <span class="token number">3306</span>:3306 <span class="token parameter variable">--name</span> mysql <span class="token parameter variable">-e</span> <span class="token assign-left variable">MYSQL_ROOT_PASSWORD</span><span class="token operator">=</span><span class="token number">123456</span> mysql:5.7.24</code></pre>
+<p>运行完成后在环境变量中添加如下代码即可</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">NVM_DIR</span><span class="token operator">=</span><span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME-&#125;</span>"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;<span class="token environment constant">HOME</span>&#125;</span>/.nvm"</span> <span class="token operator">||</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME&#125;</span>/nvm"</span><span class="token variable">)</span></span>"</span>
+<span class="token punctuation">[</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>. <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span> <span class="token comment"># This loads nvm</span></code></pre>
 
-<p>如果出现容器号码没有报错就成功了</p>
-<p>然后我们就可以查看一下容器是否成功运行</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> <span class="token function">ps</span></code></pre>
+<p>然后使用版本命令验证是否安装成功</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">nvm <span class="token parameter variable">-v</span></code></pre>
 
-<p>安装完成后我们还要设置一下字符编码，而docker中的mysql是默认root用户是可以远程访问的这里就不需要再进行设置了</p>
-<p>要更改配置首先要进入容器内</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-it</span> 容器名或容器id <span class="token function">bash</span></code></pre>
+<p>安装完成nvm后我们再通过官方文档的提示继续安装node即可</p>
+<p>我们可以指定nodejs的版本，因为有时候最新的版本安装某些依赖会报错，导致项目无法启动，而nvm可以随意切换nodejs的版本，所以这才是我们想要的</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">$ nvm use <span class="token number">16</span>
+Now using <span class="token function">node</span> v16.9.1 <span class="token punctuation">(</span>npm v7.21.1<span class="token punctuation">)</span>
+$ <span class="token function">node</span> <span class="token parameter variable">-v</span>
+v16.9.1
+$ nvm use <span class="token number">14</span>
+Now using <span class="token function">node</span> v14.18.0 <span class="token punctuation">(</span>npm v6.14.15<span class="token punctuation">)</span>
+$ <span class="token function">node</span> <span class="token parameter variable">-v</span>
+v14.18.0
+$ nvm <span class="token function">install</span> <span class="token number">12</span>
+Now using <span class="token function">node</span> v12.22.6 <span class="token punctuation">(</span>npm v6.14.5<span class="token punctuation">)</span>
+$ <span class="token function">node</span> <span class="token parameter variable">-v</span>
+v12.22.6</code></pre>
 
-<p>然后我们可以修改&#x2F;etc&#x2F;mysql&#x2F;my.cnf这个配置文件</p>
-<p>如果存在像mysql5.7.4这样的没有这个文件夹的话那么就自己先创建一个就好了</p>
-<p>然后改为如下配置</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>client<span class="token punctuation">]</span>
-default-character-set<span class="token operator">=</span>utf8
+<p>上面是官方文档列出来的安装例子，我现在需要安装12.14版本，所以直接执行</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">node</span> <span class="token function">install</span> <span class="token number">12</span></code></pre>
 
-<span class="token punctuation">[</span>mysqld<span class="token punctuation">]</span>
-default-storage-engine<span class="token operator">=</span>INNODB
-character-set-server<span class="token operator">=</span>utf8
-collation-server<span class="token operator">=</span>utf8_general_ci</code></pre>
-
-<p>client的配置一定要在上方，否则会报错</p>
-<p>配置好后重启docker容器即可</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> restart 容器名或id</code></pre>
-
-<p>查看mysql数据库编码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">show variables like <span class="token string">'%character%'</span><span class="token punctuation">;</span></code></pre>
-
+<p>因为都是12版本，小版本之间的差异不大，所以安装12.22版本也是可以的</p>
 ]]></content>
       <tags>
-        <tag>docker</tag>
-        <tag>mysql</tag>
+        <tag>centos</tag>
+        <tag>nvm</tag>
+        <tag>node</tag>
       </tags>
   </entry>
   <entry>
-    <title>docker数据卷</title>
-    <url>/2021/06/03/docker%E6%95%B0%E6%8D%AE%E5%8D%B7/</url>
-    <content><![CDATA[<p>数据卷可以用来指定容器内部的某个文件夹映射到外部的某个文件夹，外部访问文件夹修改内容后内部容器的文件会自动同步内容</p>
-<p>创建数据卷</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume create 名称</code></pre>
+    <title>docker部署jar包</title>
+    <url>/2023/09/10/docker%E9%83%A8%E7%BD%B2jar%E5%8C%85/</url>
+    <content><![CDATA[<p>由于普通部署jar包的方式较为繁琐，我们使用docker则相对较为简单，例如有多个jar包需要启动，则需要逐个启动，或者使用一个脚本启动，而启动后如果机器断电则无法保证服务能立即启动，当然也可以将需要启动的服务加入自启动，但是如果对于多台服务器都要部署同样的服务则较为繁琐，可能需要安装各种依赖导致部署时间过长，而使用docker则可以在各个机器拉取镜像即可启动，无需额外安装软件。</p>
 <span id="more"></span>
-<p>创建数据卷后会自动放在本机的&#x2F;var&#x2F;lib&#x2F;docker&#x2F;volumes中</p>
-<p>创建容器时可以指定使用哪个数据卷</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> run <span class="token parameter variable">-d</span> <span class="token parameter variable">-p</span> <span class="token number">8080</span>:8080 <span class="token parameter variable">-v</span> tomcat_conf:/usr/local/tomcat/conf <span class="token parameter variable">-v</span> tomcat_webapps:/usr/local/tomcat/webapps <span class="token parameter variable">--name</span> tomcat tomcat</code></pre>
 
-<p>当指定的数据卷不存在时就会自动创建</p>
-<p>删除容器后不会自动删除数据卷</p>
-<p>删除数据卷</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">rm</span> 数据卷全名</code></pre>
+<h2 id="1、制作镜像部署jar包"><a href="#1、制作镜像部署jar包" class="headerlink" title="1、制作镜像部署jar包"></a>1、制作镜像部署jar包</h2><p>通常更推荐这种方式来部署，因为如果新构建的镜像如果跑不动则可以立即切换到上一个版本的镜像，但是每次改动代码都要重新构建一个新的镜像。</p>
+<h3 id="1-1新建Dockerfile"><a href="#1-1新建Dockerfile" class="headerlink" title="1.1新建Dockerfile"></a>1.1新建Dockerfile</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">touch</span> Dockerfile</code></pre>
 
-<p>只能删除没有容器使用的数据卷，正在使用的无法删除</p>
-<p>查看所有数据卷</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">ls</span></code></pre>
+<h3 id="1-2编辑Dockerfile内容"><a href="#1-2编辑Dockerfile内容" class="headerlink" title="1.2编辑Dockerfile内容"></a>1.2编辑Dockerfile内容</h3><p>这里以ruoyi服务举个例子</p>
+<pre class="language-docker" data-language="docker"><code class="language-docker"><span class="token instruction"><span class="token keyword">FROM</span> openjdk:8-jdk-alpine</span>
+<span class="token instruction"><span class="token keyword">MAINTAINER</span> ruoyi</span>
+<span class="token instruction"><span class="token keyword">ADD</span> ruoyi-modules-system.jar /app/system.jar</span>
+<span class="token instruction"><span class="token keyword">EXPOSE</span> 9201</span>
+<span class="token instruction"><span class="token keyword">ENTRYPOINT</span> [<span class="token string">"java"</span>,<span class="token string">"-jar"</span>,<span class="token string">"/app/system.jar"</span>]</span></code></pre>
 
-<p>查看所有不在使用的数据卷</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">ls</span>   <span class="token parameter variable">--filter</span> <span class="token assign-left variable">dangling</span><span class="token operator">=</span>true</code></pre>
+<p>FROM：以什么镜像为基础镜像</p>
+<p>MAINTAINER：作者</p>
+<p>ADD：将什么文件复制到容器内部</p>
+<p>EXPOSE：镜像所需端口</p>
+<p>ENTRYPOINT：运行容器后执行的命令</p>
+<h3 id="1-3构建镜像"><a href="#1-3构建镜像" class="headerlink" title="1.3构建镜像"></a>1.3构建镜像</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> build <span class="token parameter variable">-t</span> ruoyi-system:1.0 <span class="token builtin class-name">.</span></code></pre>
 
-<p>删除所有不在使用的数据卷</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> volume <span class="token function">ls</span> <span class="token parameter variable">-qf</span> <span class="token assign-left variable">dangling</span><span class="token operator">=</span>true<span class="token variable">)</span></span></code></pre>
+<p>ruoyi-system:镜像名称</p>
+<p>1.0:镜像版本号</p>
+<h3 id="1-4运行容器"><a href="#1-4运行容器" class="headerlink" title="1.4运行容器"></a>1.4运行容器</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> run <span class="token parameter variable">--restart</span><span class="token operator">=</span>always <span class="token parameter variable">-d</span> <span class="token parameter variable">-it</span> <span class="token parameter variable">--name</span><span class="token operator">=</span>ruoyi-system <span class="token parameter variable">-p</span> <span class="token number">9201</span>:9201 ruoyi-system:1.0</code></pre>
+
+<h2 id="2、不构建镜像直接运行jar包"><a href="#2、不构建镜像直接运行jar包" class="headerlink" title="2、不构建镜像直接运行jar包"></a>2、不构建镜像直接运行jar包</h2><p>这种方式的好处就是不需要每次都构建镜像，只需要将jar包上传到服务器重启指定的服务即可，但是无法像构建镜像那样有问题马上回滚到上一个版本。所以生产环境使用第一种方式</p>
+<h3 id="2-1拉取基础镜像"><a href="#2-1拉取基础镜像" class="headerlink" title="2.1拉取基础镜像"></a>2.1拉取基础镜像</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull openjdk:8-jdk-alpine</code></pre>
+
+<h3 id="2-2创建docker-compose"><a href="#2-2创建docker-compose" class="headerlink" title="2.2创建docker-compose"></a>2.2创建docker-compose</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">touch</span> docker-compose.yml</code></pre>
+
+<h3 id="2-3编辑docker-compose内容"><a href="#2-3编辑docker-compose内容" class="headerlink" title="2.3编辑docker-compose内容"></a>2.3编辑docker-compose内容</h3><pre class="language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">'3'</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">ruoyi-system</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> openjdk<span class="token punctuation">:</span>8<span class="token punctuation">-</span>jdk<span class="token punctuation">-</span>alpine
+    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> ruoyi<span class="token punctuation">-</span>system
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> /root/ruoyi/ruoyi<span class="token punctuation">-</span>modules<span class="token punctuation">-</span>system.jar<span class="token punctuation">:</span>/usr/local/data/ruoyi<span class="token punctuation">-</span>modules<span class="token punctuation">-</span>system.jar
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> java <span class="token punctuation">-</span>jar /usr/local/data/ruoyi<span class="token punctuation">-</span>modules<span class="token punctuation">-</span>system.jar
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token key atrule">TZ</span><span class="token punctuation">:</span> Asia/Shanghai        <span class="token comment"># 指定时区</span>
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token string">"9201:9201"</span>
+  <span class="token key atrule">ruoyi-gateway</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> openjdk<span class="token punctuation">:</span>8<span class="token punctuation">-</span>jdk<span class="token punctuation">-</span>alpine
+    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> ruoyi<span class="token punctuation">-</span>gateway
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token key atrule">TZ</span><span class="token punctuation">:</span> Asia/Shanghai        <span class="token comment"># 指定时区</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> /root/ruoyi/ruoyi<span class="token punctuation">-</span>gateway.jar<span class="token punctuation">:</span>/usr/local/data/ruoyi<span class="token punctuation">-</span>gateway.jar
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> java <span class="token punctuation">-</span>jar /usr/local/data/ruoyi<span class="token punctuation">-</span>gateway.jar
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ruoyi<span class="token punctuation">-</span>system
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token string">"9080:9080"</span>
+  <span class="token key atrule">ruoyi-auth</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> openjdk<span class="token punctuation">:</span>8<span class="token punctuation">-</span>jdk<span class="token punctuation">-</span>alpine
+    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> ruoyi<span class="token punctuation">-</span>auth
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token key atrule">TZ</span><span class="token punctuation">:</span> Asia/Shanghai        <span class="token comment"># 指定时区</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> /root/ruoyi/ruoyi<span class="token punctuation">-</span>auth.jar<span class="token punctuation">:</span>/usr/local/data/ruoyi<span class="token punctuation">-</span>auth.jar
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> java <span class="token punctuation">-</span>jar /usr/local/data/ruoyi<span class="token punctuation">-</span>auth.jar
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ruoyi<span class="token punctuation">-</span>system
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token string">"9200:9200"</span>
+  <span class="token key atrule">ruoyi-job</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> openjdk<span class="token punctuation">:</span>8<span class="token punctuation">-</span>jdk<span class="token punctuation">-</span>alpine
+    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> ruoyi<span class="token punctuation">-</span>job
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token key atrule">TZ</span><span class="token punctuation">:</span> Asia/Shanghai        <span class="token comment"># 指定时区</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> /root/ruoyi/ruoyi<span class="token punctuation">-</span>modules<span class="token punctuation">-</span>job.jar<span class="token punctuation">:</span>/usr/local/data/ruoyi<span class="token punctuation">-</span>modules<span class="token punctuation">-</span>job.jar
+    <span class="token key atrule">command</span><span class="token punctuation">:</span> java <span class="token punctuation">-</span>jar /usr/local/data/ruoyi<span class="token punctuation">-</span>modules<span class="token punctuation">-</span>job.jar
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ruoyi<span class="token punctuation">-</span>system
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token string">"9203:9203"</span></code></pre>
+
+<p>切记，以容器运行jar必须指定时区，否则程序默认获取到的时间是美国时间</p>
+<h3 id="2-4运行容器"><a href="#2-4运行容器" class="headerlink" title="2.4运行容器"></a>2.4运行容器</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker-compose</span> up <span class="token parameter variable">-d</span></code></pre>
 
 ]]></content>
       <tags>
         <tag>docker</tag>
+        <tag>java</tag>
       </tags>
   </entry>
   <entry>
@@ -1760,6 +1823,126 @@ db.password 配置你的数据库的登录密码</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>docker数据卷</title>
+    <url>/2021/06/03/docker%E6%95%B0%E6%8D%AE%E5%8D%B7/</url>
+    <content><![CDATA[<p>数据卷可以用来指定容器内部的某个文件夹映射到外部的某个文件夹，外部访问文件夹修改内容后内部容器的文件会自动同步内容</p>
+<p>创建数据卷</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume create 名称</code></pre>
+<span id="more"></span>
+<p>创建数据卷后会自动放在本机的&#x2F;var&#x2F;lib&#x2F;docker&#x2F;volumes中</p>
+<p>创建容器时可以指定使用哪个数据卷</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> run <span class="token parameter variable">-d</span> <span class="token parameter variable">-p</span> <span class="token number">8080</span>:8080 <span class="token parameter variable">-v</span> tomcat_conf:/usr/local/tomcat/conf <span class="token parameter variable">-v</span> tomcat_webapps:/usr/local/tomcat/webapps <span class="token parameter variable">--name</span> tomcat tomcat</code></pre>
+
+<p>当指定的数据卷不存在时就会自动创建</p>
+<p>删除容器后不会自动删除数据卷</p>
+<p>删除数据卷</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">rm</span> 数据卷全名</code></pre>
+
+<p>只能删除没有容器使用的数据卷，正在使用的无法删除</p>
+<p>查看所有数据卷</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">ls</span></code></pre>
+
+<p>查看所有不在使用的数据卷</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">ls</span>   <span class="token parameter variable">--filter</span> <span class="token assign-left variable">dangling</span><span class="token operator">=</span>true</code></pre>
+
+<p>删除所有不在使用的数据卷</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> volume <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> volume <span class="token function">ls</span> <span class="token parameter variable">-qf</span> <span class="token assign-left variable">dangling</span><span class="token operator">=</span>true<span class="token variable">)</span></span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ffmpeg加密解密合成mp4</title>
+    <url>/2023/07/28/ffmpeg%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E5%90%88%E6%88%90mp4/</url>
+    <content><![CDATA[<p>由于目前网络传输都是使用ts分段视频，而不是mp4，在网页中也没有下载按钮，所以需要下载网页中的m3u8视频文件和ts分段视频，然后根据m3u8中的ts列表合成为一个mp4视频，我们可以使用ffmpeg下载网页中的ts视频合成mp4，或者自己想要将mp4分解为ts</p>
+<span id="more"></span>
+
+<h2 id="1、下载ffmpeg"><a href="#1、下载ffmpeg" class="headerlink" title="1、下载ffmpeg"></a>1、下载ffmpeg</h2><p>官网：<a href="https://ffmpeg.org/download.html">https://ffmpeg.org/download.html</a></p>
+<p>或者可以到ffmpeg的官方github下载</p>
+<p><a href="https://github.com/BtbN/FFmpeg-Builds/releases">https://github.com/BtbN/FFmpeg-Builds/releases</a></p>
+<p>具体可以下载gpl格式的：</p>
+<p><a href="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip">https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip</a></p>
+<h2 id="2、配置环境变量"><a href="#2、配置环境变量" class="headerlink" title="2、配置环境变量"></a>2、配置环境变量</h2><p>我是将ffmpeg解压后放到C:\Program Files中，可以自行选择路径</p>
+<p>然后在环境变量Path中添加：C:\Program Files\ffmpeg\bin</p>
+<p>添加完成后重启电脑</p>
+<h2 id="3、不使用密钥仅将mp4分解为ts"><a href="#3、不使用密钥仅将mp4分解为ts" class="headerlink" title="3、不使用密钥仅将mp4分解为ts"></a>3、不使用密钥仅将mp4分解为ts</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> input.mp4 <span class="token parameter variable">-c</span> copy <span class="token parameter variable">-bsf:v</span> h264_mp4toannexb <span class="token parameter variable">-f</span> segment <span class="token parameter variable">-segment_list</span> playlist.m3u8 <span class="token parameter variable">-segment_time</span> <span class="token number">10</span> output%d.ts</code></pre>
+
+<ol>
+<li><code>-bsf:v h264_mp4toannexb</code>：它是FFmpeg中的比特流滤镜选项，用于将H.264视频流格式从MP4转换为Annex B格式。Annex B格式是TS（传输流）格式所使用的格式。</li>
+<li><code>-f segment</code>：这个选项告诉FFmpeg将输入文件分割成多个片段。</li>
+<li><code>-segment_list playlist.m3u8</code>：通过指定<code>playlist.m3u8</code>，FFmpeg将生成一个包含所有片段信息的M3U8播放列表文件。</li>
+<li>output%d.ts 分解的ts文件名称为 output0.ts  output1.ts等  %d表示数字</li>
+</ol>
+<h2 id="4、使用密钥分解mp4为ts"><a href="#4、使用密钥分解mp4为ts" class="headerlink" title="4、使用密钥分解mp4为ts"></a>4、使用密钥分解mp4为ts</h2><h3 id="4-1-使用python生成key和IV"><a href="#4-1-使用python生成key和IV" class="headerlink" title="4.1 使用python生成key和IV"></a>4.1 使用python生成key和IV</h3><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> binascii
+<span class="token keyword">import</span> secrets
+
+key <span class="token operator">=</span> secrets<span class="token punctuation">.</span>token_bytes<span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span>  <span class="token comment"># 生成16个字节作为密钥</span>
+iv <span class="token operator">=</span> secrets<span class="token punctuation">.</span>token_bytes<span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span>   <span class="token comment"># 生成16个字节作为IV</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>binascii<span class="token punctuation">.</span>hexlify<span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>binascii<span class="token punctuation">.</span>hexlify<span class="token punctuation">(</span>iv<span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+
+<h3 id="4-2创建密钥文件"><a href="#4-2创建密钥文件" class="headerlink" title="4.2创建密钥文件"></a>4.2创建密钥文件</h3><p>需要使用winhex或者使用代码将十六进制写入文件，而不是直接手动创建文件将明文粘贴进去，直接粘贴进去的不算十六进制，这里使用python来创建一个keyfile.key文件</p>
+<pre class="language-python" data-language="python"><code class="language-python">hex_data <span class="token operator">=</span> <span class="token string">"893DA3D84435FF5B165C4D5B8089F4BC"</span>
+binary_data <span class="token operator">=</span> <span class="token builtin">bytes</span><span class="token punctuation">.</span>fromhex<span class="token punctuation">(</span>hex_data<span class="token punctuation">)</span>
+
+<span class="token builtin">file</span> <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"keyfile.key"</span><span class="token punctuation">,</span> <span class="token string">"wb"</span><span class="token punctuation">)</span>
+<span class="token builtin">file</span><span class="token punctuation">.</span>write<span class="token punctuation">(</span>binary_data<span class="token punctuation">)</span>
+<span class="token builtin">file</span><span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<p>创建完成后右键属性可以看到是16字节数据，如果直接粘贴到文本文件里是32字节</p>
+<h3 id="4-3创建密钥信息文件"><a href="#4-3创建密钥信息文件" class="headerlink" title="4.3创建密钥信息文件"></a>4.3创建密钥信息文件</h3><p>新建一个key_info.txt文件 内容如下：</p>
+<pre class="language-ini" data-language="ini"><code class="language-ini">C:/Users/Administrator/Downloads/test/keyfile.key
+keyfile.key
+103f5d9f91fffe510f272457f8b7545e</code></pre>
+
+<p>1.第一行代表key文件的位置，如果是网络密钥可以使用http网址</p>
+<p>2.第二行代表key文件的名称</p>
+<p>3.第三行代表IV位移,将刚刚python生成的IV填进去即可</p>
+<h3 id="4-4加密"><a href="#4-4加密" class="headerlink" title="4.4加密"></a>4.4加密</h3><pre class="language-bash" data-language="bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> big_buck_bunny.mp4 <span class="token parameter variable">-hls_time</span> <span class="token number">10</span> <span class="token parameter variable">-hls_key_info_file</span> key_info.txt <span class="token parameter variable">-hls_segment_filename</span> <span class="token string">"file%d.ts"</span> <span class="token parameter variable">-hls_playlist_type</span> vod paylist.m3u8</code></pre>
+
+<p>-i 指定视频文件路径</p>
+<p>-hls_time 指定每个分片视频时长，单位秒</p>
+<p>-hls_key_info_file 指定密钥信息文件路径</p>
+<p>-hls_segment_filename 指定ts分片文件名称</p>
+<p>-hls_playlist_type 指定HLS（HTTP Live Streaming）播放列表的类型 vod表示HLS播放列表为点播类型。点播类型的播放列表会保存所有的媒体片段，并按照请求的顺序逐个播放。</p>
+<h2 id="5、解密ts合成为mp4"><a href="#5、解密ts合成为mp4" class="headerlink" title="5、解密ts合成为mp4"></a>5、解密ts合成为mp4</h2><p>注意：如果密钥为本地路径，则URI必须为反斜杠，如果m3u8文件和ts视频放在一起则可以不写绝对路径，如果写建议也写成反斜杠</p>
+<p>下面是我的m3u8文件示例：</p>
+<pre class="language-ini" data-language="ini"><code class="language-ini"><span class="token comment">#EXTM3U</span>
+<span class="token comment">#EXT-X-VERSION:3</span>
+<span class="token comment">#EXT-X-TARGETDURATION:14</span>
+<span class="token comment">#EXT-X-MEDIA-SEQUENCE:0</span>
+<span class="token comment">#EXT-X-PLAYLIST-TYPE:VOD</span>
+<span class="token comment">#EXT-X-KEY:METHOD=AES-128,URI="C:/Users/Administrator/Downloads/test/keyfile.key",IV=0x103f5d9f91fffe510f272457f8b7545e</span>
+<span class="token comment">#EXTINF:10.416667,</span>
+file0.ts
+<span class="token comment">#EXTINF:12.625000,</span>
+file1.ts
+<span class="token comment">#EXTINF:8.958333,</span>
+file2.ts
+<span class="token comment">#EXTINF:10.416667,</span>
+file3.ts
+<span class="token comment">#EXTINF:13.666667,</span>
+file4.ts
+<span class="token comment">#EXTINF:4.000000,</span>
+file5.ts
+<span class="token comment">#EXT-X-ENDLIST</span></code></pre>
+
+
+
+<p>解密&#x2F;合成mp4：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-allowed_extensions</span> ALL <span class="token parameter variable">-i</span> paylist.m3u8 <span class="token parameter variable">-c</span> copy output.mp4</code></pre>
+
+]]></content>
+      <tags>
+        <tag>ffmpeg</tag>
+        <tag>mp4</tag>
+        <tag>ts</tag>
+        <tag>m3u8</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git配置ssh</title>
     <url>/2023/06/30/git%E9%85%8D%E7%BD%AEssh/</url>
     <content><![CDATA[<p>git是现在代码管理的一个常用工具，采用两种传输方式 http ssh </p>
@@ -1960,95 +2143,6 @@ db.password 配置你的数据库的登录密码</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>ffmpeg加密解密合成mp4</title>
-    <url>/2023/07/28/ffmpeg%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E5%90%88%E6%88%90mp4/</url>
-    <content><![CDATA[<p>由于目前网络传输都是使用ts分段视频，而不是mp4，在网页中也没有下载按钮，所以需要下载网页中的m3u8视频文件和ts分段视频，然后根据m3u8中的ts列表合成为一个mp4视频，我们可以使用ffmpeg下载网页中的ts视频合成mp4，或者自己想要将mp4分解为ts</p>
-<span id="more"></span>
-
-<h2 id="1、下载ffmpeg"><a href="#1、下载ffmpeg" class="headerlink" title="1、下载ffmpeg"></a>1、下载ffmpeg</h2><p>官网：<a href="https://ffmpeg.org/download.html">https://ffmpeg.org/download.html</a></p>
-<p>或者可以到ffmpeg的官方github下载</p>
-<p><a href="https://github.com/BtbN/FFmpeg-Builds/releases">https://github.com/BtbN/FFmpeg-Builds/releases</a></p>
-<p>具体可以下载gpl格式的：</p>
-<p><a href="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip">https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip</a></p>
-<h2 id="2、配置环境变量"><a href="#2、配置环境变量" class="headerlink" title="2、配置环境变量"></a>2、配置环境变量</h2><p>我是将ffmpeg解压后放到C:\Program Files中，可以自行选择路径</p>
-<p>然后在环境变量Path中添加：C:\Program Files\ffmpeg\bin</p>
-<p>添加完成后重启电脑</p>
-<h2 id="3、不使用密钥仅将mp4分解为ts"><a href="#3、不使用密钥仅将mp4分解为ts" class="headerlink" title="3、不使用密钥仅将mp4分解为ts"></a>3、不使用密钥仅将mp4分解为ts</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> input.mp4 <span class="token parameter variable">-c</span> copy <span class="token parameter variable">-bsf:v</span> h264_mp4toannexb <span class="token parameter variable">-f</span> segment <span class="token parameter variable">-segment_list</span> playlist.m3u8 <span class="token parameter variable">-segment_time</span> <span class="token number">10</span> output%d.ts</code></pre>
-
-<ol>
-<li><code>-bsf:v h264_mp4toannexb</code>：它是FFmpeg中的比特流滤镜选项，用于将H.264视频流格式从MP4转换为Annex B格式。Annex B格式是TS（传输流）格式所使用的格式。</li>
-<li><code>-f segment</code>：这个选项告诉FFmpeg将输入文件分割成多个片段。</li>
-<li><code>-segment_list playlist.m3u8</code>：通过指定<code>playlist.m3u8</code>，FFmpeg将生成一个包含所有片段信息的M3U8播放列表文件。</li>
-<li>output%d.ts 分解的ts文件名称为 output0.ts  output1.ts等  %d表示数字</li>
-</ol>
-<h2 id="4、使用密钥分解mp4为ts"><a href="#4、使用密钥分解mp4为ts" class="headerlink" title="4、使用密钥分解mp4为ts"></a>4、使用密钥分解mp4为ts</h2><h3 id="4-1-使用python生成key和IV"><a href="#4-1-使用python生成key和IV" class="headerlink" title="4.1 使用python生成key和IV"></a>4.1 使用python生成key和IV</h3><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> binascii
-<span class="token keyword">import</span> secrets
-
-key <span class="token operator">=</span> secrets<span class="token punctuation">.</span>token_bytes<span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span>  <span class="token comment"># 生成16个字节作为密钥</span>
-iv <span class="token operator">=</span> secrets<span class="token punctuation">.</span>token_bytes<span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span>   <span class="token comment"># 生成16个字节作为IV</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>binascii<span class="token punctuation">.</span>hexlify<span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>binascii<span class="token punctuation">.</span>hexlify<span class="token punctuation">(</span>iv<span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
-
-<h3 id="4-2创建密钥文件"><a href="#4-2创建密钥文件" class="headerlink" title="4.2创建密钥文件"></a>4.2创建密钥文件</h3><p>需要使用winhex或者使用代码将十六进制写入文件，而不是直接手动创建文件将明文粘贴进去，直接粘贴进去的不算十六进制，这里使用python来创建一个keyfile.key文件</p>
-<pre class="language-python" data-language="python"><code class="language-python">hex_data <span class="token operator">=</span> <span class="token string">"893DA3D84435FF5B165C4D5B8089F4BC"</span>
-binary_data <span class="token operator">=</span> <span class="token builtin">bytes</span><span class="token punctuation">.</span>fromhex<span class="token punctuation">(</span>hex_data<span class="token punctuation">)</span>
-
-<span class="token builtin">file</span> <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"keyfile.key"</span><span class="token punctuation">,</span> <span class="token string">"wb"</span><span class="token punctuation">)</span>
-<span class="token builtin">file</span><span class="token punctuation">.</span>write<span class="token punctuation">(</span>binary_data<span class="token punctuation">)</span>
-<span class="token builtin">file</span><span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-
-<p>创建完成后右键属性可以看到是16字节数据，如果直接粘贴到文本文件里是32字节</p>
-<h3 id="4-3创建密钥信息文件"><a href="#4-3创建密钥信息文件" class="headerlink" title="4.3创建密钥信息文件"></a>4.3创建密钥信息文件</h3><p>新建一个key_info.txt文件 内容如下：</p>
-<pre class="language-ini" data-language="ini"><code class="language-ini">C:/Users/Administrator/Downloads/test/keyfile.key
-keyfile.key
-103f5d9f91fffe510f272457f8b7545e</code></pre>
-
-<p>1.第一行代表key文件的位置，如果是网络密钥可以使用http网址</p>
-<p>2.第二行代表key文件的名称</p>
-<p>3.第三行代表IV位移,将刚刚python生成的IV填进去即可</p>
-<h3 id="4-4加密"><a href="#4-4加密" class="headerlink" title="4.4加密"></a>4.4加密</h3><pre class="language-bash" data-language="bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-i</span> big_buck_bunny.mp4 <span class="token parameter variable">-hls_time</span> <span class="token number">10</span> <span class="token parameter variable">-hls_key_info_file</span> key_info.txt <span class="token parameter variable">-hls_segment_filename</span> <span class="token string">"file%d.ts"</span> <span class="token parameter variable">-hls_playlist_type</span> vod paylist.m3u8</code></pre>
-
-<p>-i 指定视频文件路径</p>
-<p>-hls_time 指定每个分片视频时长，单位秒</p>
-<p>-hls_key_info_file 指定密钥信息文件路径</p>
-<p>-hls_segment_filename 指定ts分片文件名称</p>
-<p>-hls_playlist_type 指定HLS（HTTP Live Streaming）播放列表的类型 vod表示HLS播放列表为点播类型。点播类型的播放列表会保存所有的媒体片段，并按照请求的顺序逐个播放。</p>
-<h2 id="5、解密ts合成为mp4"><a href="#5、解密ts合成为mp4" class="headerlink" title="5、解密ts合成为mp4"></a>5、解密ts合成为mp4</h2><p>注意：如果密钥为本地路径，则URI必须为反斜杠，如果m3u8文件和ts视频放在一起则可以不写绝对路径，如果写建议也写成反斜杠</p>
-<p>下面是我的m3u8文件示例：</p>
-<pre class="language-ini" data-language="ini"><code class="language-ini"><span class="token comment">#EXTM3U</span>
-<span class="token comment">#EXT-X-VERSION:3</span>
-<span class="token comment">#EXT-X-TARGETDURATION:14</span>
-<span class="token comment">#EXT-X-MEDIA-SEQUENCE:0</span>
-<span class="token comment">#EXT-X-PLAYLIST-TYPE:VOD</span>
-<span class="token comment">#EXT-X-KEY:METHOD=AES-128,URI="C:/Users/Administrator/Downloads/test/keyfile.key",IV=0x103f5d9f91fffe510f272457f8b7545e</span>
-<span class="token comment">#EXTINF:10.416667,</span>
-file0.ts
-<span class="token comment">#EXTINF:12.625000,</span>
-file1.ts
-<span class="token comment">#EXTINF:8.958333,</span>
-file2.ts
-<span class="token comment">#EXTINF:10.416667,</span>
-file3.ts
-<span class="token comment">#EXTINF:13.666667,</span>
-file4.ts
-<span class="token comment">#EXTINF:4.000000,</span>
-file5.ts
-<span class="token comment">#EXT-X-ENDLIST</span></code></pre>
-
-
-
-<p>解密&#x2F;合成mp4：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">ffmpeg <span class="token parameter variable">-allowed_extensions</span> ALL <span class="token parameter variable">-i</span> paylist.m3u8 <span class="token parameter variable">-c</span> copy output.mp4</code></pre>
-
-]]></content>
-      <tags>
-        <tag>ffmpeg</tag>
-        <tag>mp4</tag>
-        <tag>ts</tag>
-        <tag>m3u8</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>idea配置默认maven的jdk版本</title>
     <url>/2021/05/19/idea-maven/</url>
     <content><![CDATA[<p>前言：每一次我们使用idea创建一个项目时都默认使用的是jkd1.5，那么我们就会发现在代码的编写过程中很多新语法都无法使用，点击配置成1.8之后就只有这一个项目是生效的，再新建一个项目结果又要重新配置特别麻烦，那么有没有一种只要配置一次那么之后创建的每一个版本都使用我设置好的这一个版本</p>
@@ -2121,6 +2215,40 @@ file5.ts
       </tags>
   </entry>
   <entry>
+    <title>idea无限试用</title>
+    <url>/2021/11/07/idea%E6%97%A0%E9%99%90%E8%AF%95%E7%94%A8/</url>
+    <content><![CDATA[<p>按照以前的破解方式，我们会在安装好idea后点击试用，然后将破解的jar包丢进idea选择重启就可以破解到2089年了，但是这样的破解方式只能用在老版本的idea上，在新版的idea中，只要官网发布一次更新，那么破解的jar包就会失效，只能去寻找新的jar包继续破解，但是过不了几天就要找新的破解包的方式不免让我们觉得厌烦，那么我们想试用新版本但是又不想频繁的去寻找jar包应该要怎么做呢，其实在前几年就有人想出了idea无限试用的方法，idea安装后会有30天的试用期限，如果我们把这个信息删除那么不就又可以试用30天了吗。后来，又有人专门为idea做了一款插件，只要在idea中装上这个插件就可以达到无限试用的效果。</p>
+<span id="more"></span>
+
+<p>首先这里需要注意，2021.2.3版本开始，官方已经取消了试用的功能，也就是说你想要试用idea就必须登录账号，但是我们破解需要先进入idea才可以安装插件，所以我们可以将idea降级到2021.2.3版本之前即可，比如2021.2.2这个版本，然后我们选择试用30天，接着升级到最新版本即可，虽然2021.2.3版本没有了试用的功能，但是我们可以在之前的版本获得试用资格，然后升级最新版，最新版就可以知道我们还是有试用的天数的，就不会进行拦截。</p>
+<p>我们在idea的插件管理中添加一个插件的地址，<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 我们在搜索中搜索evel就会出现一个名叫IDE Eval Rest的插件，我们选择安装即可，安装完成后可以不用重启idea，我们直接点击主页的help，然后就会出现eval reset的选项，点击后可以选择重置也可以勾选自动重置，然后选择重启idea即可重置25天试用期，当我们勾选了自动重置后当我们每次重新打开idea就会自动重置使用时间，不用我们手动选择重置。是不是很方便呢。</p>
+<p>如果没有网络应该如何安装呢，我们可以直接进入<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 这个网站，然后选择网站内容中的下载安装即可下载idea插件的本地安装jar包，然后去idea中选择插件，并选择从本地磁盘安装插件即可选择jar包安装插件。</p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>jar启动报错Input length = 1</title>
+    <url>/2023/07/09/jar%E5%90%AF%E5%8A%A8%E6%8A%A5%E9%94%99Input/</url>
+    <content><![CDATA[<p>前言：在使用idea启动项目时设置了全局编码和文件编码都是utf-8启动正常，但是打成jar包在windows环境启动报错 <code>org.yaml.snakeyaml.error.YAMLException: java.nio.charset.MalformedInputException: Input length = 1</code></p>
+<p>原因是windows默认的编码是gbk，使用java -jar启动jar包时会默认使用系统环境编码，所以导致和配置文件的UTF-8不一致</p>
+<span id="more"></span>
+
+<h2 id="1、启动时指定编码"><a href="#1、启动时指定编码" class="headerlink" title="1、启动时指定编码"></a>1、启动时指定编码</h2><p>使用java -jar命令时指定文件编码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">java</span> <span class="token parameter variable">-jar</span> <span class="token parameter variable">-Dfile.encoding</span><span class="token operator">=</span>utf-8 xx.jar</code></pre>
+
+<h2 id="2、修改系统环境编码"><a href="#2、修改系统环境编码" class="headerlink" title="2、修改系统环境编码"></a>2、修改系统环境编码</h2><p>一般情况下不要修改windows的系统编码，默认为gbk即可，建议使用第一种方式指定启动编码。</p>
+<p>而liunx系统一般情况下是UTF-8编码，所以使用java -jar命令启动不会有问题。</p>
+<p>查询liunx系统编码：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">echo</span> <span class="token environment constant">$LANG</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何在centos7安装vnc</title>
     <url>/2021/03/18/installvnc/</url>
     <content><![CDATA[<ol>
@@ -2170,26 +2298,6 @@ file5.ts
       <tags>
         <tag>centos</tag>
         <tag>vnc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>jar启动报错Input length = 1</title>
-    <url>/2023/07/09/jar%E5%90%AF%E5%8A%A8%E6%8A%A5%E9%94%99Input/</url>
-    <content><![CDATA[<p>前言：在使用idea启动项目时设置了全局编码和文件编码都是utf-8启动正常，但是打成jar包在windows环境启动报错 <code>org.yaml.snakeyaml.error.YAMLException: java.nio.charset.MalformedInputException: Input length = 1</code></p>
-<p>原因是windows默认的编码是gbk，使用java -jar启动jar包时会默认使用系统环境编码，所以导致和配置文件的UTF-8不一致</p>
-<span id="more"></span>
-
-<h2 id="1、启动时指定编码"><a href="#1、启动时指定编码" class="headerlink" title="1、启动时指定编码"></a>1、启动时指定编码</h2><p>使用java -jar命令时指定文件编码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">java</span> <span class="token parameter variable">-jar</span> <span class="token parameter variable">-Dfile.encoding</span><span class="token operator">=</span>utf-8 xx.jar</code></pre>
-
-<h2 id="2、修改系统环境编码"><a href="#2、修改系统环境编码" class="headerlink" title="2、修改系统环境编码"></a>2、修改系统环境编码</h2><p>一般情况下不要修改windows的系统编码，默认为gbk即可，建议使用第一种方式指定启动编码。</p>
-<p>而liunx系统一般情况下是UTF-8编码，所以使用java -jar命令启动不会有问题。</p>
-<p>查询liunx系统编码：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">echo</span> <span class="token environment constant">$LANG</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>java</tag>
       </tags>
   </entry>
   <entry>
@@ -2621,39 +2729,6 @@ resp <span class="token operator">=</span> session<span class="token punctuation
       </tags>
   </entry>
   <entry>
-    <title>mac安装vnc server</title>
-    <url>/2021/05/19/mac-vnc/</url>
-    <content><![CDATA[<p>首先下载mac端的vnc Server</p>
-<p><a href="http://www.pc6.com/mac/165577.html">http://www.pc6.com/mac/165577.html</a></p>
-<p>然后进行安装，安装完成之后需要点击输入密钥进行激活，其实输入的是过期的密钥也可以进入vnc Server 下面提供几个可用的密钥</p>
-<pre class="language-asciiarmor" data-language="asciiarmor"><code class="language-asciiarmor">5D7L8-ZQXSA-2L5D4-4UFB4-PWDLA
-77NVU-D9G5T-79ESS-V9Y6X-JMVGA</code></pre>
-<span id="more"></span>
-<p>激活后如果要设置为对方不可控制你的电脑只能观看那么可以打开vnc菜单中的options</p>
-<p>然后第一个选项中的Encryption就是远程连接的方式，可以更改为密码连接，然后就会提示输入一个密码这个密码就可以用来连接我们的mac端vnc了</p>
-<p>我们再点击到第二个选项，Users&amp;Permissions</p>
-<p>这里可以添加用户和设置访问权限，我们可以点击第一个Global permission 也就是全局权限，我们将下面的Permission的所有权限取消就没有访问权限了，别人就只能看着你操作了，如果你不想全部取消那么你可以到百度翻译一下看看都是什么意思，然后把自己需要的选项打勾就可以了</p>
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>vnc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>idea无限试用</title>
-    <url>/2021/11/07/idea%E6%97%A0%E9%99%90%E8%AF%95%E7%94%A8/</url>
-    <content><![CDATA[<p>按照以前的破解方式，我们会在安装好idea后点击试用，然后将破解的jar包丢进idea选择重启就可以破解到2089年了，但是这样的破解方式只能用在老版本的idea上，在新版的idea中，只要官网发布一次更新，那么破解的jar包就会失效，只能去寻找新的jar包继续破解，但是过不了几天就要找新的破解包的方式不免让我们觉得厌烦，那么我们想试用新版本但是又不想频繁的去寻找jar包应该要怎么做呢，其实在前几年就有人想出了idea无限试用的方法，idea安装后会有30天的试用期限，如果我们把这个信息删除那么不就又可以试用30天了吗。后来，又有人专门为idea做了一款插件，只要在idea中装上这个插件就可以达到无限试用的效果。</p>
-<span id="more"></span>
-
-<p>首先这里需要注意，2021.2.3版本开始，官方已经取消了试用的功能，也就是说你想要试用idea就必须登录账号，但是我们破解需要先进入idea才可以安装插件，所以我们可以将idea降级到2021.2.3版本之前即可，比如2021.2.2这个版本，然后我们选择试用30天，接着升级到最新版本即可，虽然2021.2.3版本没有了试用的功能，但是我们可以在之前的版本获得试用资格，然后升级最新版，最新版就可以知道我们还是有试用的天数的，就不会进行拦截。</p>
-<p>我们在idea的插件管理中添加一个插件的地址，<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 我们在搜索中搜索evel就会出现一个名叫IDE Eval Rest的插件，我们选择安装即可，安装完成后可以不用重启idea，我们直接点击主页的help，然后就会出现eval reset的选项，点击后可以选择重置也可以勾选自动重置，然后选择重启idea即可重置25天试用期，当我们勾选了自动重置后当我们每次重新打开idea就会自动重置使用时间，不用我们手动选择重置。是不是很方便呢。</p>
-<p>如果没有网络应该如何安装呢，我们可以直接进入<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 这个网站，然后选择网站内容中的下载安装即可下载idea插件的本地安装jar包，然后去idea中选择插件，并选择从本地磁盘安装插件即可选择jar包安装插件。</p>
-]]></content>
-      <tags>
-        <tag>idea</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>liunx配置环境变量</title>
     <url>/2021/10/04/liunx%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
     <content><![CDATA[<p>首先在liunx中有两种环境变量，一种是系统级别的环境变量，一种是用户级别的环境变量</p>
@@ -2673,45 +2748,22 @@ resp <span class="token operator">=</span> session<span class="token punctuation
       </tags>
   </entry>
   <entry>
-    <title>mac启动springboot项目慢解决方案</title>
-    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
-    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
-<p>下面就是你的电脑地址.local</p>
-<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
+    <title>mac安装vnc server</title>
+    <url>/2021/05/19/mac-vnc/</url>
+    <content><![CDATA[<p>首先下载mac端的vnc Server</p>
+<p><a href="http://www.pc6.com/mac/165577.html">http://www.pc6.com/mac/165577.html</a></p>
+<p>然后进行安装，安装完成之后需要点击输入密钥进行激活，其实输入的是过期的密钥也可以进入vnc Server 下面提供几个可用的密钥</p>
+<pre class="language-asciiarmor" data-language="asciiarmor"><code class="language-asciiarmor">5D7L8-ZQXSA-2L5D4-4UFB4-PWDLA
+77NVU-D9G5T-79ESS-V9Y6X-JMVGA</code></pre>
 <span id="more"></span>
-
-<p>然后复制这段地址包括.local</p>
-<p><code>luoqingdeMacBook-Pro.local</code></p>
-<p>再打开本机的hosts，准备修改本地ip映射</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
-
-<p>原内容如下：</p>
-<pre class="language-none"><code class="language-none">##
-# Host Database
-#
-# localhost is used to configure the loopback interface
-# when the system is booting.  Do not change this entry.
-##
-127.0.0.1             localhost
-255.255.255.255     broadcasthost
-::1                 localhost </code></pre>
-
-<p>修改成如下：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
-<span class="token comment"># Host Database</span>
-<span class="token comment">#</span>
-<span class="token comment"># localhost is used to configure the loopback interface</span>
-<span class="token comment"># when the system is booting.  Do not change this entry.</span>
-<span class="token comment">##</span>
-<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
-<span class="token number">255.255</span>.255.255     broadcasthost
-::1                 localhost 你的机器名.local</code></pre>
-
-<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
+<p>激活后如果要设置为对方不可控制你的电脑只能观看那么可以打开vnc菜单中的options</p>
+<p>然后第一个选项中的Encryption就是远程连接的方式，可以更改为密码连接，然后就会提示输入一个密码这个密码就可以用来连接我们的mac端vnc了</p>
+<p>我们再点击到第二个选项，Users&amp;Permissions</p>
+<p>这里可以添加用户和设置访问权限，我们可以点击第一个Global permission 也就是全局权限，我们将下面的Permission的所有权限取消就没有访问权限了，别人就只能看着你操作了，如果你不想全部取消那么你可以到百度翻译一下看看都是什么意思，然后把自己需要的选项打勾就可以了</p>
 ]]></content>
       <tags>
         <tag>mac</tag>
-        <tag>springboot</tag>
+        <tag>vnc</tag>
       </tags>
   </entry>
   <entry>
@@ -2780,6 +2832,48 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
 ]]></content>
       <tags>
         <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mac启动springboot项目慢解决方案</title>
+    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
+<p>下面就是你的电脑地址.local</p>
+<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
+<span id="more"></span>
+
+<p>然后复制这段地址包括.local</p>
+<p><code>luoqingdeMacBook-Pro.local</code></p>
+<p>再打开本机的hosts，准备修改本地ip映射</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
+
+<p>原内容如下：</p>
+<pre class="language-none"><code class="language-none">##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1             localhost
+255.255.255.255     broadcasthost
+::1                 localhost </code></pre>
+
+<p>修改成如下：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
+<span class="token comment"># Host Database</span>
+<span class="token comment">#</span>
+<span class="token comment"># localhost is used to configure the loopback interface</span>
+<span class="token comment"># when the system is booting.  Do not change this entry.</span>
+<span class="token comment">##</span>
+<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
+<span class="token number">255.255</span>.255.255     broadcasthost
+::1                 localhost 你的机器名.local</code></pre>
+
+<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>springboot</tag>
       </tags>
   </entry>
   <entry>
@@ -2883,6 +2977,28 @@ collation-server&#x3D;utf8_general_ci</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>完美解决MySql出现1366中文错误</title>
+    <url>/2021/04/06/mysql-1366/</url>
+    <content><![CDATA[<p>在表中插入中文数据出现如下错误：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">Warning Code ：1366 Incorrect string value: <span class="token string">'\xE5\x9C\xA8'</span> <span class="token keyword">for</span> <span class="token function">column</span> <span class="token string">'content'</span> at row <span class="token number">1</span></code></pre>
+
+<p>数据库一般有三个字符编码，一个是数据库，一个是表，一个是列</p>
+<p>首先检查数据库是否为utf8字符集</p>
+<p>打开navicat，选择数据库右键编辑数据库就可以看到数据库的字符集，如果不是utf8我们就把字符集调成utf8，并且排序规则改为<code>utf8_general_ci</code>,这是数据库的utf8默认字符集，如果是utf8就不用改，然后点击确认</p>
+<span id="more"></span>
+
+<p><img src="/../../../../mysql1366/%E6%95%B0%E6%8D%AE%E5%BA%93.png" loading="lazy"></p>
+<p>我们再看一下表是否为utf8的字符集，同样用navicat选择报错的表，右键设计表，然后点击选项就可以看到表的默认字符集，如果不是utf8就改为和刚刚我们修改数据库字符集一样的编码，排序规则也是参照上面修改数据库的字符集和排序规则来</p>
+<p><img src="/../../../../mysql1366/%E8%A1%A8.png" alt="表" loading="lazy"></p>
+<p>然后我们再看一下字段的字符集是否为utf8</p>
+<p>我们现在还在设计表的选项中，我们切换回字段的选择，然后点击所有可以插入中文的字段，比如varchar类型的name，选中，然后下面就有这个字段的默认字符集，如果不是utf8我们也将他的字符集改为utf8然后保存就可以解决数据库的所有中文报错问题啦！</p>
+<p><img src="/../../../../mysql1366/%E5%AD%97%E6%AE%B5.png" alt="字段" loading="lazy"></p>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mysql忘记密码</title>
     <url>/2021/10/05/mysql%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<p>首先我们先停止mysql服务</p>
@@ -2966,25 +3082,30 @@ mysql&gt; exit;</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>完美解决MySql出现1366中文错误</title>
-    <url>/2021/04/06/mysql-1366/</url>
-    <content><![CDATA[<p>在表中插入中文数据出现如下错误：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">Warning Code ：1366 Incorrect string value: <span class="token string">'\xE5\x9C\xA8'</span> <span class="token keyword">for</span> <span class="token function">column</span> <span class="token string">'content'</span> at row <span class="token number">1</span></code></pre>
+    <title>nginx部署vue项目</title>
+    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
+<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
 
-<p>数据库一般有三个字符编码，一个是数据库，一个是表，一个是列</p>
-<p>首先检查数据库是否为utf8字符集</p>
-<p>打开navicat，选择数据库右键编辑数据库就可以看到数据库的字符集，如果不是utf8我们就把字符集调成utf8，并且排序规则改为<code>utf8_general_ci</code>,这是数据库的utf8默认字符集，如果是utf8就不用改，然后点击确认</p>
-<span id="more"></span>
+<p>然后安装运行所需要的依赖</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
 
-<p><img src="/../../../../mysql1366/%E6%95%B0%E6%8D%AE%E5%BA%93.png" loading="lazy"></p>
-<p>我们再看一下表是否为utf8的字符集，同样用navicat选择报错的表，右键设计表，然后点击选项就可以看到表的默认字符集，如果不是utf8就改为和刚刚我们修改数据库字符集一样的编码，排序规则也是参照上面修改数据库的字符集和排序规则来</p>
-<p><img src="/../../../../mysql1366/%E8%A1%A8.png" alt="表" loading="lazy"></p>
-<p>然后我们再看一下字段的字符集是否为utf8</p>
-<p>我们现在还在设计表的选项中，我们切换回字段的选择，然后点击所有可以插入中文的字段，比如varchar类型的name，选中，然后下面就有这个字段的默认字符集，如果不是utf8我们也将他的字符集改为utf8然后保存就可以解决数据库的所有中文报错问题啦！</p>
-<p><img src="/../../../../mysql1366/%E5%AD%97%E6%AE%B5.png" alt="字段" loading="lazy"></p>
+<p>安装完成后本地运行查看</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
+
+<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
+<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
+<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
+<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
+
+<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
+<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
 ]]></content>
       <tags>
-        <tag>mysql</tag>
+        <tag>nginx</tag>
+        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
@@ -3364,30 +3485,43 @@ nginx: configuration <span class="token function">file</span> /usr/local/nginx//
       </tags>
   </entry>
   <entry>
-    <title>nginx部署vue项目</title>
-    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
-    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
-<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
+    <title>rarcrack破解多种格式压缩包</title>
+    <url>/2021/03/28/rarcrack/</url>
+    <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
+<p><a href="https://gitee.com/luoqingBlog/rarcrack.git">https://gitee.com/luoqingBlog/rarcrack.git</a></p>
+<p>点击下载zip即可，也可以使用git工具的clone。</p>
+<p>下载完成后解压得到里面的文件，然后在mac或者Ubuntu上编译此文件</p>
+<p>直接cd切换到文件夹当中然后使用make即可，mac并没有自带编译工具，所以要先去下载安装</p>
+<p>编译</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span></code></pre>
+<span id="more"></span>
+<p>编译完成后问价夹里会多一个rarcrack可运行程序，mac版本尽量保持在mac10.x</p>
+<p>我的系统是bigsur11.0.1  使用make编译完成后无法使用。尽管可以使用也是密码只破解了几次就结束了程序，这个问题我在kali中使用apt-get安装rarcrack之后也是这个样子，但是在kali中使用aapt-get rarcrack命令安装的可以破解rar的类型文件，但是其他文件类型都不行，密码走了四行就停止了</p>
+<p>所以只有一个主意事项，mac版本尽量低于11.0</p>
+<p>这里我使用的是kali的最新版本2021来做测试，因为kali和Ubuntu一样使用的是同一个发行版本，命令也不尽相同。</p>
+<p>编译完成后我们就可以使用rarcrack来破解zip、rar、7z等格式的压缩包了，但是这里注意到是rarcrack只能使用暴力破解方式，也就是穷举法，是不支持自己使用字典破解的。</p>
+<p>破解</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">./rarcrack <span class="token parameter variable">--threads</span> <span class="token number">12</span> <span class="token parameter variable">--type</span> <span class="token function">zip</span> test.zip</code></pre>
 
-<p>然后安装运行所需要的依赖</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
+<p>这里我指定使用文件夹下的rarcrack程序进行破解，这里一定要加上.&#x2F;。 因为这样才会识别是使用你当前文件夹里的程序，而直接输入rarcrack的话会提示你找不到这个命令，因为你没有安装这个程序</p>
+<p>参数解释</p>
+<blockquote>
+<p>–threads 线程数。 最大不超过12。 超过也默认12</p>
+<p>–type   要破解的压缩包类型。 可选zip rar  7z</p>
+</blockquote>
+<p>在运行破解命令之后马上按CTRL+C停止命令。 因为我们要缩小破解的范围</p>
+<p>在压缩包的统计目录下会自动生成一个和压缩包同名的文件并且后缀为.xml</p>
+<p>我们使用记事本打开此文件，然后把<abc></abc>中间的字符串改成0123456789，这里的意思是指定纯数字破解，然后再把 <current></current>中间的内容改为0，表示从0开始破解 然后我们保存在运行一遍破解命令<code>./rarcrack --threads 12 --type zip test.zip</code>就会自动读取你的xml配置文件然后从0开始破解数字</p>
+<p>我们可以使用<code>top -H</code>来查看当前运行的程序，可以看到rarcrack一共有12个正在运行</p>
+<p>最后破解成功了就会显示</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">GOOD: password cracked: <span class="token string">'100'</span></code></pre>
 
-<p>安装完成后本地运行查看</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
-
-<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
-<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
-<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
-<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
-
-<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
-<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
+<p>这里成功破解出了密码是100</p>
+<p>如果要破解的文件是zip。可以使用fcrackzip来破解。 因为速度要快很多。其他格式就可以使用rarcrack来破解。但是时间较长。</p>
 ]]></content>
       <tags>
-        <tag>nginx</tag>
-        <tag>vue</tag>
+        <tag>rarcrack</tag>
+        <tag>zip</tag>
       </tags>
   </entry>
   <entry>
@@ -3826,46 +3960,6 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>rarcrack破解多种格式压缩包</title>
-    <url>/2021/03/28/rarcrack/</url>
-    <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
-<p><a href="https://gitee.com/luoqingBlog/rarcrack.git">https://gitee.com/luoqingBlog/rarcrack.git</a></p>
-<p>点击下载zip即可，也可以使用git工具的clone。</p>
-<p>下载完成后解压得到里面的文件，然后在mac或者Ubuntu上编译此文件</p>
-<p>直接cd切换到文件夹当中然后使用make即可，mac并没有自带编译工具，所以要先去下载安装</p>
-<p>编译</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span></code></pre>
-<span id="more"></span>
-<p>编译完成后问价夹里会多一个rarcrack可运行程序，mac版本尽量保持在mac10.x</p>
-<p>我的系统是bigsur11.0.1  使用make编译完成后无法使用。尽管可以使用也是密码只破解了几次就结束了程序，这个问题我在kali中使用apt-get安装rarcrack之后也是这个样子，但是在kali中使用aapt-get rarcrack命令安装的可以破解rar的类型文件，但是其他文件类型都不行，密码走了四行就停止了</p>
-<p>所以只有一个主意事项，mac版本尽量低于11.0</p>
-<p>这里我使用的是kali的最新版本2021来做测试，因为kali和Ubuntu一样使用的是同一个发行版本，命令也不尽相同。</p>
-<p>编译完成后我们就可以使用rarcrack来破解zip、rar、7z等格式的压缩包了，但是这里注意到是rarcrack只能使用暴力破解方式，也就是穷举法，是不支持自己使用字典破解的。</p>
-<p>破解</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">./rarcrack <span class="token parameter variable">--threads</span> <span class="token number">12</span> <span class="token parameter variable">--type</span> <span class="token function">zip</span> test.zip</code></pre>
-
-<p>这里我指定使用文件夹下的rarcrack程序进行破解，这里一定要加上.&#x2F;。 因为这样才会识别是使用你当前文件夹里的程序，而直接输入rarcrack的话会提示你找不到这个命令，因为你没有安装这个程序</p>
-<p>参数解释</p>
-<blockquote>
-<p>–threads 线程数。 最大不超过12。 超过也默认12</p>
-<p>–type   要破解的压缩包类型。 可选zip rar  7z</p>
-</blockquote>
-<p>在运行破解命令之后马上按CTRL+C停止命令。 因为我们要缩小破解的范围</p>
-<p>在压缩包的统计目录下会自动生成一个和压缩包同名的文件并且后缀为.xml</p>
-<p>我们使用记事本打开此文件，然后把<abc></abc>中间的字符串改成0123456789，这里的意思是指定纯数字破解，然后再把 <current></current>中间的内容改为0，表示从0开始破解 然后我们保存在运行一遍破解命令<code>./rarcrack --threads 12 --type zip test.zip</code>就会自动读取你的xml配置文件然后从0开始破解数字</p>
-<p>我们可以使用<code>top -H</code>来查看当前运行的程序，可以看到rarcrack一共有12个正在运行</p>
-<p>最后破解成功了就会显示</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">GOOD: password cracked: <span class="token string">'100'</span></code></pre>
-
-<p>这里成功破解出了密码是100</p>
-<p>如果要破解的文件是zip。可以使用fcrackzip来破解。 因为速度要快很多。其他格式就可以使用rarcrack来破解。但是时间较长。</p>
-]]></content>
-      <tags>
-        <tag>rarcrack</tag>
-        <tag>zip</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>windows切换版本</title>
     <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
     <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
@@ -3981,36 +4075,14 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
       </tags>
   </entry>
   <entry>
-    <title>接入支付宝沙箱支付</title>
-    <url>/2021/07/29/%E6%8E%A5%E5%85%A5%E6%94%AF%E4%BB%98%E5%AE%9D%E6%B2%99%E7%AE%B1%E6%94%AF%E4%BB%98/</url>
-    <content><![CDATA[<p>首先进入支付宝开放平台官网<a href="https://open.alipay.com/">https://open.alipay.com/</a> 使用自己的支付宝账户进行登录就可以了，期间如果要填一些信息正常填写即可</p>
-<p>登录成功后点击控制台管理，再往下滑找到研发服务<br><img src="/../../../../myImg/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%8E%A7%E5%88%B6%E5%8F%B0.png" loading="lazy"></p>
-<span id="more"></span>
-
-
-<p>进入之后你就可以看到自己的沙箱环境了，然后我们需要配置一下RSA2的密钥，这个密钥需要使用支付宝官方工具进行自动生成即可，这里可以选择windows版本以及mac版本，当然如果你不想下载这些工具你可以选择网页生成效果也是一样的，支付宝提供了一个专门生成密钥的网页给开发者使用<a href="https://miniu.alipay.com/keytool/create">https://miniu.alipay.com/keytool/create</a></p>
-<p>点击生成密钥即可生成应用的公钥和私钥，将应用公钥填写到支付宝的沙箱环境中即可</p>
-<p>然后我们可以往下滑就可以看到有各种支付的api，我们可以点击一个进入下载demo即可，这里我们选择手机网站或电脑网站</p>
-<p><img src="/../../../../myImg/%E6%B2%99%E7%AE%B1.png" loading="lazy"></p>
-<p>进入api会有各种教程教你如何使用这个api调用付款及用户信息，这里我们选择左边的菜单中的SDK&amp;DEMO 这里可以看到使用项目中需要下载的依赖以及demo</p>
-<p>我们下载一个demo进行尝试</p>
-<p>我们打开demo可以看见有一个配置文件和一个util工具类，工具类是用来记录日志的这个可以不用，我们打开配置文件查看一下<br><img src="/../../../../myImg/%E6%94%AF%E4%BB%98%E5%AE%9Ddemo.png" loading="lazy"></p>
-<p>第一个是appid，我们可以在支付宝沙箱应用的必看部分第一个看到，复制填上去即可</p>
-<p>第二个参数需要一个私钥，在之前我们生成的密钥中有应用的公钥和私钥，公钥我们已经填到支付宝沙箱环境中了，下面的私钥再填到配置文件中即可</p>
-<p>第三个参数是异步通知的回调地址，这里需要使用外网地址，如果测试环境没有可以选择内网穿透</p>
-<p>第四个参数是本地同步回调地址，也就是用户支付成功后过几秒会看到的页面，这里可以不需要外网，可以使用内网地址。</p>
-<p>第五个参数是请求网关地址，这个地址我们同样可以在支付宝的沙箱环境中找到</p>
-<p>第六个参数和第七个参数是编码规范我们不需要改动</p>
-<p>第八个参数是支付宝公钥，我们同样可以在支付宝沙箱环境中找到</p>
-<p>最后的两个参数也不需要改动</p>
-<p>这样我们的参数就配置好了，然后我们使用tomcat进行启动即可</p>
-<p>可以看到除了配置文件之外的业务核心代码都写在了jsp中，当然我们也可以将里面的代码放在mcv中执行，因为jsp中的代码就是java代码</p>
-<p>到了这里就可以使用demo对沙箱环境进行一个正常的支付扣款功能了  支付的时候选择账号密码登录然后使用沙箱给的账号密码付款即可</p>
+    <title>如何删除 Mac 上的 Office 许可证文件</title>
+    <url>/2021/11/07/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%20Mac%20%E4%B8%8A%E7%9A%84%20Office%20%E8%AE%B8%E5%8F%AF%E8%AF%81%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>我们平常在使用office时会使用批量许可证的软件，但是我们当我们卸载掉Office全家桶后再进行安装，发现还是显示已经使用了批量许可证激活，这时我们就要进行许可证的移除来保证可以使用我们购买的新的许可证进行激活</p>
+<p>首先我们可以在官网<a href="https://support.microsoft.com/zh-cn">https://support.microsoft.com/zh-cn</a> 搜索“如何删除 Mac 上的 Office 许可证文件”，然后第一个搜索结果就是了，我们将网页向下移动就可以发现有一个标题是“下载并运行许可证删除工具”，我们下载下来然后安装即可清除，这个安装是不会安装其他软件的，只会清除一次许可证。</p>
 ]]></content>
       <tags>
-        <tag>支付宝</tag>
-        <tag>沙箱</tag>
-        <tag>支付</tag>
+        <tag>mac</tag>
+        <tag>office</tag>
       </tags>
   </entry>
   <entry>
@@ -4046,14 +4118,36 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
       </tags>
   </entry>
   <entry>
-    <title>如何删除 Mac 上的 Office 许可证文件</title>
-    <url>/2021/11/07/%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%20Mac%20%E4%B8%8A%E7%9A%84%20Office%20%E8%AE%B8%E5%8F%AF%E8%AF%81%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>我们平常在使用office时会使用批量许可证的软件，但是我们当我们卸载掉Office全家桶后再进行安装，发现还是显示已经使用了批量许可证激活，这时我们就要进行许可证的移除来保证可以使用我们购买的新的许可证进行激活</p>
-<p>首先我们可以在官网<a href="https://support.microsoft.com/zh-cn">https://support.microsoft.com/zh-cn</a> 搜索“如何删除 Mac 上的 Office 许可证文件”，然后第一个搜索结果就是了，我们将网页向下移动就可以发现有一个标题是“下载并运行许可证删除工具”，我们下载下来然后安装即可清除，这个安装是不会安装其他软件的，只会清除一次许可证。</p>
+    <title>接入支付宝沙箱支付</title>
+    <url>/2021/07/29/%E6%8E%A5%E5%85%A5%E6%94%AF%E4%BB%98%E5%AE%9D%E6%B2%99%E7%AE%B1%E6%94%AF%E4%BB%98/</url>
+    <content><![CDATA[<p>首先进入支付宝开放平台官网<a href="https://open.alipay.com/">https://open.alipay.com/</a> 使用自己的支付宝账户进行登录就可以了，期间如果要填一些信息正常填写即可</p>
+<p>登录成功后点击控制台管理，再往下滑找到研发服务<br><img src="/../../../../myImg/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%8E%A7%E5%88%B6%E5%8F%B0.png" loading="lazy"></p>
+<span id="more"></span>
+
+
+<p>进入之后你就可以看到自己的沙箱环境了，然后我们需要配置一下RSA2的密钥，这个密钥需要使用支付宝官方工具进行自动生成即可，这里可以选择windows版本以及mac版本，当然如果你不想下载这些工具你可以选择网页生成效果也是一样的，支付宝提供了一个专门生成密钥的网页给开发者使用<a href="https://miniu.alipay.com/keytool/create">https://miniu.alipay.com/keytool/create</a></p>
+<p>点击生成密钥即可生成应用的公钥和私钥，将应用公钥填写到支付宝的沙箱环境中即可</p>
+<p>然后我们可以往下滑就可以看到有各种支付的api，我们可以点击一个进入下载demo即可，这里我们选择手机网站或电脑网站</p>
+<p><img src="/../../../../myImg/%E6%B2%99%E7%AE%B1.png" loading="lazy"></p>
+<p>进入api会有各种教程教你如何使用这个api调用付款及用户信息，这里我们选择左边的菜单中的SDK&amp;DEMO 这里可以看到使用项目中需要下载的依赖以及demo</p>
+<p>我们下载一个demo进行尝试</p>
+<p>我们打开demo可以看见有一个配置文件和一个util工具类，工具类是用来记录日志的这个可以不用，我们打开配置文件查看一下<br><img src="/../../../../myImg/%E6%94%AF%E4%BB%98%E5%AE%9Ddemo.png" loading="lazy"></p>
+<p>第一个是appid，我们可以在支付宝沙箱应用的必看部分第一个看到，复制填上去即可</p>
+<p>第二个参数需要一个私钥，在之前我们生成的密钥中有应用的公钥和私钥，公钥我们已经填到支付宝沙箱环境中了，下面的私钥再填到配置文件中即可</p>
+<p>第三个参数是异步通知的回调地址，这里需要使用外网地址，如果测试环境没有可以选择内网穿透</p>
+<p>第四个参数是本地同步回调地址，也就是用户支付成功后过几秒会看到的页面，这里可以不需要外网，可以使用内网地址。</p>
+<p>第五个参数是请求网关地址，这个地址我们同样可以在支付宝的沙箱环境中找到</p>
+<p>第六个参数和第七个参数是编码规范我们不需要改动</p>
+<p>第八个参数是支付宝公钥，我们同样可以在支付宝沙箱环境中找到</p>
+<p>最后的两个参数也不需要改动</p>
+<p>这样我们的参数就配置好了，然后我们使用tomcat进行启动即可</p>
+<p>可以看到除了配置文件之外的业务核心代码都写在了jsp中，当然我们也可以将里面的代码放在mcv中执行，因为jsp中的代码就是java代码</p>
+<p>到了这里就可以使用demo对沙箱环境进行一个正常的支付扣款功能了  支付的时候选择账号密码登录然后使用沙箱给的账号密码付款即可</p>
 ]]></content>
       <tags>
-        <tag>mac</tag>
-        <tag>office</tag>
+        <tag>支付宝</tag>
+        <tag>沙箱</tag>
+        <tag>支付</tag>
       </tags>
   </entry>
   <entry>
@@ -4116,76 +4210,27 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
       </tags>
   </entry>
   <entry>
-    <title>通过PKCE获取ChatGPT的AccessToken</title>
-    <url>/2023/06/30/%E9%80%9A%E8%BF%87PKCE%E8%8E%B7%E5%8F%96ChatGPT%E7%9A%84AccessToken/</url>
-    <content><![CDATA[<p>前言：今天看到知了出了一篇文章说有一个新的方法可以获取chatgpt的AccessToken，可能自己后面会用到所以转载一下，以下内容均来源于：<a href="https://zhile.io/2023/05/19/how-to-get-chatgpt-access-token-via-pkce.html">https://zhile.io/2023/05/19/how-to-get-chatgpt-access-token-via-pkce.html</a></p>
+    <title>老毛子固件共享ss</title>
+    <url>/2021/10/03/%E8%80%81%E6%AF%9B%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%85%B1%E4%BA%ABss/</url>
+    <content><![CDATA[<p>使用场景：使用路由器连接ss然后任意一台设备连接到路由器下都可以访问国外网站</p>
+<p>首先我们这里使用到的是斐讯K2路由器，已经刷好老毛子固件，本来是想在openwrt固件里连接ss，但是发现斐讯k2刷了opwnwrt固件后内存只剩1.5M，而安装一个ss或者v2ray插件的空间则需要4M左右，所以只能放弃，网上也有其他的方式，这里我们直接使用老毛子固件自带的ss插件进行操作，这样我们只需要输入账号密码就可以了</p>
+<p>首先我们保证路由器的上网功能是已经设置好的，并且可以访问外网，也就是设置一个宽带连接的事，这里应该不用我说，我们来设置ss</p>
 <span id="more"></span>
 
-<p>借助今天OpenAI公布的iOS版本的ChaGPT，我们可以通过PKCE拿到AccessToken。<br>我先简单写一下，不懂的自己去查资料。</p>
-<pre class="language-none"><code class="language-none">https:&#x2F;&#x2F;auth0.openai.com&#x2F;authorize?client_id&#x3D;pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh&amp;audience&#x3D;https%3A%2F%2Fapi.openai.com%2Fv1&amp;redirect_uri&#x3D;com.openai.chat%3A%2F%2Fauth0.openai.com%2Fios%2Fcom.openai.chat%2Fcallback&amp;scope&#x3D;openid%20email%20profile%20offline_access%20model.request%20model.read%20organization.read%20offline&amp;response_type&#x3D;code&amp;code_challenge&#x3D;w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY&amp;code_challenge_method&#x3D;S256</code></pre>
-
-<p>我们看这个登录的链接，这就是一个标准的Oauth里登录链接。<strong>通过这个方法这里的scope是可以换的。</strong><br>上面的登录链接会直接使用你浏览器里已登录的账号，直接跳转。如果你希望每次都登录则使用这个地址：</p>
-<pre class="language-none"><code class="language-none">https:&#x2F;&#x2F;auth0.openai.com&#x2F;authorize?client_id&#x3D;pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh&amp;audience&#x3D;https%3A%2F%2Fapi.openai.com%2Fv1&amp;redirect_uri&#x3D;com.openai.chat%3A%2F%2Fauth0.openai.com%2Fios%2Fcom.openai.chat%2Fcallback&amp;scope&#x3D;openid%20email%20profile%20offline_access%20model.request%20model.read%20organization.read%20offline&amp;response_type&#x3D;code&amp;code_challenge&#x3D;w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY&amp;code_challenge_method&#x3D;S256&amp;prompt&#x3D;login</code></pre>
-
-<p>其实很简单，就是加了个<code>prompt=login</code>参数。</p>
-<p>链接里的<code>code_challenge</code>可以通过如下代码生成（这段代码GPT帮我写的，跟我说：谢谢OpenAI）：</p>
-<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> os
-<span class="token keyword">import</span> base64
-<span class="token keyword">import</span> hashlib
-
-<span class="token keyword">def</span> <span class="token function">generate_code_verifier</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token comment"># 随机生成一个长度为 32 的 code_verifier</span>
-    token <span class="token operator">=</span> os<span class="token punctuation">.</span>urandom<span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">)</span>
-    code_verifier <span class="token operator">=</span> base64<span class="token punctuation">.</span>urlsafe_b64encode<span class="token punctuation">(</span>token<span class="token punctuation">)</span><span class="token punctuation">.</span>rstrip<span class="token punctuation">(</span><span class="token string">b'='</span><span class="token punctuation">)</span>
-    <span class="token keyword">return</span> code_verifier<span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
-
-<span class="token keyword">def</span> <span class="token function">generate_code_challenge</span><span class="token punctuation">(</span>code_verifier<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token comment"># 对 code_verifier 进行哈希处理，然后再进行 base64url 编码，生成 code_challenge</span>
-    m <span class="token operator">=</span> hashlib<span class="token punctuation">.</span>sha256<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    m<span class="token punctuation">.</span>update<span class="token punctuation">(</span>code_verifier<span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    code_challenge <span class="token operator">=</span> base64<span class="token punctuation">.</span>urlsafe_b64encode<span class="token punctuation">(</span>m<span class="token punctuation">.</span>digest<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>rstrip<span class="token punctuation">(</span><span class="token string">b'='</span><span class="token punctuation">)</span>
-    <span class="token keyword">return</span> code_challenge<span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
-
-code_verifier <span class="token operator">=</span> generate_code_verifier<span class="token punctuation">(</span><span class="token punctuation">)</span>
-code_challenge <span class="token operator">=</span> generate_code_challenge<span class="token punctuation">(</span>code_verifier<span class="token punctuation">)</span>
-
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"code_verifier: "</span><span class="token punctuation">,</span> code_verifier<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"code_challenge: "</span><span class="token punctuation">,</span> code_challenge<span class="token punctuation">)</span></code></pre>
-
-<p>对，就是用这里生成的<code>code_challenge</code>来替换链接里的，同时你需要记下这里的 <code>code_verifier</code>，后面要用。</p>
-<p>我这里给一对例子，可以直接用：</p>
-<pre class="language-none"><code class="language-none">code_verifier:  IkrrBD89CBmwwzM-csfBnWKLMan5uE7laCMd2YTcPWE
-code_challenge:  t1RM5eR6dToh4VAe85qAf4ANdsnob6ANiuyl_z67mr4</code></pre>
-
-<p>现在请求拼装好的链接，登录成功后会跳转到 <code>com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback?code=dbzSm1K578wMZ26GXXUri18a5_e024Dew123kzuiZ_Kq9</code> 这里的code每次不同。</p>
-<p>现在我们收集到这里的信息之后，<code>POST</code> 请求：<code>https://auth0.openai.com/oauth/token</code><br>请求内容为json</p>
-<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
-    <span class="token property">"redirect_uri"</span><span class="token operator">:</span> <span class="token string">"com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback"</span><span class="token punctuation">,</span>
-    <span class="token property">"grant_type"</span><span class="token operator">:</span> <span class="token string">"authorization_code"</span><span class="token punctuation">,</span>
-    <span class="token property">"client_id"</span><span class="token operator">:</span> <span class="token string">"pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh"</span><span class="token punctuation">,</span>
-    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token string">"替换成你拿到的code"</span><span class="token punctuation">,</span>
-    <span class="token property">"code_verifier"</span><span class="token operator">:</span> <span class="token string">"替换成你前面生成的code_verifier"</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>请求了就能拿到 access token了，这个token可以使用ChatGPT。也可以在 <a href="https://github.com/pengzhile/pandora">Pandora</a> 中使用。</p>
-<p>补一下<code>Refresh Token</code>的内容：<br>在我们上步骤<code>POST</code>拿到access token之后，同时也会拿到一个refresh token，这个是用来刷新access token的（反正看OAuth就懂了）。<br>我们可以这么使用：还是 <code>POST</code> 请求： <code>https://auth0.openai.com/oauth/token</code><br>请求内容为json</p>
-<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
-    <span class="token property">"redirect_uri"</span><span class="token operator">:</span> <span class="token string">"com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback"</span><span class="token punctuation">,</span>
-    <span class="token property">"grant_type"</span><span class="token operator">:</span> <span class="token string">"refresh_token"</span><span class="token punctuation">,</span>
-    <span class="token property">"client_id"</span><span class="token operator">:</span> <span class="token string">"pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh"</span><span class="token punctuation">,</span>
-    <span class="token property">"refresh_token"</span><span class="token operator">:</span> <span class="token string">"上步获取的refresh token"</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p><strong>你可以看到这里请求，只需要refresh token就能刷新并获取到新的access token！所以你万万不可以泄露refresh token！！</strong></p>
-<p>这里补充一下，如果泄露了refresh token，如何来吊销的方法（<strong>是吊销refresh token</strong>）：</p>
-<p><code>POST</code> 请求：<code>https://auth0.openai.com/oauth/revoke</code><br>请求内容为json</p>
-<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
-    <span class="token property">"client_id"</span><span class="token operator">:</span> <span class="token string">"pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh"</span><span class="token punctuation">,</span>
-    <span class="token property">"token"</span><span class="token operator">:</span> <span class="token string">"要吊销的refresh token"</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<p>首先点击老毛子后台的ShadowSocks菜单</p>
+<p><img src="/../../../../myImg/image-20211003172948073.png" alt="image-20211003172948073" loading="lazy"></p>
+<p>然后我们可以导入一个单节点，也可以导入订阅，这里我们准备好一个可用的单节点进行尝试，导入完成后节点配置中会有一个节点</p>
+<p><img src="/../../../../myImg/image-20211003173150774.png" alt="image-20211003173150774" loading="lazy"></p>
+<p>导入完成可以看到这些参数都是自动填到里面的，我们可以不用改动，唯一需要改动的可以改一下节点名称，然后在当前使用服务器节点填上已经导入的节点的名称</p>
+<p><img src="/../../../../myImg/image-20211003173254474.png" alt="image-20211003173254474" loading="lazy"></p>
+<p>然后我们就可以看到最下面的参数已经全部填好了</p>
+<p><img src="/../../../../myImg/image-20211003173359084.png" alt="image-20211003173359084" loading="lazy"></p>
+<p>然后我们转到ss配置，填写以下信息，其他的不用填，因为都是自动填好的不用管</p>
+<p><img src="/../../../../myImg/image-20211003173510025.png" alt="image-20211003173510025" loading="lazy"></p>
+<p>然后把对应的开关打开，再应用页面设置就可以尝试访问谷歌看一下效果了</p>
 ]]></content>
       <tags>
-        <tag>chatgpt</tag>
+        <tag>ss</tag>
       </tags>
   </entry>
   <entry>
@@ -4575,27 +4620,76 @@ binary_data <span class="token operator">=</span> <span class="token builtin">by
       </tags>
   </entry>
   <entry>
-    <title>老毛子固件共享ss</title>
-    <url>/2021/10/03/%E8%80%81%E6%AF%9B%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%85%B1%E4%BA%ABss/</url>
-    <content><![CDATA[<p>使用场景：使用路由器连接ss然后任意一台设备连接到路由器下都可以访问国外网站</p>
-<p>首先我们这里使用到的是斐讯K2路由器，已经刷好老毛子固件，本来是想在openwrt固件里连接ss，但是发现斐讯k2刷了opwnwrt固件后内存只剩1.5M，而安装一个ss或者v2ray插件的空间则需要4M左右，所以只能放弃，网上也有其他的方式，这里我们直接使用老毛子固件自带的ss插件进行操作，这样我们只需要输入账号密码就可以了</p>
-<p>首先我们保证路由器的上网功能是已经设置好的，并且可以访问外网，也就是设置一个宽带连接的事，这里应该不用我说，我们来设置ss</p>
+    <title>通过PKCE获取ChatGPT的AccessToken</title>
+    <url>/2023/06/30/%E9%80%9A%E8%BF%87PKCE%E8%8E%B7%E5%8F%96ChatGPT%E7%9A%84AccessToken/</url>
+    <content><![CDATA[<p>前言：今天看到知了出了一篇文章说有一个新的方法可以获取chatgpt的AccessToken，可能自己后面会用到所以转载一下，以下内容均来源于：<a href="https://zhile.io/2023/05/19/how-to-get-chatgpt-access-token-via-pkce.html">https://zhile.io/2023/05/19/how-to-get-chatgpt-access-token-via-pkce.html</a></p>
 <span id="more"></span>
 
-<p>首先点击老毛子后台的ShadowSocks菜单</p>
-<p><img src="/../../../../myImg/image-20211003172948073.png" alt="image-20211003172948073" loading="lazy"></p>
-<p>然后我们可以导入一个单节点，也可以导入订阅，这里我们准备好一个可用的单节点进行尝试，导入完成后节点配置中会有一个节点</p>
-<p><img src="/../../../../myImg/image-20211003173150774.png" alt="image-20211003173150774" loading="lazy"></p>
-<p>导入完成可以看到这些参数都是自动填到里面的，我们可以不用改动，唯一需要改动的可以改一下节点名称，然后在当前使用服务器节点填上已经导入的节点的名称</p>
-<p><img src="/../../../../myImg/image-20211003173254474.png" alt="image-20211003173254474" loading="lazy"></p>
-<p>然后我们就可以看到最下面的参数已经全部填好了</p>
-<p><img src="/../../../../myImg/image-20211003173359084.png" alt="image-20211003173359084" loading="lazy"></p>
-<p>然后我们转到ss配置，填写以下信息，其他的不用填，因为都是自动填好的不用管</p>
-<p><img src="/../../../../myImg/image-20211003173510025.png" alt="image-20211003173510025" loading="lazy"></p>
-<p>然后把对应的开关打开，再应用页面设置就可以尝试访问谷歌看一下效果了</p>
+<p>借助今天OpenAI公布的iOS版本的ChaGPT，我们可以通过PKCE拿到AccessToken。<br>我先简单写一下，不懂的自己去查资料。</p>
+<pre class="language-none"><code class="language-none">https:&#x2F;&#x2F;auth0.openai.com&#x2F;authorize?client_id&#x3D;pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh&amp;audience&#x3D;https%3A%2F%2Fapi.openai.com%2Fv1&amp;redirect_uri&#x3D;com.openai.chat%3A%2F%2Fauth0.openai.com%2Fios%2Fcom.openai.chat%2Fcallback&amp;scope&#x3D;openid%20email%20profile%20offline_access%20model.request%20model.read%20organization.read%20offline&amp;response_type&#x3D;code&amp;code_challenge&#x3D;w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY&amp;code_challenge_method&#x3D;S256</code></pre>
+
+<p>我们看这个登录的链接，这就是一个标准的Oauth里登录链接。<strong>通过这个方法这里的scope是可以换的。</strong><br>上面的登录链接会直接使用你浏览器里已登录的账号，直接跳转。如果你希望每次都登录则使用这个地址：</p>
+<pre class="language-none"><code class="language-none">https:&#x2F;&#x2F;auth0.openai.com&#x2F;authorize?client_id&#x3D;pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh&amp;audience&#x3D;https%3A%2F%2Fapi.openai.com%2Fv1&amp;redirect_uri&#x3D;com.openai.chat%3A%2F%2Fauth0.openai.com%2Fios%2Fcom.openai.chat%2Fcallback&amp;scope&#x3D;openid%20email%20profile%20offline_access%20model.request%20model.read%20organization.read%20offline&amp;response_type&#x3D;code&amp;code_challenge&#x3D;w6n3Ix420Xhhu-Q5-mOOEyuPZmAsJHUbBpO8Ub7xBCY&amp;code_challenge_method&#x3D;S256&amp;prompt&#x3D;login</code></pre>
+
+<p>其实很简单，就是加了个<code>prompt=login</code>参数。</p>
+<p>链接里的<code>code_challenge</code>可以通过如下代码生成（这段代码GPT帮我写的，跟我说：谢谢OpenAI）：</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> os
+<span class="token keyword">import</span> base64
+<span class="token keyword">import</span> hashlib
+
+<span class="token keyword">def</span> <span class="token function">generate_code_verifier</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 随机生成一个长度为 32 的 code_verifier</span>
+    token <span class="token operator">=</span> os<span class="token punctuation">.</span>urandom<span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">)</span>
+    code_verifier <span class="token operator">=</span> base64<span class="token punctuation">.</span>urlsafe_b64encode<span class="token punctuation">(</span>token<span class="token punctuation">)</span><span class="token punctuation">.</span>rstrip<span class="token punctuation">(</span><span class="token string">b'='</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> code_verifier<span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">generate_code_challenge</span><span class="token punctuation">(</span>code_verifier<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 对 code_verifier 进行哈希处理，然后再进行 base64url 编码，生成 code_challenge</span>
+    m <span class="token operator">=</span> hashlib<span class="token punctuation">.</span>sha256<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    m<span class="token punctuation">.</span>update<span class="token punctuation">(</span>code_verifier<span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    code_challenge <span class="token operator">=</span> base64<span class="token punctuation">.</span>urlsafe_b64encode<span class="token punctuation">(</span>m<span class="token punctuation">.</span>digest<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>rstrip<span class="token punctuation">(</span><span class="token string">b'='</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> code_challenge<span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
+
+code_verifier <span class="token operator">=</span> generate_code_verifier<span class="token punctuation">(</span><span class="token punctuation">)</span>
+code_challenge <span class="token operator">=</span> generate_code_challenge<span class="token punctuation">(</span>code_verifier<span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"code_verifier: "</span><span class="token punctuation">,</span> code_verifier<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"code_challenge: "</span><span class="token punctuation">,</span> code_challenge<span class="token punctuation">)</span></code></pre>
+
+<p>对，就是用这里生成的<code>code_challenge</code>来替换链接里的，同时你需要记下这里的 <code>code_verifier</code>，后面要用。</p>
+<p>我这里给一对例子，可以直接用：</p>
+<pre class="language-none"><code class="language-none">code_verifier:  IkrrBD89CBmwwzM-csfBnWKLMan5uE7laCMd2YTcPWE
+code_challenge:  t1RM5eR6dToh4VAe85qAf4ANdsnob6ANiuyl_z67mr4</code></pre>
+
+<p>现在请求拼装好的链接，登录成功后会跳转到 <code>com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback?code=dbzSm1K578wMZ26GXXUri18a5_e024Dew123kzuiZ_Kq9</code> 这里的code每次不同。</p>
+<p>现在我们收集到这里的信息之后，<code>POST</code> 请求：<code>https://auth0.openai.com/oauth/token</code><br>请求内容为json</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"redirect_uri"</span><span class="token operator">:</span> <span class="token string">"com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback"</span><span class="token punctuation">,</span>
+    <span class="token property">"grant_type"</span><span class="token operator">:</span> <span class="token string">"authorization_code"</span><span class="token punctuation">,</span>
+    <span class="token property">"client_id"</span><span class="token operator">:</span> <span class="token string">"pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh"</span><span class="token punctuation">,</span>
+    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token string">"替换成你拿到的code"</span><span class="token punctuation">,</span>
+    <span class="token property">"code_verifier"</span><span class="token operator">:</span> <span class="token string">"替换成你前面生成的code_verifier"</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>请求了就能拿到 access token了，这个token可以使用ChatGPT。也可以在 <a href="https://github.com/pengzhile/pandora">Pandora</a> 中使用。</p>
+<p>补一下<code>Refresh Token</code>的内容：<br>在我们上步骤<code>POST</code>拿到access token之后，同时也会拿到一个refresh token，这个是用来刷新access token的（反正看OAuth就懂了）。<br>我们可以这么使用：还是 <code>POST</code> 请求： <code>https://auth0.openai.com/oauth/token</code><br>请求内容为json</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"redirect_uri"</span><span class="token operator">:</span> <span class="token string">"com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback"</span><span class="token punctuation">,</span>
+    <span class="token property">"grant_type"</span><span class="token operator">:</span> <span class="token string">"refresh_token"</span><span class="token punctuation">,</span>
+    <span class="token property">"client_id"</span><span class="token operator">:</span> <span class="token string">"pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh"</span><span class="token punctuation">,</span>
+    <span class="token property">"refresh_token"</span><span class="token operator">:</span> <span class="token string">"上步获取的refresh token"</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p><strong>你可以看到这里请求，只需要refresh token就能刷新并获取到新的access token！所以你万万不可以泄露refresh token！！</strong></p>
+<p>这里补充一下，如果泄露了refresh token，如何来吊销的方法（<strong>是吊销refresh token</strong>）：</p>
+<p><code>POST</code> 请求：<code>https://auth0.openai.com/oauth/revoke</code><br>请求内容为json</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"client_id"</span><span class="token operator">:</span> <span class="token string">"pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh"</span><span class="token punctuation">,</span>
+    <span class="token property">"token"</span><span class="token operator">:</span> <span class="token string">"要吊销的refresh token"</span>
+<span class="token punctuation">&#125;</span></code></pre>
 ]]></content>
       <tags>
-        <tag>ss</tag>
+        <tag>chatgpt</tag>
       </tags>
   </entry>
 </search>
