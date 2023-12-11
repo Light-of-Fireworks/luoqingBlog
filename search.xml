@@ -2418,26 +2418,6 @@ file5.ts
       </tags>
   </entry>
   <entry>
-    <title>jar启动报错Input length = 1</title>
-    <url>/2023/07/09/jar%E5%90%AF%E5%8A%A8%E6%8A%A5%E9%94%99Input/</url>
-    <content><![CDATA[<p>前言：在使用idea启动项目时设置了全局编码和文件编码都是utf-8启动正常，但是打成jar包在windows环境启动报错 <code>org.yaml.snakeyaml.error.YAMLException: java.nio.charset.MalformedInputException: Input length = 1</code></p>
-<p>原因是windows默认的编码是gbk，使用java -jar启动jar包时会默认使用系统环境编码，所以导致和配置文件的UTF-8不一致</p>
-<span id="more"></span>
-
-<h2 id="1、启动时指定编码"><a href="#1、启动时指定编码" class="headerlink" title="1、启动时指定编码"></a>1、启动时指定编码</h2><p>使用java -jar命令时指定文件编码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">java</span> <span class="token parameter variable">-jar</span> <span class="token parameter variable">-Dfile.encoding</span><span class="token operator">=</span>utf-8 xx.jar</code></pre>
-
-<h2 id="2、修改系统环境编码"><a href="#2、修改系统环境编码" class="headerlink" title="2、修改系统环境编码"></a>2、修改系统环境编码</h2><p>一般情况下不要修改windows的系统编码，默认为gbk即可，建议使用第一种方式指定启动编码。</p>
-<p>而liunx系统一般情况下是UTF-8编码，所以使用java -jar命令启动不会有问题。</p>
-<p>查询liunx系统编码：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">echo</span> <span class="token environment constant">$LANG</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>jdk8新特性</title>
     <url>/2021/10/02/jdk8%E6%96%B0%E7%89%B9%E6%80%A7/</url>
     <content><![CDATA[<p>jdk8自带了一个jjs的脚本，如果是windows安装，可以在自己安装好的jdk目录下看到有一个jjs.exe的脚本</p>
@@ -2735,6 +2715,26 @@ passwd：已成功更新密码</code></pre>
         <tag>kali</tag>
         <tag>ssh</tag>
         <tag>root</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>jar启动报错Input length = 1</title>
+    <url>/2023/07/09/jar%E5%90%AF%E5%8A%A8%E6%8A%A5%E9%94%99Input/</url>
+    <content><![CDATA[<p>前言：在使用idea启动项目时设置了全局编码和文件编码都是utf-8启动正常，但是打成jar包在windows环境启动报错 <code>org.yaml.snakeyaml.error.YAMLException: java.nio.charset.MalformedInputException: Input length = 1</code></p>
+<p>原因是windows默认的编码是gbk，使用java -jar启动jar包时会默认使用系统环境编码，所以导致和配置文件的UTF-8不一致</p>
+<span id="more"></span>
+
+<h2 id="1、启动时指定编码"><a href="#1、启动时指定编码" class="headerlink" title="1、启动时指定编码"></a>1、启动时指定编码</h2><p>使用java -jar命令时指定文件编码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">java</span> <span class="token parameter variable">-jar</span> <span class="token parameter variable">-Dfile.encoding</span><span class="token operator">=</span>utf-8 xx.jar</code></pre>
+
+<h2 id="2、修改系统环境编码"><a href="#2、修改系统环境编码" class="headerlink" title="2、修改系统环境编码"></a>2、修改系统环境编码</h2><p>一般情况下不要修改windows的系统编码，默认为gbk即可，建议使用第一种方式指定启动编码。</p>
+<p>而liunx系统一般情况下是UTF-8编码，所以使用java -jar命令启动不会有问题。</p>
+<p>查询liunx系统编码：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">echo</span> <span class="token environment constant">$LANG</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>java</tag>
       </tags>
   </entry>
   <entry>
@@ -3625,6 +3625,42 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>trim()方法和strip()方法之间的区别</title>
+    <url>/2021/10/02/trim-%E6%96%B9%E6%B3%95%E5%92%8Cstrip-%E6%96%B9%E6%B3%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>Java在JDK11中的String类中引入strip方法，trim()和strip()功能类似，主要区别是:</p>
+<p>trim()可以去除字符串前后的半角空白字符<br>strip()可以去除字符串前后的全角和半角空白字符</p>
+<p>半角和全角<br>半角是我们多数人在打字的时候使用的状态，如果我们不去刻意调整半全角，它会一直伴随着我们，因为半角状态下，人们已经习惯了这种打字模式，半角状态下可以使用任何标点符号，而且对于空格也没有特殊限制。<br>全角占两个字节，半角占一个字节。半角全角主要是针对标点符号来说的，全角标点占两个字节，半角占一个字节，而不管是半角还是全角，汉字都还是要占两个字节。<br>这里并非一个全角空白字符等于两个半角空白字符。<br>所以半角空白字符占用一个字节,半角的空白字符unicode编码为\u0020。<br>全角空白字符占用两个字节，全角的空白字符unicode编码为\u3000。</p>
+<span id="more"></span>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">String</span> test1<span class="token operator">=</span><span class="token string">"测试\u0020"</span><span class="token punctuation">;</span><span class="token comment">//半角unicode</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+
+        <span class="token class-name">String</span> test2<span class="token operator">=</span><span class="token string">"测试\u3000"</span><span class="token punctuation">;</span><span class="token comment">//全角unicode</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+
+        <span class="token class-name">String</span> test3<span class="token operator">=</span><span class="token string">"测试 "</span><span class="token punctuation">;</span><span class="token comment">//半角空白字符</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+
+        <span class="token class-name">String</span> test4<span class="token operator">=</span><span class="token string">"测试　"</span><span class="token punctuation">;</span><span class="token comment">//全角空白字符</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+
+        <span class="token class-name">String</span> test5<span class="token operator">=</span><span class="token string">"测试  "</span><span class="token punctuation">;</span><span class="token comment">//两个半角空白字符</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+    <span class="token punctuation">&#125;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>swagger</title>
     <url>/2021/10/17/swagger/</url>
     <content><![CDATA[<p>首先导入对应的swagger依赖</p>
@@ -3809,39 +3845,18 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>trim()方法和strip()方法之间的区别</title>
-    <url>/2021/10/02/trim-%E6%96%B9%E6%B3%95%E5%92%8Cstrip-%E6%96%B9%E6%B3%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>Java在JDK11中的String类中引入strip方法，trim()和strip()功能类似，主要区别是:</p>
-<p>trim()可以去除字符串前后的半角空白字符<br>strip()可以去除字符串前后的全角和半角空白字符</p>
-<p>半角和全角<br>半角是我们多数人在打字的时候使用的状态，如果我们不去刻意调整半全角，它会一直伴随着我们，因为半角状态下，人们已经习惯了这种打字模式，半角状态下可以使用任何标点符号，而且对于空格也没有特殊限制。<br>全角占两个字节，半角占一个字节。半角全角主要是针对标点符号来说的，全角标点占两个字节，半角占一个字节，而不管是半角还是全角，汉字都还是要占两个字节。<br>这里并非一个全角空白字符等于两个半角空白字符。<br>所以半角空白字符占用一个字节,半角的空白字符unicode编码为\u0020。<br>全角空白字符占用两个字节，全角的空白字符unicode编码为\u3000。</p>
+    <title>windows切换版本</title>
+    <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
+    <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
 <span id="more"></span>
 
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Test</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token class-name">String</span> test1<span class="token operator">=</span><span class="token string">"测试\u0020"</span><span class="token punctuation">;</span><span class="token comment">//半角unicode</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
 
-        <span class="token class-name">String</span> test2<span class="token operator">=</span><span class="token string">"测试\u3000"</span><span class="token punctuation">;</span><span class="token comment">//全角unicode</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
 
-        <span class="token class-name">String</span> test3<span class="token operator">=</span><span class="token string">"测试 "</span><span class="token punctuation">;</span><span class="token comment">//半角空白字符</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-
-        <span class="token class-name">String</span> test4<span class="token operator">=</span><span class="token string">"测试　"</span><span class="token punctuation">;</span><span class="token comment">//全角空白字符</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-
-        <span class="token class-name">String</span> test5<span class="token operator">=</span><span class="token string">"测试  "</span><span class="token punctuation">;</span><span class="token comment">//两个半角空白字符</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-    <span class="token punctuation">&#125;</span></code></pre>
-
+<p>软件已经放到gitee了，方便下载</p>
+<p>地址：<a href="https://gitee.com/luoqingBlog/windows-version-switching/tree/master/">https://gitee.com/luoqingBlog/windows-version-switching/tree/master/</a></p>
 ]]></content>
       <tags>
-        <tag>java</tag>
+        <tag>windows</tag>
       </tags>
   </entry>
   <entry>
@@ -3911,21 +3926,6 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>windows切换版本</title>
-    <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
-    <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
-<span id="more"></span>
-
-
-
-<p>软件已经放到gitee了，方便下载</p>
-<p>地址：<a href="https://gitee.com/luoqingBlog/windows-version-switching/tree/master/">https://gitee.com/luoqingBlog/windows-version-switching/tree/master/</a></p>
-]]></content>
-      <tags>
-        <tag>windows</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用python无头浏览器</title>
     <url>/2021/05/12/%E4%BD%BF%E7%94%A8python%E6%97%A0%E5%A4%B4%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<p>这里我们使用谷歌的无头浏览器进行演示</p>
@@ -3982,6 +3982,23 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
 ]]></content>
       <tags>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用阿里云仓库导入报错找不到maven-compiler-plugin</title>
+    <url>/2023/12/11/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91%E4%BB%93%E5%BA%93%E5%AF%BC%E5%85%A5%E6%8A%A5%E9%94%99%E6%89%BE%E4%B8%8D%E5%88%B0maven-compiler-plugin/</url>
+    <content><![CDATA[<p>发现每次只要pom中需要使用到spring-boot-maven-plugin这个插件就会有几率报错Could not find <a href="https://so.csdn.net/so/search?q=artifact&spm=1001.2101.3001.7020">artifact</a> org.apache.maven.plugins，原因是没有允许使用SSl证书拉取</p>
+<span id="more"></span>
+
+<h2 id="1、设置导入允许使用SSL"><a href="#1、设置导入允许使用SSL" class="headerlink" title="1、设置导入允许使用SSL"></a>1、设置导入允许使用SSL</h2><p>打开设置 - &gt; 构建、执行、部署(Build,Execution,Deployment) - &gt; 构建工具(Build Tools) - &gt; Maven - &gt; 导入（Importing）</p>
+<p>在导入的VM选项(VM options for importer)中输入：-Dmaven.wagon.http.ssl.insecure&#x3D;true</p>
+<h2 id="2、设置正在运行时允许使用SSL"><a href="#2、设置正在运行时允许使用SSL" class="headerlink" title="2、设置正在运行时允许使用SSL"></a>2、设置正在运行时允许使用SSL</h2><p>打开设置 - &gt; 构建、执行、部署(Build,Execution,Deployment) - &gt; 构建工具(Build Tools) - &gt; Maven</p>
+<p>-&gt; 运行的程序(Runner)</p>
+<p>在VM选项(VM options)中输入：-Dmaven.wagon.http.ssl.allowall&#x3D;true</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
