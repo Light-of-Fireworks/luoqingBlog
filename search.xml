@@ -176,6 +176,100 @@ exec执行
       </tags>
   </entry>
   <entry>
+    <title>Spring-Cloud发送请求的几种方式</title>
+    <url>/2023/12/15/Spring-Cloud%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[<p>Spring Cloud提供了多种方式来发送请求到其他服务。以下是一些常见的方法</p>
+<h2 id="1-RestTemplate"><a href="#1-RestTemplate" class="headerlink" title="1. RestTemplate"></a>1. RestTemplate</h2><p>使用RestTemplate，需要在<code>pom.xml</code>文件中添加以下依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>示例代码：</p>
+<pre class="language-none"><code class="language-none">javaCopy codeRestTemplate restTemplate &#x3D; new RestTemplate();
+String result &#x3D; restTemplate.getForObject(&quot;http:&#x2F;&#x2F;service-url&#x2F;api&#x2F;resource&quot;, String.class);</code></pre>
+
+<span id="more"></span>
+
+<h2 id="2-WebClient"><a href="#2-WebClient" class="headerlink" title="2. WebClient"></a>2. WebClient</h2><p>WebClient通常与Spring WebFlux一起使用，需要添加以下依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-webflux&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>示例代码：</p>
+<pre class="language-none"><code class="language-none">javaCopy codeWebClient webClient &#x3D; WebClient.create(&quot;http:&#x2F;&#x2F;service-url&quot;);
+Mono&lt;String&gt; resultMono &#x3D; webClient.get()
+    .uri(&quot;&#x2F;api&#x2F;resource&quot;)
+    .retrieve()
+    .bodyToMono(String.class);
+String result &#x3D; resultMono.block();</code></pre>
+
+<h2 id="3-Feign"><a href="#3-Feign" class="headerlink" title="3. Feign"></a>3. Feign</h2><p>使用Feign，需要添加<code>spring-cloud-starter-openfeign</code>依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>这里主要讲一下fegin。</p>
+<p>首先看一下fegin调用内部已经注册到同一个注册中心上的服务互相调用方式</p>
+<h3 id="3-1-内部微服务互相调用"><a href="#3-1-内部微服务互相调用" class="headerlink" title="3.1 内部微服务互相调用"></a>3.1 内部微服务互相调用</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@FeignClient</span><span class="token punctuation">(</span>contextId <span class="token operator">=</span> <span class="token string">"remoteUserService"</span><span class="token punctuation">,</span> value <span class="token operator">=</span> <span class="token class-name">ServiceNameConstants</span><span class="token punctuation">.</span><span class="token constant">SYSTEM_SERVICE</span><span class="token punctuation">,</span> fallbackFactory <span class="token operator">=</span> <span class="token class-name">RemoteUserFallbackFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">RemoteUserService</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">/**
+     * 通过用户名查询用户信息
+     *
+     * @param username 用户名
+     * @param source 请求来源
+     * @return 结果
+     */</span>
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/user/info/&#123;username&#125;"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">R</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">LoginUser</span><span class="token punctuation">></span></span> <span class="token function">getUserInfo</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span><span class="token punctuation">(</span><span class="token string">"username"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> username<span class="token punctuation">,</span> <span class="token annotation punctuation">@RequestHeader</span><span class="token punctuation">(</span><span class="token class-name">SecurityConstants</span><span class="token punctuation">.</span><span class="token constant">FROM_SOURCE</span><span class="token punctuation">)</span> <span class="token class-name">String</span> source<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+</code></pre>
+
+<p>需要指定value为已注册的服务的id</p>
+<h3 id="3-2-调用外部第三方系统"><a href="#3-2-调用外部第三方系统" class="headerlink" title="3.2 调用外部第三方系统"></a>3.2 调用外部第三方系统</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@FeignClient</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"test"</span><span class="token punctuation">,</span>url <span class="token operator">=</span> <span class="token string">"https://timor.tech"</span><span class="token punctuation">,</span> fallbackFactory <span class="token operator">=</span> <span class="token class-name">RemoteVideoFallbackFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span>configuration <span class="token operator">=</span> <span class="token class-name">FeignConfig</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">RemoteTestService</span>
+<span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"/api/holiday/year/&#123;year&#125;"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">test1</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"year"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> year<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h4 id="3-2-1-指定请求时默认的请求头"><a href="#3-2-1-指定请求时默认的请求头" class="headerlink" title="3.2.1 指定请求时默认的请求头"></a>3.2.1 指定请求时默认的请求头</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Configuration</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FeignConfig</span> <span class="token keyword">implements</span> <span class="token class-name">RequestInterceptor</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">RequestTemplate</span> requestTemplate<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        requestTemplate<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"User-Agent"</span><span class="token punctuation">,</span> <span class="token string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>添加配置后在@FeignClient注解中指定使用此配置类，configuration &#x3D; FeignConfig.class</p>
+<h2 id="4-HttpClient"><a href="#4-HttpClient" class="headerlink" title="4. HttpClient"></a>4. HttpClient</h2><p>对于直接使用HttpClient，可以添加以下依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.httpcomponents&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;httpclient&lt;&#x2F;artifactId&gt;
+    &lt;version&gt;4.5.13&lt;&#x2F;version&gt; &lt;!-- 版本号可能会有更新 --&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>示例代码：</p>
+<pre class="language-none"><code class="language-none">javaCopy codeCloseableHttpClient httpClient &#x3D; HttpClients.createDefault();
+HttpGet httpGet &#x3D; new HttpGet(&quot;http:&#x2F;&#x2F;service-url&#x2F;api&#x2F;resource&quot;);
+try (CloseableHttpResponse response &#x3D; httpClient.execute(httpGet)) &#123;
+    HttpEntity entity &#x3D; response.getEntity();
+    if (entity !&#x3D; null) &#123;
+        String result &#x3D; EntityUtils.toString(entity);
+        &#x2F;&#x2F; 使用结果
+    &#125;
+&#125;</code></pre>
+
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java判断节假日</title>
     <url>/2023/10/09/Java%E5%88%A4%E6%96%AD%E8%8A%82%E5%81%87%E6%97%A5/</url>
     <content><![CDATA[<p>由于要做一个自动打卡的功能，需要用到判断是否是节假日，如果是节假日则需要跳过打卡，如果不是节假日或者需要补班则需要打卡。网上没有找到好用的方法和jar包，这里分享一下自己使用的代码。</p>
@@ -2302,6 +2396,20 @@ file5.ts
       </tags>
   </entry>
   <entry>
+    <title>idea无限试用</title>
+    <url>/2021/11/07/idea%E6%97%A0%E9%99%90%E8%AF%95%E7%94%A8/</url>
+    <content><![CDATA[<p>按照以前的破解方式，我们会在安装好idea后点击试用，然后将破解的jar包丢进idea选择重启就可以破解到2089年了，但是这样的破解方式只能用在老版本的idea上，在新版的idea中，只要官网发布一次更新，那么破解的jar包就会失效，只能去寻找新的jar包继续破解，但是过不了几天就要找新的破解包的方式不免让我们觉得厌烦，那么我们想试用新版本但是又不想频繁的去寻找jar包应该要怎么做呢，其实在前几年就有人想出了idea无限试用的方法，idea安装后会有30天的试用期限，如果我们把这个信息删除那么不就又可以试用30天了吗。后来，又有人专门为idea做了一款插件，只要在idea中装上这个插件就可以达到无限试用的效果。</p>
+<span id="more"></span>
+
+<p>首先这里需要注意，2021.2.3版本开始，官方已经取消了试用的功能，也就是说你想要试用idea就必须登录账号，但是我们破解需要先进入idea才可以安装插件，所以我们可以将idea降级到2021.2.3版本之前即可，比如2021.2.2这个版本，然后我们选择试用30天，接着升级到最新版本即可，虽然2021.2.3版本没有了试用的功能，但是我们可以在之前的版本获得试用资格，然后升级最新版，最新版就可以知道我们还是有试用的天数的，就不会进行拦截。</p>
+<p>我们在idea的插件管理中添加一个插件的地址，<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 我们在搜索中搜索evel就会出现一个名叫IDE Eval Rest的插件，我们选择安装即可，安装完成后可以不用重启idea，我们直接点击主页的help，然后就会出现eval reset的选项，点击后可以选择重置也可以勾选自动重置，然后选择重启idea即可重置25天试用期，当我们勾选了自动重置后当我们每次重新打开idea就会自动重置使用时间，不用我们手动选择重置。是不是很方便呢。</p>
+<p>如果没有网络应该如何安装呢，我们可以直接进入<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 这个网站，然后选择网站内容中的下载安装即可下载idea插件的本地安装jar包，然后去idea中选择插件，并选择从本地磁盘安装插件即可选择jar包安装插件。</p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>idea安装后无法打开解决方案</title>
     <url>/2021/10/01/idea%E5%AE%89%E8%A3%85%E5%90%8E%E6%97%A0%E6%B3%95%E6%89%93%E5%BC%80%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
     <content><![CDATA[<p>首先可以尝试安装完成后双击打不开就重启电脑，如果还是不行可以尝试以下方案。</p>
@@ -2311,20 +2419,6 @@ file5.ts
 <p>然后在这个文件里应该在最后一行可以找到一个-javaagent:开头的</p>
 <p>例如：-javaagent:D:\01.Software\IntelliJIDEA\JetbrainsCrack-2.8-release-enc.jar</p>
 <p>删除这一行，然后保存就可以打开idea了，这是因为之前在电脑上使用过破解包，但是还是不清楚为什么安装新版idea会有这一行，删掉破解就可以了</p>
-]]></content>
-      <tags>
-        <tag>idea</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>idea无限试用</title>
-    <url>/2021/11/07/idea%E6%97%A0%E9%99%90%E8%AF%95%E7%94%A8/</url>
-    <content><![CDATA[<p>按照以前的破解方式，我们会在安装好idea后点击试用，然后将破解的jar包丢进idea选择重启就可以破解到2089年了，但是这样的破解方式只能用在老版本的idea上，在新版的idea中，只要官网发布一次更新，那么破解的jar包就会失效，只能去寻找新的jar包继续破解，但是过不了几天就要找新的破解包的方式不免让我们觉得厌烦，那么我们想试用新版本但是又不想频繁的去寻找jar包应该要怎么做呢，其实在前几年就有人想出了idea无限试用的方法，idea安装后会有30天的试用期限，如果我们把这个信息删除那么不就又可以试用30天了吗。后来，又有人专门为idea做了一款插件，只要在idea中装上这个插件就可以达到无限试用的效果。</p>
-<span id="more"></span>
-
-<p>首先这里需要注意，2021.2.3版本开始，官方已经取消了试用的功能，也就是说你想要试用idea就必须登录账号，但是我们破解需要先进入idea才可以安装插件，所以我们可以将idea降级到2021.2.3版本之前即可，比如2021.2.2这个版本，然后我们选择试用30天，接着升级到最新版本即可，虽然2021.2.3版本没有了试用的功能，但是我们可以在之前的版本获得试用资格，然后升级最新版，最新版就可以知道我们还是有试用的天数的，就不会进行拦截。</p>
-<p>我们在idea的插件管理中添加一个插件的地址，<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 我们在搜索中搜索evel就会出现一个名叫IDE Eval Rest的插件，我们选择安装即可，安装完成后可以不用重启idea，我们直接点击主页的help，然后就会出现eval reset的选项，点击后可以选择重置也可以勾选自动重置，然后选择重启idea即可重置25天试用期，当我们勾选了自动重置后当我们每次重新打开idea就会自动重置使用时间，不用我们手动选择重置。是不是很方便呢。</p>
-<p>如果没有网络应该如何安装呢，我们可以直接进入<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 这个网站，然后选择网站内容中的下载安装即可下载idea插件的本地安装jar包，然后去idea中选择插件，并选择从本地磁盘安装插件即可选择jar包安装插件。</p>
 ]]></content>
       <tags>
         <tag>idea</tag>
@@ -2412,6 +2506,26 @@ file5.ts
 <p>　　StringUtils.isNotBlank(“bob”) &#x3D; true</p>
 <p>　　StringUtils.isNotBlank(“ bob “) &#x3D; true</p>
 <p>总结：isEmpty()会判断null或者空字符串，但是isBank()会多判断字符串里面是否有空格或者换行符等特殊字符，如果有那么将这些字符也看作是空的，如果全是空格则也认为是空字符串，所以一般来说用的比较多的应该是isEmpty()</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>jar启动报错Input length = 1</title>
+    <url>/2023/07/09/jar%E5%90%AF%E5%8A%A8%E6%8A%A5%E9%94%99Input/</url>
+    <content><![CDATA[<p>前言：在使用idea启动项目时设置了全局编码和文件编码都是utf-8启动正常，但是打成jar包在windows环境启动报错 <code>org.yaml.snakeyaml.error.YAMLException: java.nio.charset.MalformedInputException: Input length = 1</code></p>
+<p>原因是windows默认的编码是gbk，使用java -jar启动jar包时会默认使用系统环境编码，所以导致和配置文件的UTF-8不一致</p>
+<span id="more"></span>
+
+<h2 id="1、启动时指定编码"><a href="#1、启动时指定编码" class="headerlink" title="1、启动时指定编码"></a>1、启动时指定编码</h2><p>使用java -jar命令时指定文件编码</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">java</span> <span class="token parameter variable">-jar</span> <span class="token parameter variable">-Dfile.encoding</span><span class="token operator">=</span>utf-8 xx.jar</code></pre>
+
+<h2 id="2、修改系统环境编码"><a href="#2、修改系统环境编码" class="headerlink" title="2、修改系统环境编码"></a>2、修改系统环境编码</h2><p>一般情况下不要修改windows的系统编码，默认为gbk即可，建议使用第一种方式指定启动编码。</p>
+<p>而liunx系统一般情况下是UTF-8编码，所以使用java -jar命令启动不会有问题。</p>
+<p>查询liunx系统编码：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">echo</span> <span class="token environment constant">$LANG</span></code></pre>
+
 ]]></content>
       <tags>
         <tag>java</tag>
@@ -2718,26 +2832,6 @@ passwd：已成功更新密码</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>jar启动报错Input length = 1</title>
-    <url>/2023/07/09/jar%E5%90%AF%E5%8A%A8%E6%8A%A5%E9%94%99Input/</url>
-    <content><![CDATA[<p>前言：在使用idea启动项目时设置了全局编码和文件编码都是utf-8启动正常，但是打成jar包在windows环境启动报错 <code>org.yaml.snakeyaml.error.YAMLException: java.nio.charset.MalformedInputException: Input length = 1</code></p>
-<p>原因是windows默认的编码是gbk，使用java -jar启动jar包时会默认使用系统环境编码，所以导致和配置文件的UTF-8不一致</p>
-<span id="more"></span>
-
-<h2 id="1、启动时指定编码"><a href="#1、启动时指定编码" class="headerlink" title="1、启动时指定编码"></a>1、启动时指定编码</h2><p>使用java -jar命令时指定文件编码</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">java</span> <span class="token parameter variable">-jar</span> <span class="token parameter variable">-Dfile.encoding</span><span class="token operator">=</span>utf-8 xx.jar</code></pre>
-
-<h2 id="2、修改系统环境编码"><a href="#2、修改系统环境编码" class="headerlink" title="2、修改系统环境编码"></a>2、修改系统环境编码</h2><p>一般情况下不要修改windows的系统编码，默认为gbk即可，建议使用第一种方式指定启动编码。</p>
-<p>而liunx系统一般情况下是UTF-8编码，所以使用java -jar命令启动不会有问题。</p>
-<p>查询liunx系统编码：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">echo</span> <span class="token environment constant">$LANG</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>liunx配置环境变量</title>
     <url>/2021/10/04/liunx%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
     <content><![CDATA[<p>首先在liunx中有两种环境变量，一种是系统级别的环境变量，一种是用户级别的环境变量</p>
@@ -2824,48 +2918,6 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
       </tags>
   </entry>
   <entry>
-    <title>mac启动springboot项目慢解决方案</title>
-    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
-    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
-<p>下面就是你的电脑地址.local</p>
-<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
-<span id="more"></span>
-
-<p>然后复制这段地址包括.local</p>
-<p><code>luoqingdeMacBook-Pro.local</code></p>
-<p>再打开本机的hosts，准备修改本地ip映射</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
-
-<p>原内容如下：</p>
-<pre class="language-none"><code class="language-none">##
-# Host Database
-#
-# localhost is used to configure the loopback interface
-# when the system is booting.  Do not change this entry.
-##
-127.0.0.1             localhost
-255.255.255.255     broadcasthost
-::1                 localhost </code></pre>
-
-<p>修改成如下：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
-<span class="token comment"># Host Database</span>
-<span class="token comment">#</span>
-<span class="token comment"># localhost is used to configure the loopback interface</span>
-<span class="token comment"># when the system is booting.  Do not change this entry.</span>
-<span class="token comment">##</span>
-<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
-<span class="token number">255.255</span>.255.255     broadcasthost
-::1                 localhost 你的机器名.local</code></pre>
-
-<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>springboot</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mac如何设置环境变量关机不失效</title>
     <url>/2021/03/18/mac%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%85%B3%E6%9C%BA%E4%B8%8D%E5%A4%B1%E6%95%88/</url>
     <content><![CDATA[<p>mac在10.15版本之前使用的是.bash_profile这个文件，但是从10.15版本开始则采用了新的文件设置环境变量。</p>
@@ -2927,6 +2979,48 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
 ]]></content>
       <tags>
         <tag>mac</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mac启动springboot项目慢解决方案</title>
+    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
+<p>下面就是你的电脑地址.local</p>
+<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
+<span id="more"></span>
+
+<p>然后复制这段地址包括.local</p>
+<p><code>luoqingdeMacBook-Pro.local</code></p>
+<p>再打开本机的hosts，准备修改本地ip映射</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
+
+<p>原内容如下：</p>
+<pre class="language-none"><code class="language-none">##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1             localhost
+255.255.255.255     broadcasthost
+::1                 localhost </code></pre>
+
+<p>修改成如下：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
+<span class="token comment"># Host Database</span>
+<span class="token comment">#</span>
+<span class="token comment"># localhost is used to configure the loopback interface</span>
+<span class="token comment"># when the system is booting.  Do not change this entry.</span>
+<span class="token comment">##</span>
+<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
+<span class="token number">255.255</span>.255.255     broadcasthost
+::1                 localhost 你的机器名.local</code></pre>
+
+<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>springboot</tag>
       </tags>
   </entry>
   <entry>
@@ -3023,32 +3117,6 @@ collation-server&#x3D;utf8_general_ci</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>mac配置系统环境变量</title>
-    <url>/2021/07/29/mac%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
-    <content><![CDATA[<p>首先要了解mac环境变量的配置文件在哪里</p>
-<p>在mac10.15.1之前也就是版本为catalina之前的版本都是将用户的环境变量保存在.bash_profile这个文件中，而环境变量的配置文件则保存在用户的根目录，也就是～目录，我们直接使用命令切换到这个目录即可查看到环境变量的文件</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> ~</code></pre>
-
-<p>当然当你打开终端的时候默认是在～目录的，所以可以不用切换，如果到了用户目录下但是如果你在此目录下没有发现这个文件可以使用<code>ls -a</code>这个命令来查看隐藏文件，如果还是没有那么你可以创建一个这个名称的文件即可命令如下</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">touch</span> .bash_profile</code></pre>
-<span id="more"></span>
-<p>然后你就可以使用vi或者文本编辑器对其进行修改操作，这里演示添加一个maven的环境变量和mysql的环境变量</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token environment constant">$PATH</span>:/Users/luoqing/apache-maven-3.5.4/bin:/usr/local/mysql/bin</code></pre>
-
-<p>可以看到如果需要添加多个变量的话只需要在上一个环境变量路径的末尾添加:然后追加你的新环境变量路径即可</p>
-<p>最后再使用source命令使你的环境变量立即生效</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> .bash_profile</code></pre>
-
-
-
-<p>上面就是mac10.15.1系统版本之前的环境变量配置，但是如果你是10.15.1版本及以后那么新的系统环境变量的文件名称默认改为了.zshrc 和上面一样你只需要将.bash_profile这个文件里的环境变量全部转移到新的文件然后删除.bash_profile即可最后再使用source命令使你的环境变量生效</p>
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>环境变量</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mysql忘记密码</title>
     <url>/2021/10/05/mysql%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<p>首先我们先停止mysql服务</p>
@@ -3083,6 +3151,32 @@ mysql&gt; exit;</code></pre>
 ]]></content>
       <tags>
         <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mac配置系统环境变量</title>
+    <url>/2021/07/29/mac%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
+    <content><![CDATA[<p>首先要了解mac环境变量的配置文件在哪里</p>
+<p>在mac10.15.1之前也就是版本为catalina之前的版本都是将用户的环境变量保存在.bash_profile这个文件中，而环境变量的配置文件则保存在用户的根目录，也就是～目录，我们直接使用命令切换到这个目录即可查看到环境变量的文件</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> ~</code></pre>
+
+<p>当然当你打开终端的时候默认是在～目录的，所以可以不用切换，如果到了用户目录下但是如果你在此目录下没有发现这个文件可以使用<code>ls -a</code>这个命令来查看隐藏文件，如果还是没有那么你可以创建一个这个名称的文件即可命令如下</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">touch</span> .bash_profile</code></pre>
+<span id="more"></span>
+<p>然后你就可以使用vi或者文本编辑器对其进行修改操作，这里演示添加一个maven的环境变量和mysql的环境变量</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token environment constant">$PATH</span>:/Users/luoqing/apache-maven-3.5.4/bin:/usr/local/mysql/bin</code></pre>
+
+<p>可以看到如果需要添加多个变量的话只需要在上一个环境变量路径的末尾添加:然后追加你的新环境变量路径即可</p>
+<p>最后再使用source命令使你的环境变量立即生效</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">source</span> .bash_profile</code></pre>
+
+
+
+<p>上面就是mac10.15.1系统版本之前的环境变量配置，但是如果你是10.15.1版本及以后那么新的系统环境变量的文件名称默认改为了.zshrc 和上面一样你只需要将.bash_profile这个文件里的环境变量全部转移到新的文件然后删除.bash_profile即可最后再使用source命令使你的环境变量生效</p>
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>环境变量</tag>
       </tags>
   </entry>
   <entry>
@@ -3625,42 +3719,6 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>trim()方法和strip()方法之间的区别</title>
-    <url>/2021/10/02/trim-%E6%96%B9%E6%B3%95%E5%92%8Cstrip-%E6%96%B9%E6%B3%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>Java在JDK11中的String类中引入strip方法，trim()和strip()功能类似，主要区别是:</p>
-<p>trim()可以去除字符串前后的半角空白字符<br>strip()可以去除字符串前后的全角和半角空白字符</p>
-<p>半角和全角<br>半角是我们多数人在打字的时候使用的状态，如果我们不去刻意调整半全角，它会一直伴随着我们，因为半角状态下，人们已经习惯了这种打字模式，半角状态下可以使用任何标点符号，而且对于空格也没有特殊限制。<br>全角占两个字节，半角占一个字节。半角全角主要是针对标点符号来说的，全角标点占两个字节，半角占一个字节，而不管是半角还是全角，汉字都还是要占两个字节。<br>这里并非一个全角空白字符等于两个半角空白字符。<br>所以半角空白字符占用一个字节,半角的空白字符unicode编码为\u0020。<br>全角空白字符占用两个字节，全角的空白字符unicode编码为\u3000。</p>
-<span id="more"></span>
-
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Test</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token class-name">String</span> test1<span class="token operator">=</span><span class="token string">"测试\u0020"</span><span class="token punctuation">;</span><span class="token comment">//半角unicode</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-
-        <span class="token class-name">String</span> test2<span class="token operator">=</span><span class="token string">"测试\u3000"</span><span class="token punctuation">;</span><span class="token comment">//全角unicode</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-
-        <span class="token class-name">String</span> test3<span class="token operator">=</span><span class="token string">"测试 "</span><span class="token punctuation">;</span><span class="token comment">//半角空白字符</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-
-        <span class="token class-name">String</span> test4<span class="token operator">=</span><span class="token string">"测试　"</span><span class="token punctuation">;</span><span class="token comment">//全角空白字符</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-
-        <span class="token class-name">String</span> test5<span class="token operator">=</span><span class="token string">"测试  "</span><span class="token punctuation">;</span><span class="token comment">//两个半角空白字符</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
-    <span class="token punctuation">&#125;</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>swagger</title>
     <url>/2021/10/17/swagger/</url>
     <content><![CDATA[<p>首先导入对应的swagger依赖</p>
@@ -3845,18 +3903,39 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>windows切换版本</title>
-    <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
-    <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
+    <title>trim()方法和strip()方法之间的区别</title>
+    <url>/2021/10/02/trim-%E6%96%B9%E6%B3%95%E5%92%8Cstrip-%E6%96%B9%E6%B3%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>Java在JDK11中的String类中引入strip方法，trim()和strip()功能类似，主要区别是:</p>
+<p>trim()可以去除字符串前后的半角空白字符<br>strip()可以去除字符串前后的全角和半角空白字符</p>
+<p>半角和全角<br>半角是我们多数人在打字的时候使用的状态，如果我们不去刻意调整半全角，它会一直伴随着我们，因为半角状态下，人们已经习惯了这种打字模式，半角状态下可以使用任何标点符号，而且对于空格也没有特殊限制。<br>全角占两个字节，半角占一个字节。半角全角主要是针对标点符号来说的，全角标点占两个字节，半角占一个字节，而不管是半角还是全角，汉字都还是要占两个字节。<br>这里并非一个全角空白字符等于两个半角空白字符。<br>所以半角空白字符占用一个字节,半角的空白字符unicode编码为\u0020。<br>全角空白字符占用两个字节，全角的空白字符unicode编码为\u3000。</p>
 <span id="more"></span>
 
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">testString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">String</span> test1<span class="token operator">=</span><span class="token string">"测试\u0020"</span><span class="token punctuation">;</span><span class="token comment">//半角unicode</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test1<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
 
+        <span class="token class-name">String</span> test2<span class="token operator">=</span><span class="token string">"测试\u3000"</span><span class="token punctuation">;</span><span class="token comment">//全角unicode</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test2<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
 
-<p>软件已经放到gitee了，方便下载</p>
-<p>地址：<a href="https://gitee.com/luoqingBlog/windows-version-switching/tree/master/">https://gitee.com/luoqingBlog/windows-version-switching/tree/master/</a></p>
+        <span class="token class-name">String</span> test3<span class="token operator">=</span><span class="token string">"测试 "</span><span class="token punctuation">;</span><span class="token comment">//半角空白字符</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test3<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+
+        <span class="token class-name">String</span> test4<span class="token operator">=</span><span class="token string">"测试　"</span><span class="token punctuation">;</span><span class="token comment">//全角空白字符</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//3</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test4<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+
+        <span class="token class-name">String</span> test5<span class="token operator">=</span><span class="token string">"测试  "</span><span class="token punctuation">;</span><span class="token comment">//两个半角空白字符</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>test5<span class="token punctuation">.</span><span class="token function">strip</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//2</span>
+    <span class="token punctuation">&#125;</span></code></pre>
+
 ]]></content>
       <tags>
-        <tag>windows</tag>
+        <tag>java</tag>
       </tags>
   </entry>
   <entry>
@@ -3926,6 +4005,21 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>windows切换版本</title>
+    <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
+    <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
+<span id="more"></span>
+
+
+
+<p>软件已经放到gitee了，方便下载</p>
+<p>地址：<a href="https://gitee.com/luoqingBlog/windows-version-switching/tree/master/">https://gitee.com/luoqingBlog/windows-version-switching/tree/master/</a></p>
+]]></content>
+      <tags>
+        <tag>windows</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用python无头浏览器</title>
     <url>/2021/05/12/%E4%BD%BF%E7%94%A8python%E6%97%A0%E5%A4%B4%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<p>这里我们使用谷歌的无头浏览器进行演示</p>
@@ -3982,23 +4076,6 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
 ]]></content>
       <tags>
         <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用阿里云仓库导入报错找不到maven-compiler-plugin</title>
-    <url>/2023/12/11/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91%E4%BB%93%E5%BA%93%E5%AF%BC%E5%85%A5%E6%8A%A5%E9%94%99%E6%89%BE%E4%B8%8D%E5%88%B0maven-compiler-plugin/</url>
-    <content><![CDATA[<p>发现每次只要pom中需要使用到spring-boot-maven-plugin这个插件就会有几率报错Could not find <a href="https://so.csdn.net/so/search?q=artifact&spm=1001.2101.3001.7020">artifact</a> org.apache.maven.plugins，原因是没有允许使用SSl证书拉取</p>
-<span id="more"></span>
-
-<h2 id="1、设置导入允许使用SSL"><a href="#1、设置导入允许使用SSL" class="headerlink" title="1、设置导入允许使用SSL"></a>1、设置导入允许使用SSL</h2><p>打开设置 - &gt; 构建、执行、部署(Build,Execution,Deployment) - &gt; 构建工具(Build Tools) - &gt; Maven - &gt; 导入（Importing）</p>
-<p>在导入的VM选项(VM options for importer)中输入：-Dmaven.wagon.http.ssl.insecure&#x3D;true</p>
-<h2 id="2、设置正在运行时允许使用SSL"><a href="#2、设置正在运行时允许使用SSL" class="headerlink" title="2、设置正在运行时允许使用SSL"></a>2、设置正在运行时允许使用SSL</h2><p>打开设置 - &gt; 构建、执行、部署(Build,Execution,Deployment) - &gt; 构建工具(Build Tools) - &gt; Maven</p>
-<p>-&gt; 运行的程序(Runner)</p>
-<p>在VM选项(VM options)中输入：-Dmaven.wagon.http.ssl.allowall&#x3D;true</p>
-]]></content>
-      <tags>
-        <tag>java</tag>
-        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
@@ -4164,6 +4241,23 @@ resp <span class="token operator">=</span> session<span class="token punctuation
         <tag>python</tag>
         <tag>云函数</tag>
         <tag>自动签到</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用阿里云仓库导入报错找不到maven-compiler-plugin</title>
+    <url>/2023/12/11/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91%E4%BB%93%E5%BA%93%E5%AF%BC%E5%85%A5%E6%8A%A5%E9%94%99%E6%89%BE%E4%B8%8D%E5%88%B0maven-compiler-plugin/</url>
+    <content><![CDATA[<p>发现每次只要pom中需要使用到spring-boot-maven-plugin这个插件就会有几率报错Could not find <a href="https://so.csdn.net/so/search?q=artifact&spm=1001.2101.3001.7020">artifact</a> org.apache.maven.plugins，原因是没有允许使用SSl证书拉取</p>
+<span id="more"></span>
+
+<h2 id="1、设置导入允许使用SSL"><a href="#1、设置导入允许使用SSL" class="headerlink" title="1、设置导入允许使用SSL"></a>1、设置导入允许使用SSL</h2><p>打开设置 - &gt; 构建、执行、部署(Build,Execution,Deployment) - &gt; 构建工具(Build Tools) - &gt; Maven - &gt; 导入（Importing）</p>
+<p>在导入的VM选项(VM options for importer)中输入：-Dmaven.wagon.http.ssl.insecure&#x3D;true</p>
+<h2 id="2、设置正在运行时允许使用SSL"><a href="#2、设置正在运行时允许使用SSL" class="headerlink" title="2、设置正在运行时允许使用SSL"></a>2、设置正在运行时允许使用SSL</h2><p>打开设置 - &gt; 构建、执行、部署(Build,Execution,Deployment) - &gt; 构建工具(Build Tools) - &gt; Maven</p>
+<p>-&gt; 运行的程序(Runner)</p>
+<p>在VM选项(VM options)中输入：-Dmaven.wagon.http.ssl.allowall&#x3D;true</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
