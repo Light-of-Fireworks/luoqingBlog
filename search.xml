@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Git 裸仓库</title>
-    <url>/2021/11/08/Git%20%E8%A3%B8%E4%BB%93%E5%BA%93/</url>
-    <content><![CDATA[<p>在我们平常的代码提交时，一般会将代码提交到GitHub、gitee、gitlab等等这些仓库中，但是这些操作都是提交到远程仓库的，我们想要提交代码到自己的私服仓库的话就必须自己搭建一个远程仓库，拿gitlab来举例子，在centos中搭建一个gitlab仓库需要占用将近3G左右的内存。但是我们如果只是买一个个人服务器作为学习使用的话那么内存已经远远不够我们后续的使用了，所以我们可以使用Git裸仓库的形式来创建仓库</p>
-<span id="more"></span>
-
-<p>我们都知道git创建一个默认的仓库的命令为 <code>git init</code> 但是我们这样创建的仓库只能在我们的本地使用，如果我们想要将这个仓库分享给他人一起协作提交代码就无法实现了，这时候我们可以搭建一个Git裸仓库</p>
-<p>Git裸仓库可以作为一个远程仓库，可以支持其他人拉代码和推代码，这样就解决了使用 <code>git init</code>初始化一个本地仓库的局限性，但是裸仓库仅仅只有推和拉的功能，并没有切换分支的功能，那么你可以将它看作是一个Master分支的Git仓库，但是不能切换分支罢了</p>
-<p>初始化一个Git库仓库的命令为：<code>git init --bare 仓库名</code></p>
-<p>下面介绍一下裸仓库的常用命令：</p>
-<p>提交文件还是一样的命令：<code>git add .</code></p>
-<p>假设我们现在有一个192.168.148.2的远程服务器</p>
-<p>我们在服务器上创建好一个test裸仓库</p>
-<p>然后我们进行克隆，这里一定是先克隆，因为直接拉是拉取不下来的</p>
-<p>拉取：<code>git clone ssh://root@192.168.148.2/root/test</code></p>
-<p>添加文件：<code>git add .</code></p>
-<p>提交更改：<code>git commit -m &quot;更新readme&quot;</code></p>
-<p>推送到远程：git push origin master</p>
-<p>可以看出，裸库的操作和普通的git并没有什么不同，仅仅是没有分支这个概念而已</p>
-]]></content>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Dockerfile</title>
     <url>/2021/06/03/Dockerfile/</url>
     <content><![CDATA[<p>首先要创建一个名为Dockerfile的普通的文件 然后在里面编辑命令</p>
@@ -113,6 +89,30 @@ exec执行
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git 裸仓库</title>
+    <url>/2021/11/08/Git%20%E8%A3%B8%E4%BB%93%E5%BA%93/</url>
+    <content><![CDATA[<p>在我们平常的代码提交时，一般会将代码提交到GitHub、gitee、gitlab等等这些仓库中，但是这些操作都是提交到远程仓库的，我们想要提交代码到自己的私服仓库的话就必须自己搭建一个远程仓库，拿gitlab来举例子，在centos中搭建一个gitlab仓库需要占用将近3G左右的内存。但是我们如果只是买一个个人服务器作为学习使用的话那么内存已经远远不够我们后续的使用了，所以我们可以使用Git裸仓库的形式来创建仓库</p>
+<span id="more"></span>
+
+<p>我们都知道git创建一个默认的仓库的命令为 <code>git init</code> 但是我们这样创建的仓库只能在我们的本地使用，如果我们想要将这个仓库分享给他人一起协作提交代码就无法实现了，这时候我们可以搭建一个Git裸仓库</p>
+<p>Git裸仓库可以作为一个远程仓库，可以支持其他人拉代码和推代码，这样就解决了使用 <code>git init</code>初始化一个本地仓库的局限性，但是裸仓库仅仅只有推和拉的功能，并没有切换分支的功能，那么你可以将它看作是一个Master分支的Git仓库，但是不能切换分支罢了</p>
+<p>初始化一个Git库仓库的命令为：<code>git init --bare 仓库名</code></p>
+<p>下面介绍一下裸仓库的常用命令：</p>
+<p>提交文件还是一样的命令：<code>git add .</code></p>
+<p>假设我们现在有一个192.168.148.2的远程服务器</p>
+<p>我们在服务器上创建好一个test裸仓库</p>
+<p>然后我们进行克隆，这里一定是先克隆，因为直接拉是拉取不下来的</p>
+<p>拉取：<code>git clone ssh://root@192.168.148.2/root/test</code></p>
+<p>添加文件：<code>git add .</code></p>
+<p>提交更改：<code>git commit -m &quot;更新readme&quot;</code></p>
+<p>推送到远程：git push origin master</p>
+<p>可以看出，裸库的操作和普通的git并没有什么不同，仅仅是没有分支这个概念而已</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -2960,43 +2960,6 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
       </tags>
   </entry>
   <entry>
-    <title>mac安装node、npm、hexo</title>
-    <url>/2021/10/04/mac%E5%AE%89%E8%A3%85node%E3%80%81npm%E3%80%81hexo/</url>
-    <content><![CDATA[<p>在mac中按照正常的安装node的方法来说是无法安装hexo的，所以我们要先安装nvm来安装node和hexo</p>
-<p>首先我们安装nvm</p>
-<p>官网：<a href="https://github.com/nvm-sh/nvm#installing-and-updating">https://github.com/nvm-sh/nvm#installing-and-updating</a></p>
-<p>按照官方的安装方法来安装</p>
-<p>先下载并安装好index脚本</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh <span class="token operator">|</span> <span class="token function">bash</span></code></pre>
-
-<p>如果上面的命令执行了几次都是报错443无法连接的话那我们可以先把index脚本下载到电脑中然后自己手动执行</p>
-   <span id="more"></span>
-
-<p>执行完成后可以使用以下命令查看</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">command</span> <span class="token parameter variable">-v</span> nvm</code></pre>
-
-<p>如果出现nvm这几个英文那么就成功了，如果什么都没有显示是空的话那么说明环境变量没有配置好</p>
-<p>按照官方的话将下面的命令直接粘贴到环境变量的文件中，如果是11.0.1系统及之后的那么就要放在.zshrc这个文件中，具体可以参照mac如何配置环境变量的帖子</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">NVM_DIR</span><span class="token operator">=</span><span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME-&#125;</span>"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;<span class="token environment constant">HOME</span>&#125;</span>/.nvm"</span> <span class="token operator">||</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME&#125;</span>/nvm"</span><span class="token variable">)</span></span>"</span>
-<span class="token punctuation">[</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>. <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span></code></pre>
-
-<p>配置好环境变量后再次尝试使用上面的命令检查是否出现nvm，出现了后就可以进行下一步，也可以使用<code>nvm -v</code>这个命令来看nvm有没有配置好</p>
-<p>安装完成nvm后就可以使用以下命令安装node</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">nvm <span class="token function">install</span> <span class="token function">node</span></code></pre>
-
-<p>安装完成node后可以使用<code>node -v</code>进行验证</p>
-<p>最后一步就可以安装hexo博客了</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> hexo-cli</code></pre>
-
-]]></content>
-      <tags>
-        <tag>node</tag>
-        <tag>hexo</tag>
-        <tag>mac</tag>
-        <tag>npm</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mac如何设置环境变量关机不失效</title>
     <url>/2021/03/18/mac%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E5%85%B3%E6%9C%BA%E4%B8%8D%E5%A4%B1%E6%95%88/</url>
     <content><![CDATA[<p>mac在10.15版本之前使用的是.bash_profile这个文件，但是从10.15版本开始则采用了新的文件设置环境变量。</p>
@@ -3058,6 +3021,43 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
 ]]></content>
       <tags>
         <tag>mac</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mac安装node、npm、hexo</title>
+    <url>/2021/10/04/mac%E5%AE%89%E8%A3%85node%E3%80%81npm%E3%80%81hexo/</url>
+    <content><![CDATA[<p>在mac中按照正常的安装node的方法来说是无法安装hexo的，所以我们要先安装nvm来安装node和hexo</p>
+<p>首先我们安装nvm</p>
+<p>官网：<a href="https://github.com/nvm-sh/nvm#installing-and-updating">https://github.com/nvm-sh/nvm#installing-and-updating</a></p>
+<p>按照官方的安装方法来安装</p>
+<p>先下载并安装好index脚本</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh <span class="token operator">|</span> <span class="token function">bash</span></code></pre>
+
+<p>如果上面的命令执行了几次都是报错443无法连接的话那我们可以先把index脚本下载到电脑中然后自己手动执行</p>
+   <span id="more"></span>
+
+<p>执行完成后可以使用以下命令查看</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">command</span> <span class="token parameter variable">-v</span> nvm</code></pre>
+
+<p>如果出现nvm这几个英文那么就成功了，如果什么都没有显示是空的话那么说明环境变量没有配置好</p>
+<p>按照官方的话将下面的命令直接粘贴到环境变量的文件中，如果是11.0.1系统及之后的那么就要放在.zshrc这个文件中，具体可以参照mac如何配置环境变量的帖子</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">NVM_DIR</span><span class="token operator">=</span><span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME-&#125;</span>"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;<span class="token environment constant">HOME</span>&#125;</span>/.nvm"</span> <span class="token operator">||</span> <span class="token builtin class-name">printf</span> %s <span class="token string">"<span class="token variable">$&#123;XDG_CONFIG_HOME&#125;</span>/nvm"</span><span class="token variable">)</span></span>"</span>
+<span class="token punctuation">[</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>. <span class="token string">"<span class="token variable">$NVM_DIR</span>/nvm.sh"</span></code></pre>
+
+<p>配置好环境变量后再次尝试使用上面的命令检查是否出现nvm，出现了后就可以进行下一步，也可以使用<code>nvm -v</code>这个命令来看nvm有没有配置好</p>
+<p>安装完成nvm后就可以使用以下命令安装node</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">nvm <span class="token function">install</span> <span class="token function">node</span></code></pre>
+
+<p>安装完成node后可以使用<code>node -v</code>进行验证</p>
+<p>最后一步就可以安装hexo博客了</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> hexo-cli</code></pre>
+
+]]></content>
+      <tags>
+        <tag>node</tag>
+        <tag>hexo</tag>
+        <tag>mac</tag>
+        <tag>npm</tag>
       </tags>
   </entry>
   <entry>
@@ -3576,6 +3576,47 @@ a = Analysis(
       </tags>
   </entry>
   <entry>
+    <title>rarcrack破解多种格式压缩包</title>
+    <url>/2021/03/28/rarcrack%E7%A0%B4%E8%A7%A3%E5%A4%9A%E7%A7%8D%E6%A0%BC%E5%BC%8F%E5%8E%8B%E7%BC%A9%E5%8C%85/</url>
+    <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
+<p><a href="https://gitee.com/luoqingBlog/rarcrack.git">https://gitee.com/luoqingBlog/rarcrack.git</a></p>
+<p>点击下载zip即可，也可以使用git工具的clone。</p>
+<p>下载完成后解压得到里面的文件，然后在mac或者Ubuntu上编译此文件</p>
+<p>直接cd切换到文件夹当中然后使用make即可，mac并没有自带编译工具，所以要先去下载安装</p>
+<p>编译</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span></code></pre>
+
+<span id="more"></span>
+<p>编译完成后问价夹里会多一个rarcrack可运行程序，mac版本尽量保持在mac10.x</p>
+<p>我的系统是bigsur11.0.1  使用make编译完成后无法使用。尽管可以使用也是密码只破解了几次就结束了程序，这个问题我在kali中使用apt-get安装rarcrack之后也是这个样子，但是在kali中使用aapt-get rarcrack命令安装的可以破解rar的类型文件，但是其他文件类型都不行，密码走了四行就停止了</p>
+<p>所以只有一个主意事项，mac版本尽量低于11.0</p>
+<p>这里我使用的是kali的最新版本2021来做测试，因为kali和Ubuntu一样使用的是同一个发行版本，命令也不尽相同。</p>
+<p>编译完成后我们就可以使用rarcrack来破解zip、rar、7z等格式的压缩包了，但是这里注意到是rarcrack只能使用暴力破解方式，也就是穷举法，是不支持自己使用字典破解的。</p>
+<p>破解</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">./rarcrack <span class="token parameter variable">--threads</span> <span class="token number">12</span> <span class="token parameter variable">--type</span> <span class="token function">zip</span> test.zip</code></pre>
+
+<p>这里我指定使用文件夹下的rarcrack程序进行破解，这里一定要加上.&#x2F;。 因为这样才会识别是使用你当前文件夹里的程序，而直接输入rarcrack的话会提示你找不到这个命令，因为你没有安装这个程序</p>
+<p>参数解释</p>
+<blockquote>
+<p>–threads 线程数。 最大不超过12。 超过也默认12</p>
+<p>–type   要破解的压缩包类型。 可选zip rar  7z</p>
+</blockquote>
+<p>在运行破解命令之后马上按CTRL+C停止命令。 因为我们要缩小破解的范围</p>
+<p>在压缩包的统计目录下会自动生成一个和压缩包同名的文件并且后缀为.xml</p>
+<p>我们使用记事本打开此文件，然后把<abc></abc>中间的字符串改成0123456789，这里的意思是指定纯数字破解，然后再把 <current></current>中间的内容改为0，表示从0开始破解 然后我们保存在运行一遍破解命令<code>./rarcrack --threads 12 --type zip test.zip</code>就会自动读取你的xml配置文件然后从0开始破解数字</p>
+<p>我们可以使用<code>top -H</code>来查看当前运行的程序，可以看到rarcrack一共有12个正在运行</p>
+<p>最后破解成功了就会显示</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">GOOD: password cracked: <span class="token string">'100'</span></code></pre>
+
+<p>这里成功破解出了密码是100</p>
+<p>如果要破解的文件是zip。可以使用fcrackzip来破解。 因为速度要快很多。其他格式就可以使用rarcrack来破解。但是时间较长。</p>
+]]></content>
+      <tags>
+        <tag>rarcrack</tag>
+        <tag>zip</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>shell脚本</title>
     <url>/2021/10/04/shell%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<h3 id="shell脚本规范"><a href="#shell脚本规范" class="headerlink" title="shell脚本规范"></a>shell脚本规范</h3><ul>
@@ -3761,44 +3802,104 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>rarcrack破解多种格式压缩包</title>
-    <url>/2021/03/28/rarcrack%E7%A0%B4%E8%A7%A3%E5%A4%9A%E7%A7%8D%E6%A0%BC%E5%BC%8F%E5%8E%8B%E7%BC%A9%E5%8C%85/</url>
-    <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
-<p><a href="https://gitee.com/luoqingBlog/rarcrack.git">https://gitee.com/luoqingBlog/rarcrack.git</a></p>
-<p>点击下载zip即可，也可以使用git工具的clone。</p>
-<p>下载完成后解压得到里面的文件，然后在mac或者Ubuntu上编译此文件</p>
-<p>直接cd切换到文件夹当中然后使用make即可，mac并没有自带编译工具，所以要先去下载安装</p>
-<p>编译</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span></code></pre>
-
+    <title>springboot工程中使用logback输出实现日志唯一标识</title>
+    <url>/2024/03/12/springboot%E5%B7%A5%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8logback%E8%BE%93%E5%87%BA%E5%AE%9E%E7%8E%B0%E6%97%A5%E5%BF%97%E5%94%AF%E4%B8%80%E6%A0%87%E8%AF%86/</url>
+    <content><![CDATA[<p>在日常排查问题时，log.info输出的日志并没有唯一标识，导致实际排查问题时无法判断某一条日志是否是当前线程请求输出的日志。而我们可以通过拦截器拦截日志输出时设置一个唯一标识到输出中，后续只需要排查一下请求时的报文就可以获取到唯一标识，然后再通过唯一标识拿到所有的请求日志信息，方便排查问题。</p>
 <span id="more"></span>
-<p>编译完成后问价夹里会多一个rarcrack可运行程序，mac版本尽量保持在mac10.x</p>
-<p>我的系统是bigsur11.0.1  使用make编译完成后无法使用。尽管可以使用也是密码只破解了几次就结束了程序，这个问题我在kali中使用apt-get安装rarcrack之后也是这个样子，但是在kali中使用aapt-get rarcrack命令安装的可以破解rar的类型文件，但是其他文件类型都不行，密码走了四行就停止了</p>
-<p>所以只有一个主意事项，mac版本尽量低于11.0</p>
-<p>这里我使用的是kali的最新版本2021来做测试，因为kali和Ubuntu一样使用的是同一个发行版本，命令也不尽相同。</p>
-<p>编译完成后我们就可以使用rarcrack来破解zip、rar、7z等格式的压缩包了，但是这里注意到是rarcrack只能使用暴力破解方式，也就是穷举法，是不支持自己使用字典破解的。</p>
-<p>破解</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">./rarcrack <span class="token parameter variable">--threads</span> <span class="token number">12</span> <span class="token parameter variable">--type</span> <span class="token function">zip</span> test.zip</code></pre>
 
-<p>这里我指定使用文件夹下的rarcrack程序进行破解，这里一定要加上.&#x2F;。 因为这样才会识别是使用你当前文件夹里的程序，而直接输入rarcrack的话会提示你找不到这个命令，因为你没有安装这个程序</p>
-<p>参数解释</p>
-<blockquote>
-<p>–threads 线程数。 最大不超过12。 超过也默认12</p>
-<p>–type   要破解的压缩包类型。 可选zip rar  7z</p>
-</blockquote>
-<p>在运行破解命令之后马上按CTRL+C停止命令。 因为我们要缩小破解的范围</p>
-<p>在压缩包的统计目录下会自动生成一个和压缩包同名的文件并且后缀为.xml</p>
-<p>我们使用记事本打开此文件，然后把<abc></abc>中间的字符串改成0123456789，这里的意思是指定纯数字破解，然后再把 <current></current>中间的内容改为0，表示从0开始破解 然后我们保存在运行一遍破解命令<code>./rarcrack --threads 12 --type zip test.zip</code>就会自动读取你的xml配置文件然后从0开始破解数字</p>
-<p>我们可以使用<code>top -H</code>来查看当前运行的程序，可以看到rarcrack一共有12个正在运行</p>
-<p>最后破解成功了就会显示</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">GOOD: password cracked: <span class="token string">'100'</span></code></pre>
+<h2 id="一、工程依赖"><a href="#一、工程依赖" class="headerlink" title="一、工程依赖"></a>一、工程依赖</h2><pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-logging<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span></code></pre>
 
-<p>这里成功破解出了密码是100</p>
-<p>如果要破解的文件是zip。可以使用fcrackzip来破解。 因为速度要快很多。其他格式就可以使用rarcrack来破解。但是时间较长。</p>
+<h2 id="二、日志输出配置"><a href="#二、日志输出配置" class="headerlink" title="二、日志输出配置"></a>二、日志输出配置</h2><p>日志输出配置通常包含三部分：Level（日志输出级别）、Appender（输出到哪里）、Layout（输出格式）。logback中将Appender的作用放大了，除了指定输出位置之外，还能配置输出策略以及输出格式。这节只需要对appender的子元素pattern进行调整，增加输出%X{logId}。%X可以引用日志上下文的信息，这些信息是保存在MDC中的。示例配置如下：</p>
+<pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>appender</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>console<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ch.qos.logback.core.ConsoleAppender<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>encoder</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ch.qos.logback.classic.encoder.PatternLayoutEncoder<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token comment">&lt;!--格式化输出：%d表示日期，%X&#123;logId&#125;表示日志唯一编号 %thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pattern</span><span class="token punctuation">></span></span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%X&#123;logId&#125;] [%thread] %-5level %logger&#123;60&#125;[%L] - %msg%n<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>pattern</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>encoder</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>appender</span><span class="token punctuation">></span></span></code></pre>
+
+<h2 id="三、日志拦截器"><a href="#三、日志拦截器" class="headerlink" title="三、日志拦截器"></a>三、日志拦截器</h2><pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">Logger</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">LoggerFactory</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">MDC</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ModelAndView</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>handler<span class="token punctuation">.</span></span><span class="token class-name">HandlerInterceptorAdapter</span></span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletResponse</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">UUID</span></span><span class="token punctuation">;</span>
+ 
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">LogInterceptor</span> <span class="token keyword">extends</span> <span class="token class-name">HandlerInterceptorAdapter</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">Logger</span> logger <span class="token operator">=</span> <span class="token class-name">LoggerFactory</span><span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span><span class="token class-name">LogInterceptor</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token constant">LOG_ID_KEY</span> <span class="token operator">=</span> <span class="token string">"logId"</span><span class="token punctuation">;</span>
+ 
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">afterCompletion</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> arg0<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> arg1<span class="token punctuation">,</span> <span class="token class-name">Object</span> arg2<span class="token punctuation">,</span> <span class="token class-name">Exception</span> arg3<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// 删除logId</span>
+            <span class="token constant">MDC</span><span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token constant">LOG_ID_KEY</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+ 
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">postHandle</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> arg0<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> arg1<span class="token punctuation">,</span>
+                           <span class="token class-name">Object</span> arg2<span class="token punctuation">,</span> <span class="token class-name">ModelAndView</span> arg3<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+    <span class="token punctuation">&#125;</span>
+ 
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">preHandle</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> request<span class="token punctuation">,</span>
+                             <span class="token class-name">HttpServletResponse</span> response<span class="token punctuation">,</span> <span class="token class-name">Object</span> handler<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+ 
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// 设置logId</span>
+            <span class="token class-name">String</span> logId <span class="token operator">=</span> <span class="token constant">UUID</span><span class="token punctuation">.</span><span class="token function">randomUUID</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"-"</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token constant">MDC</span><span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token constant">LOG_ID_KEY</span><span class="token punctuation">,</span> logId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h1 id="四、加入拦截器链"><a href="#四、加入拦截器链" class="headerlink" title="四、加入拦截器链"></a>四、加入拦截器链</h1><pre class="language-none"><code class="language-none">@Configuration
+public class WebMvcConfig implements WebMvcConfigurer &#123;
+ 
+    &#x2F;**
+     * 把日志拦截器注入为bean
+     *
+     * @return
+     *&#x2F;
+    @Bean
+    public HandlerInterceptor logInterceptor() &#123;
+        return new LogInterceptor();
+    &#125;
+ 
+    &#x2F;**
+     * 注册拦截器
+     *
+     * @param registry
+     *&#x2F;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) &#123;
+        &#x2F;&#x2F; addPathPatterns 用于添加拦截规则, 这里假设拦截 &#x2F;url 后面的全部链接
+        &#x2F;&#x2F; excludePathPatterns 用户排除拦截
+        registry.addInterceptor(logInterceptor()).addPathPatterns(&quot;&#x2F;**&quot;);
+    &#125;
+&#125;</code></pre>
+
+<p>到此，springboot工程可以对每次接口调用产生的日志都标记唯一的编号。</p>
 ]]></content>
       <tags>
-        <tag>rarcrack</tag>
-        <tag>zip</tag>
+        <tag>java</tag>
+        <tag>springboot</tag>
+        <tag>logback</tag>
       </tags>
   </entry>
   <entry>
@@ -4108,6 +4209,22 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>win10关闭WIN+SHIFT+S截图快捷键</title>
+    <url>/2024/03/05/win10%E5%85%B3%E9%97%ADWIN-SHIFT-S%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
+    <content><![CDATA[<p>网上搜了好久，看了不少解答都没有真正解决问题，其实问题很简单就是要禁用Shift+Win+S这组快捷键。</p>
+<p>由于Windows没法直接禁用一组快捷键，所以此处实际上禁用的是Win+S的功能键，这样一来Shift+Win+S就同时被禁用了。</p>
+<span id="more"></span>
+
+<h2 id="1、打开注册表"><a href="#1、打开注册表" class="headerlink" title="1、打开注册表"></a>1、打开注册表</h2><p>按下Win+R键，输入regedit，回车即可打开</p>
+<h2 id="2、进入禁用快捷目录"><a href="#2、进入禁用快捷目录" class="headerlink" title="2、进入禁用快捷目录"></a>2、进入禁用快捷目录</h2><p>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced</p>
+<h2 id="3、新建键值"><a href="#3、新建键值" class="headerlink" title="3、新建键值"></a>3、新建键值</h2><p>新建一个字符串值，数值名称为“DisabledHotkeys”，数值数据为“S”，注意字母不要漏拼了最后有一个s。</p>
+<h2 id="4、关闭注册表重启电脑"><a href="#4、关闭注册表重启电脑" class="headerlink" title="4、关闭注册表重启电脑"></a>4、关闭注册表重启电脑</h2><p>重启后再试试，Win10自带的截图工具快捷键是不是已经失效了。</p>
+]]></content>
+      <tags>
+        <tag>win10</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>windows切换版本</title>
     <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
     <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
@@ -4117,6 +4234,22 @@ hello</code></pre>
 
 <p>软件已经放到gitee了，方便下载</p>
 <p>地址：<a href="https://gitee.com/luoqingBlog/windows-version-switching/tree/master/">https://gitee.com/luoqingBlog/windows-version-switching/tree/master/</a></p>
+]]></content>
+      <tags>
+        <tag>windows</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>windows开启卓越性能电源计划</title>
+    <url>/2024/02/05/windows%E5%BC%80%E5%90%AF%E5%8D%93%E8%B6%8A%E6%80%A7%E8%83%BD%E7%94%B5%E6%BA%90%E8%AE%A1%E5%88%92/</url>
+    <content><![CDATA[<h2 id="1、打开cmd输入如下命令创建一个卓越性能计划"><a href="#1、打开cmd输入如下命令创建一个卓越性能计划" class="headerlink" title="1、打开cmd输入如下命令创建一个卓越性能计划"></a>1、打开cmd输入如下命令创建一个卓越性能计划</h2><pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-duplicatescheme</span> e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>
+
+<h2 id="2、自动选择已开启的卓越性能计划"><a href="#2、自动选择已开启的卓越性能计划" class="headerlink" title="2、自动选择已开启的卓越性能计划"></a>2、自动选择已开启的卓越性能计划</h2><p>上述命令执行后会返回一个GUID，例如：电源方案 GUID: 00cac9ad-0e8a-4b9d-a477-d1e0711b5099  (卓越性能)</p>
+<p>我们根据创建的guid执行选择</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-s</span> 00cac9ad-0e8a-4b9d-a477-d1e0711b5099</code></pre>
+
+<p>再次进入电源选项，可以看到已经选择到了新创建的卓越性能计划</p>
+<span id="more"></span>
 ]]></content>
       <tags>
         <tag>windows</tag>
@@ -4179,22 +4312,6 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
 ]]></content>
       <tags>
         <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>windows开启卓越性能电源计划</title>
-    <url>/2024/02/05/windows%E5%BC%80%E5%90%AF%E5%8D%93%E8%B6%8A%E6%80%A7%E8%83%BD%E7%94%B5%E6%BA%90%E8%AE%A1%E5%88%92/</url>
-    <content><![CDATA[<h2 id="1、打开cmd输入如下命令创建一个卓越性能计划"><a href="#1、打开cmd输入如下命令创建一个卓越性能计划" class="headerlink" title="1、打开cmd输入如下命令创建一个卓越性能计划"></a>1、打开cmd输入如下命令创建一个卓越性能计划</h2><pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-duplicatescheme</span> e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>
-
-<h2 id="2、自动选择已开启的卓越性能计划"><a href="#2、自动选择已开启的卓越性能计划" class="headerlink" title="2、自动选择已开启的卓越性能计划"></a>2、自动选择已开启的卓越性能计划</h2><p>上述命令执行后会返回一个GUID，例如：电源方案 GUID: 00cac9ad-0e8a-4b9d-a477-d1e0711b5099  (卓越性能)</p>
-<p>我们根据创建的guid执行选择</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-s</span> 00cac9ad-0e8a-4b9d-a477-d1e0711b5099</code></pre>
-
-<p>再次进入电源选项，可以看到已经选择到了新创建的卓越性能计划</p>
-<span id="more"></span>
-]]></content>
-      <tags>
-        <tag>windows</tag>
       </tags>
   </entry>
   <entry>
@@ -4360,6 +4477,27 @@ resp <span class="token operator">=</span> session<span class="token punctuation
         <tag>python</tag>
         <tag>云函数</tag>
         <tag>自动签到</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用支付宝充值chatgpt-plus</title>
+    <url>/2024/03/21/%E4%BD%BF%E7%94%A8%E6%94%AF%E4%BB%98%E5%AE%9D%E5%85%85%E5%80%BCchatgpt-plus/</url>
+    <content><![CDATA[<p>前些时间OpenAI官方推出了移动端ChatGPT,这方便了用户使用更简便的方式充值ChatGPT Plus。今天就介绍一种不用虚拟信用卡,只用支付宝便可以完成充值的方法。</p>
+<span id="more"></span>
+
+<h2 id="1、准备条件"><a href="#1、准备条件" class="headerlink" title="1、准备条件"></a>1、准备条件</h2><p>1、手机科学上网</p>
+<p>2、美区AppStore账号（必须要自己的账号，因为需要往账号里充钱然后充值chatgpt）</p>
+<h2 id="二、充值"><a href="#二、充值" class="headerlink" title="二、充值"></a>二、充值</h2><h3 id="1、将支付宝定位切换到纽约"><a href="#1、将支付宝定位切换到纽约" class="headerlink" title="1、将支付宝定位切换到纽约"></a>1、将支付宝定位切换到纽约</h3><p><img src="/../../../../myImg/%E6%94%AF%E4%BB%98%E5%AE%9D%E5%9B%BD%E9%99%85%E5%AE%9A%E4%BD%8D.jpg" loading="lazy"></p>
+<p><img src="/../../../../myImg/%E6%94%AF%E4%BB%98%E5%AE%9D%E5%AE%9A%E4%BD%8D%E7%BA%BD%E7%BA%A6.jpg" loading="lazy"></p>
+<h3 id="2、在支付宝首页“当前汇率”下方滚动轮播图中找到：“大牌礼品卡低至9折”"><a href="#2、在支付宝首页“当前汇率”下方滚动轮播图中找到：“大牌礼品卡低至9折”" class="headerlink" title="2、在支付宝首页“当前汇率”下方滚动轮播图中找到：“大牌礼品卡低至9折”"></a>2、在支付宝首页“当前汇率”下方滚动轮播图中找到：“大牌礼品卡低至9折”</h3><p><img src="/../../../../myImg/%E5%A4%A7%E7%89%8C%E7%A4%BC%E5%8D%A1%E4%BD%8E%E8%87%B39%E6%8A%98.jpg" loading="lazy"></p>
+<h3 id="3、在“大牌礼卡折上折”标题下点击“App-Store-amp-iTunes-Us“的去购买"><a href="#3、在“大牌礼卡折上折”标题下点击“App-Store-amp-iTunes-Us“的去购买" class="headerlink" title="3、在“大牌礼卡折上折”标题下点击“App Store &amp; iTunes Us“的去购买"></a>3、在“大牌礼卡折上折”标题下点击“App Store &amp; iTunes Us“的去购买</h3><p><img src="/../../../../myImg/%E5%A4%A7%E7%89%8C%E7%A4%BC%E5%8D%A1%E6%8A%98%E4%B8%8A%E6%8A%98.jpg" loading="lazy"></p>
+<h3 id="4、根据自己需要输入要购买的礼品券面额-此处为美元"><a href="#4、根据自己需要输入要购买的礼品券面额-此处为美元" class="headerlink" title="4、根据自己需要输入要购买的礼品券面额(此处为美元)"></a>4、根据自己需要输入要购买的礼品券面额(此处为美元)</h3><p><img src="/../../../../myImg/appStore%E7%A4%BC%E5%93%81%E5%8D%A1.jpg" loading="lazy"></p>
+<h3 id="5、打开appstore兑换充值卡"><a href="#5、打开appstore兑换充值卡" class="headerlink" title="5、打开appstore兑换充值卡"></a>5、打开appstore兑换充值卡</h3><p><img src="/../../../../myImg/appstore%E5%85%91%E6%8D%A2%E5%85%85%E5%80%BC%E5%8D%A1.jpg" loading="lazy"></p>
+<p><img src="/../../../../myImg/%E5%85%91%E6%8D%A2%E5%85%85%E5%80%BC%E5%8D%A1%E6%88%96%E4%BB%A3%E7%A0%81.jpg" loading="lazy"></p>
+<h3 id="6、打开Chatgpt点击升级chatgpt-plus-选择使用AppStore账户支付"><a href="#6、打开Chatgpt点击升级chatgpt-plus-选择使用AppStore账户支付" class="headerlink" title="6、打开Chatgpt点击升级chatgpt plus 选择使用AppStore账户支付"></a>6、打开Chatgpt点击升级chatgpt plus 选择使用AppStore账户支付</h3><p><img src="/../../../../myImg/%E5%85%85%E5%80%BCchatgpt.jpg" loading="lazy"></p>
+]]></content>
+      <tags>
+        <tag>chatgpt</tag>
       </tags>
   </entry>
   <entry>
@@ -4901,30 +5039,6 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
-    <title>老毛子固件共享ss</title>
-    <url>/2021/10/03/%E8%80%81%E6%AF%9B%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%85%B1%E4%BA%ABss/</url>
-    <content><![CDATA[<p>使用场景：使用路由器连接ss然后任意一台设备连接到路由器下都可以访问国外网站</p>
-<p>首先我们这里使用到的是斐讯K2路由器，已经刷好老毛子固件，本来是想在openwrt固件里连接ss，但是发现斐讯k2刷了opwnwrt固件后内存只剩1.5M，而安装一个ss或者v2ray插件的空间则需要4M左右，所以只能放弃，网上也有其他的方式，这里我们直接使用老毛子固件自带的ss插件进行操作，这样我们只需要输入账号密码就可以了</p>
-<p>首先我们保证路由器的上网功能是已经设置好的，并且可以访问外网，也就是设置一个宽带连接的事，这里应该不用我说，我们来设置ss</p>
-<span id="more"></span>
-
-<p>首先点击老毛子后台的ShadowSocks菜单</p>
-<p><img src="C:\myImg\image-20211003172948073.png" alt="image-20211003172948073" loading="lazy"></p>
-<p>然后我们可以导入一个单节点，也可以导入订阅，这里我们准备好一个可用的单节点进行尝试，导入完成后节点配置中会有一个节点</p>
-<p><img src="C:\myImg\image-20211003173150774.png" alt="image-20211003173150774" loading="lazy"></p>
-<p>导入完成可以看到这些参数都是自动填到里面的，我们可以不用改动，唯一需要改动的可以改一下节点名称，然后在当前使用服务器节点填上已经导入的节点的名称</p>
-<p><img src="C:\myImg\image-20211003173254474.png" alt="image-20211003173254474" loading="lazy"></p>
-<p>然后我们就可以看到最下面的参数已经全部填好了</p>
-<p><img src="C:\myImg\image-20211003173359084.png" alt="image-20211003173359084" loading="lazy"></p>
-<p>然后我们转到ss配置，填写以下信息，其他的不用填，因为都是自动填好的不用管</p>
-<p><img src="C:\myImg\image-20211003173510025.png" alt="image-20211003173510025" loading="lazy"></p>
-<p>然后把对应的开关打开，再应用页面设置就可以尝试访问谷歌看一下效果了</p>
-]]></content>
-      <tags>
-        <tag>ss</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>浅谈慕课网m3u8加密过程</title>
     <url>/2023/07/30/%E6%B5%85%E8%B0%88%E6%85%95%E8%AF%BE%E7%BD%91m3u8%E5%8A%A0%E5%AF%86%E8%BF%87%E7%A8%8B/</url>
     <content><![CDATA[<p>由于慕课网的视频是使用ts文件流格式进行播放，但是下载后发现无法正常播放，说明进行了加密，下载其对应的m3u8文件发现是一个json报文，其m3u8文件和key文件均进行了加密处理。</p>
@@ -5308,6 +5422,30 @@ binary_data <span class="token operator">=</span> <span class="token builtin">by
         <tag>ffmpeg</tag>
         <tag>ts</tag>
         <tag>m3u8</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>老毛子固件共享ss</title>
+    <url>/2021/10/03/%E8%80%81%E6%AF%9B%E5%AD%90%E5%9B%BA%E4%BB%B6%E5%85%B1%E4%BA%ABss/</url>
+    <content><![CDATA[<p>使用场景：使用路由器连接ss然后任意一台设备连接到路由器下都可以访问国外网站</p>
+<p>首先我们这里使用到的是斐讯K2路由器，已经刷好老毛子固件，本来是想在openwrt固件里连接ss，但是发现斐讯k2刷了opwnwrt固件后内存只剩1.5M，而安装一个ss或者v2ray插件的空间则需要4M左右，所以只能放弃，网上也有其他的方式，这里我们直接使用老毛子固件自带的ss插件进行操作，这样我们只需要输入账号密码就可以了</p>
+<p>首先我们保证路由器的上网功能是已经设置好的，并且可以访问外网，也就是设置一个宽带连接的事，这里应该不用我说，我们来设置ss</p>
+<span id="more"></span>
+
+<p>首先点击老毛子后台的ShadowSocks菜单</p>
+<p><img src="C:\myImg\image-20211003172948073.png" alt="image-20211003172948073" loading="lazy"></p>
+<p>然后我们可以导入一个单节点，也可以导入订阅，这里我们准备好一个可用的单节点进行尝试，导入完成后节点配置中会有一个节点</p>
+<p><img src="C:\myImg\image-20211003173150774.png" alt="image-20211003173150774" loading="lazy"></p>
+<p>导入完成可以看到这些参数都是自动填到里面的，我们可以不用改动，唯一需要改动的可以改一下节点名称，然后在当前使用服务器节点填上已经导入的节点的名称</p>
+<p><img src="C:\myImg\image-20211003173254474.png" alt="image-20211003173254474" loading="lazy"></p>
+<p>然后我们就可以看到最下面的参数已经全部填好了</p>
+<p><img src="C:\myImg\image-20211003173359084.png" alt="image-20211003173359084" loading="lazy"></p>
+<p>然后我们转到ss配置，填写以下信息，其他的不用填，因为都是自动填好的不用管</p>
+<p><img src="C:\myImg\image-20211003173510025.png" alt="image-20211003173510025" loading="lazy"></p>
+<p>然后把对应的开关打开，再应用页面设置就可以尝试访问谷歌看一下效果了</p>
+]]></content>
+      <tags>
+        <tag>ss</tag>
       </tags>
   </entry>
   <entry>
