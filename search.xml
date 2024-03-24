@@ -4256,6 +4256,35 @@ public class WebMvcConfig implements WebMvcConfigurer &#123;
       </tags>
   </entry>
   <entry>
+    <title>使用ollama部署本地模型</title>
+    <url>/2024/03/24/%E4%BD%BF%E7%94%A8ollama%E9%83%A8%E7%BD%B2%E6%9C%AC%E5%9C%B0%E6%A8%A1%E5%9E%8B/</url>
+    <content><![CDATA[<p>Ollama 是一个开源软件框架，它主要用于简化在本地环境中部署和管理大型语言模型的过程。这个框架设计了与Docker容器集成的方式，使得用户能够通过简单的命令行操作在自己的计算机上运行大型预训练的语言模型，比如Llama 2或其他兼容模型。</p>
+<p>Ollama会将模型的权重、配置和其他必要数据打包成一个Modelfile，以方便用户下载、安装和执行。它还优化了资源使用，特别是对于GPU的支持，这样即便在非云端环境下，用户也能高效地利用本地硬件资源来运行复杂的AI模型。</p>
+<p>随着2024年的更新，Ollama不仅支持macOS和Linux系统，也已经扩展到了Windows平台，使得更多用户能够在不同的操作系统上便捷地进行本地化的大规模语言模型部署。此外，Ollama还能够支持像谷歌Gemma这样的开源大语言模型。</p>
+<span id="more"></span>
+
+<h2 id="安装ollama"><a href="#安装ollama" class="headerlink" title="安装ollama"></a>安装ollama</h2><p>ollama官网：<a href="https://ollama.com/download">https://ollama.com/download</a></p>
+<p>ollama Github：<a href="https://github.com/ollama/ollama">https://github.com/ollama/ollama</a></p>
+<p>在官网可直接下载macOs、Linux、Windows三大系统已编译好的安装包</p>
+<h2 id="拉取并运行模型"><a href="#拉取并运行模型" class="headerlink" title="拉取并运行模型"></a>拉取并运行模型</h2><p>由于ollama设计了与Docker容器集成的方式所以用户可直接像docker一样从官网云端拉取模型并启动。</p>
+<p>查看官网已有模型：<a href="https://ollama.com/library">https://ollama.com/library</a></p>
+<p>下载并启动（以llama2为例）：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ollama run llama2</code></pre>
+
+<p>使用run运行模型时，如果模型未下载则会先下载后自动运行，如果已下载则会直接运行本地已下载好的。这点和docker类似</p>
+<h2 id="使用api调用ollama"><a href="#使用api调用ollama" class="headerlink" title="使用api调用ollama"></a>使用api调用ollama</h2><p>使用<code>ollama run</code>命令启动模型后就可以直接在命令行进行对话了，如果觉得命令行对话不方便也可以直接使用api的方式进行调用。</p>
+<p>请求路径：<a href="http://127.0.0.1:11434/api/generate">http://127.0.0.1:11434/api/generate</a></p>
+<p>请求体：</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"model"</span><span class="token operator">:</span><span class="token string">"llama2"</span><span class="token punctuation">,</span>
+    <span class="token property">"prompt"</span><span class="token operator">:</span><span class="token string">"hello"</span>
+<span class="token punctuation">&#125;</span></code></pre>
+]]></content>
+      <tags>
+        <tag>ollama</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用python无头浏览器</title>
     <url>/2021/05/12/%E4%BD%BF%E7%94%A8python%E6%97%A0%E5%A4%B4%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
     <content><![CDATA[<p>这里我们使用谷歌的无头浏览器进行演示</p>
