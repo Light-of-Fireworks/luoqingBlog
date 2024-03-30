@@ -4225,6 +4225,27 @@ public class WebMvcConfig implements WebMvcConfigurer &#123;
       </tags>
   </entry>
   <entry>
+    <title>佳能MG3080连接WIFi共享打印</title>
+    <url>/2024/03/30/%E4%BD%B3%E8%83%BDMG3080%E8%BF%9E%E6%8E%A5WIFi%E5%85%B1%E4%BA%AB%E6%89%93%E5%8D%B0/</url>
+    <content><![CDATA[<p>佳能MG3080喷墨打印机在家里通过无线路由器连接Wi-Fi就可以,从而连接本地局域网内的电脑或智能设备实现无线打印</p>
+<span id="more"></span>
+
+<h2 id="1、准备工作"><a href="#1、准备工作" class="headerlink" title="1、准备工作"></a>1、准备工作</h2><p>佳能打印app下载：<a href="https://www.canon.com.cn/supports/app/#/id=inkjet&Canon_PRINT">https://www.canon.com.cn/supports/app/#/id=inkjet&amp;Canon_PRINT</a></p>
+<p>选择下载：Canon PRINT</p>
+<h2 id="2、重置打印机网络"><a href="#2、重置打印机网络" class="headerlink" title="2、重置打印机网络"></a>2、重置打印机网络</h2><p>打印机开机就绪状态下，按住“WiFi”键2秒以上，电源灯闪烁时松开</p>
+<p>按一下彩色按钮后网络指示灯会跳到直连</p>
+<p>再次按一下彩色按钮，会从直连跳回网络</p>
+<p>这时会出现一个没有密码的wifi，名称类似：Canon_ij_88871_MG3000series</p>
+<h2 id="3、打印机连接WIFi"><a href="#3、打印机连接WIFi" class="headerlink" title="3、打印机连接WIFi"></a>3、打印机连接WIFi</h2><p>连接刚刚没有密码的打印机WIFi，手机打开佳能打印APP，提示是否连接网络选择是，输入wifi密码即可</p>
+<p><strong>注意：wifi必须是2.4G且加密格式必须有WPA，否则打印机无法连接wifi。</strong></p>
+<p>可能是打印机过于老旧无法支持路由器比较新的加密方式，可以选择路由器的”WPA&#x2F;WPA2”这一个选项作为打印机及其他智能设备的2.4Gwifi加密方式。</p>
+]]></content>
+      <tags>
+        <tag>佳能</tag>
+        <tag>打印机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>windows切换版本</title>
     <url>/2023/07/27/windows%E5%88%87%E6%8D%A2%E7%89%88%E6%9C%AC/</url>
     <content><![CDATA[<p>最近在玩生化危机4重置版的时候发现老是启动不了，网上搜了一些方法说是要升级windows10最新版本才可以玩，我第一次听说游戏还要看系统版本才可以玩的，由于我的系统是win10企业版LTSC养老版本，是无法升级的，所以必须切换到win10专业版然后再使用微软的官方升级工具进行升级，在吾爱论坛找了一个可以用的win10版本切换工具分享一下</p>
