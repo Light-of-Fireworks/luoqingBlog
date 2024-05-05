@@ -133,6 +133,219 @@ exec执行
       </tags>
   </entry>
   <entry>
+    <title>Spring-Cloud发送请求的几种方式</title>
+    <url>/2023/12/15/Spring-Cloud%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[<p>Spring Cloud提供了多种方式来发送请求到其他服务。以下是一些常见的方法</p>
+<h2 id="1-RestTemplate"><a href="#1-RestTemplate" class="headerlink" title="1. RestTemplate"></a>1. RestTemplate</h2><p>使用RestTemplate，需要在<code>pom.xml</code>文件中添加以下依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>示例代码：</p>
+<pre class="language-none"><code class="language-none">javaCopy codeRestTemplate restTemplate &#x3D; new RestTemplate();
+String result &#x3D; restTemplate.getForObject(&quot;http:&#x2F;&#x2F;service-url&#x2F;api&#x2F;resource&quot;, String.class);</code></pre>
+
+<span id="more"></span>
+
+<h2 id="2-WebClient"><a href="#2-WebClient" class="headerlink" title="2. WebClient"></a>2. WebClient</h2><p>WebClient通常与Spring WebFlux一起使用，需要添加以下依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-webflux&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>示例代码：</p>
+<pre class="language-none"><code class="language-none">javaCopy codeWebClient webClient &#x3D; WebClient.create(&quot;http:&#x2F;&#x2F;service-url&quot;);
+Mono&lt;String&gt; resultMono &#x3D; webClient.get()
+    .uri(&quot;&#x2F;api&#x2F;resource&quot;)
+    .retrieve()
+    .bodyToMono(String.class);
+String result &#x3D; resultMono.block();</code></pre>
+
+<h2 id="3-Feign"><a href="#3-Feign" class="headerlink" title="3. Feign"></a>3. Feign</h2><p>使用Feign，需要添加<code>spring-cloud-starter-openfeign</code>依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>这里主要讲一下fegin。</p>
+<p>首先看一下fegin调用内部已经注册到同一个注册中心上的服务互相调用方式</p>
+<h3 id="3-1-内部微服务互相调用"><a href="#3-1-内部微服务互相调用" class="headerlink" title="3.1 内部微服务互相调用"></a>3.1 内部微服务互相调用</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@FeignClient</span><span class="token punctuation">(</span>contextId <span class="token operator">=</span> <span class="token string">"remoteUserService"</span><span class="token punctuation">,</span> value <span class="token operator">=</span> <span class="token class-name">ServiceNameConstants</span><span class="token punctuation">.</span><span class="token constant">SYSTEM_SERVICE</span><span class="token punctuation">,</span> fallbackFactory <span class="token operator">=</span> <span class="token class-name">RemoteUserFallbackFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">RemoteUserService</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">/**
+     * 通过用户名查询用户信息
+     *
+     * @param username 用户名
+     * @param source 请求来源
+     * @return 结果
+     */</span>
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/user/info/&#123;username&#125;"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">R</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">LoginUser</span><span class="token punctuation">></span></span> <span class="token function">getUserInfo</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span><span class="token punctuation">(</span><span class="token string">"username"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> username<span class="token punctuation">,</span> <span class="token annotation punctuation">@RequestHeader</span><span class="token punctuation">(</span><span class="token class-name">SecurityConstants</span><span class="token punctuation">.</span><span class="token constant">FROM_SOURCE</span><span class="token punctuation">)</span> <span class="token class-name">String</span> source<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+</code></pre>
+
+<p>需要指定value为已注册的服务的id</p>
+<h3 id="3-2-调用外部第三方系统"><a href="#3-2-调用外部第三方系统" class="headerlink" title="3.2 调用外部第三方系统"></a>3.2 调用外部第三方系统</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@FeignClient</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"test"</span><span class="token punctuation">,</span>url <span class="token operator">=</span> <span class="token string">"https://timor.tech"</span><span class="token punctuation">,</span> fallbackFactory <span class="token operator">=</span> <span class="token class-name">RemoteVideoFallbackFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span>configuration <span class="token operator">=</span> <span class="token class-name">FeignConfig</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">RemoteTestService</span>
+<span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"/api/holiday/year/&#123;year&#125;"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">test1</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"year"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> year<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h4 id="3-2-1-指定请求时默认的请求头"><a href="#3-2-1-指定请求时默认的请求头" class="headerlink" title="3.2.1 指定请求时默认的请求头"></a>3.2.1 指定请求时默认的请求头</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Configuration</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FeignConfig</span> <span class="token keyword">implements</span> <span class="token class-name">RequestInterceptor</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">RequestTemplate</span> requestTemplate<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        requestTemplate<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"User-Agent"</span><span class="token punctuation">,</span> <span class="token string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>添加配置后在@FeignClient注解中指定使用此配置类，configuration &#x3D; FeignConfig.class</p>
+<h2 id="4-HttpClient"><a href="#4-HttpClient" class="headerlink" title="4. HttpClient"></a>4. HttpClient</h2><p>对于直接使用HttpClient，可以添加以下依赖：</p>
+<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.httpcomponents&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;httpclient&lt;&#x2F;artifactId&gt;
+    &lt;version&gt;4.5.13&lt;&#x2F;version&gt; &lt;!-- 版本号可能会有更新 --&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>示例代码：</p>
+<pre class="language-none"><code class="language-none">javaCopy codeCloseableHttpClient httpClient &#x3D; HttpClients.createDefault();
+HttpGet httpGet &#x3D; new HttpGet(&quot;http:&#x2F;&#x2F;service-url&#x2F;api&#x2F;resource&quot;);
+try (CloseableHttpResponse response &#x3D; httpClient.execute(httpGet)) &#123;
+    HttpEntity entity &#x3D; response.getEntity();
+    if (entity !&#x3D; null) &#123;
+        String result &#x3D; EntityUtils.toString(entity);
+        &#x2F;&#x2F; 使用结果
+    &#125;
+&#125;</code></pre>
+
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SpringBoot整合Quartz定时任务</title>
+    <url>/2021/09/25/SpringBoot%E6%95%B4%E5%90%88Quartz%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/</url>
+    <content><![CDATA[<p>首先导入quartz依赖，这里我就不演示导入springboot，自己随意导入一个版本就好了</p>
+<pre class="language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-quartz&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>然后我们就可以直接编写要执行的任务类了，这里我们选择继承QuartzJobBean这个类</p>
+<span id="more"></span>
+
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestTask</span> <span class="token keyword">extends</span> <span class="token class-name">QuartzJobBean</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">executeInternal</span><span class="token punctuation">(</span><span class="token class-name">JobExecutionContext</span> context<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">JobExecutionException</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"任务执行了。。。。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>创建好了需要执行的任务我们就需要去创建一个任务调度器，还有一个时间调度器，任务调度器是用来执行你需要执行的哪个类，时间调度器则是用来在你指定的间隔执行 一次任务</p>
+<p>我们创建一个Configuration配置</p>
+<p>然后将任务调度器和时间调度器都注入到bean中</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Configuration</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> config <span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@Bean</span>
+    <span class="token keyword">public</span> <span class="token class-name">JobDetail</span> <span class="token function">testJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token class-name">JobBuilder</span><span class="token punctuation">.</span><span class="token function">newJob</span><span class="token punctuation">(</span><span class="token class-name">TestTask</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withIdentity</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">storeDurably</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@Bean</span>
+    <span class="token keyword">public</span> <span class="token class-name">Trigger</span> <span class="token function">testTrigger</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//从第五秒开始每秒执行一次</span>
+        <span class="token class-name">CronScheduleBuilder</span> cronScheduleBuilder <span class="token operator">=</span> <span class="token class-name">CronScheduleBuilder</span><span class="token punctuation">.</span><span class="token function">cronSchedule</span><span class="token punctuation">(</span><span class="token string">"5/1 * * * * ? "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token class-name">TriggerBuilder</span><span class="token punctuation">.</span><span class="token function">newTrigger</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forJob</span><span class="token punctuation">(</span><span class="token function">testJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withIdentity</span><span class="token punctuation">(</span><span class="token string">"testTrigger"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withSchedule</span><span class="token punctuation">(</span>cronScheduleBuilder<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>最后启动springboot即可看到效果</p>
+<h2 id="spring注解Scheduled"><a href="#spring注解Scheduled" class="headerlink" title="spring注解Scheduled"></a>spring注解Scheduled</h2><p>也可以使用spring自带的Scheduled注解来完成简单开发，但是无法指定任务名称,可以直接使用cron表达式，不建议使用这种</p>
+<p>首先还是导入springboot-quartz整合的包</p>
+<pre class="language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-quartz&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<p>为什么要导入quartz整合的包呢，因为springboot和quartz整合的包里面有我们需要的几个依赖，为了方便就直接导入使用就可以了，当然也可以单独导入spring-context包，这个是spring的依赖，要用到@Scheduled需要spring的包</p>
+<p>导入完成后就可以直接在启动类上加上启动Scheduled的注解</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@SpringBootApplication</span>
+<span class="token annotation punctuation">@EnableScheduling</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoApplication</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">SpringApplication</span><span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">DemoApplication</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>然后再编写一个component类即可启动</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Task2</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@Scheduled</span><span class="token punctuation">(</span>cron <span class="token operator">=</span> <span class="token string">"55/1 * * * * ? "</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">process</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"任务在一分钟的55秒后执行，每秒执行一次"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>这种方式虽然便捷，但是没有找到能指定任务名称和调度器名称的注解属性，所以一般只用来做简单的功能，比如我想指定一个任务让他停下来但是又没有名称还是不行的。</p>
+<h2 id="暂停、恢复任务"><a href="#暂停、恢复任务" class="headerlink" title="暂停、恢复任务"></a>暂停、恢复任务</h2><p>首先我们定义好了springboot和quartz整合的任务以及调度器，并且能够正常运行，但是我们中途想让他停下来应该怎么做呢，停止整个项目肯定是不行的，那么我们可以做一个接口，发送请求就可以达到停止和开启的效果</p>
+<p>我们先注入一下Scheduler，Scheduler是quartz提供的</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Autowired</span>
+<span class="token class-name">Scheduler</span> scheduler<span class="token punctuation">;</span></code></pre>
+
+
+
+<p>我们先来了解一下停止的方法pauseJob</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/stop"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">stopJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">JobKey</span> jobKey <span class="token operator">=</span> <span class="token class-name">JobKey</span><span class="token punctuation">.</span><span class="token function">jobKey</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    scheduler<span class="token punctuation">.</span><span class="token function">pauseJob</span><span class="token punctuation">(</span>jobKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>也可以关闭一整个组的任务，我们可以把想要关闭的任务都放在同一个任务组中</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/stopJobs"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">stopJobs</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">GroupMatcher</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">JobKey</span><span class="token punctuation">></span></span> jobKeyGroupMatcher <span class="token operator">=</span> <span class="token class-name">GroupMatcher</span><span class="token punctuation">.</span><span class="token function">jobGroupEquals</span><span class="token punctuation">(</span><span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    scheduler<span class="token punctuation">.</span><span class="token function">pauseJobs</span><span class="token punctuation">(</span>jobKeyGroupMatcher<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+
+
+<p>开启一个任务</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/start"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">startJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">JobKey</span> jobKey <span class="token operator">=</span> <span class="token class-name">JobKey</span><span class="token punctuation">.</span><span class="token function">jobKey</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    scheduler<span class="token punctuation">.</span><span class="token function">resumeJob</span><span class="token punctuation">(</span>jobKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+
+
+<p> 开启一个组的任务</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/startJobs"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">startJobs</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">GroupMatcher</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">JobKey</span><span class="token punctuation">></span></span> jobKeyGroupMatcher <span class="token operator">=</span> <span class="token class-name">GroupMatcher</span><span class="token punctuation">.</span><span class="token function">jobGroupEquals</span><span class="token punctuation">(</span><span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    scheduler<span class="token punctuation">.</span><span class="token function">resumeJobs</span><span class="token punctuation">(</span>jobKeyGroupMatcher<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>SpringBoot</tag>
+        <tag>Spring</tag>
+        <tag>Quartz</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JavaMail报错问题总结</title>
     <url>/2023/07/07/JavaMail%E6%8A%A5%E9%94%99%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<p>前言：</p>
@@ -449,219 +662,6 @@ exec执行
       </tags>
   </entry>
   <entry>
-    <title>Spring-Cloud发送请求的几种方式</title>
-    <url>/2023/12/15/Spring-Cloud%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
-    <content><![CDATA[<p>Spring Cloud提供了多种方式来发送请求到其他服务。以下是一些常见的方法</p>
-<h2 id="1-RestTemplate"><a href="#1-RestTemplate" class="headerlink" title="1. RestTemplate"></a>1. RestTemplate</h2><p>使用RestTemplate，需要在<code>pom.xml</code>文件中添加以下依赖：</p>
-<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-web&lt;&#x2F;artifactId&gt;
-&lt;&#x2F;dependency&gt;</code></pre>
-
-<p>示例代码：</p>
-<pre class="language-none"><code class="language-none">javaCopy codeRestTemplate restTemplate &#x3D; new RestTemplate();
-String result &#x3D; restTemplate.getForObject(&quot;http:&#x2F;&#x2F;service-url&#x2F;api&#x2F;resource&quot;, String.class);</code></pre>
-
-<span id="more"></span>
-
-<h2 id="2-WebClient"><a href="#2-WebClient" class="headerlink" title="2. WebClient"></a>2. WebClient</h2><p>WebClient通常与Spring WebFlux一起使用，需要添加以下依赖：</p>
-<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-webflux&lt;&#x2F;artifactId&gt;
-&lt;&#x2F;dependency&gt;</code></pre>
-
-<p>示例代码：</p>
-<pre class="language-none"><code class="language-none">javaCopy codeWebClient webClient &#x3D; WebClient.create(&quot;http:&#x2F;&#x2F;service-url&quot;);
-Mono&lt;String&gt; resultMono &#x3D; webClient.get()
-    .uri(&quot;&#x2F;api&#x2F;resource&quot;)
-    .retrieve()
-    .bodyToMono(String.class);
-String result &#x3D; resultMono.block();</code></pre>
-
-<h2 id="3-Feign"><a href="#3-Feign" class="headerlink" title="3. Feign"></a>3. Feign</h2><p>使用Feign，需要添加<code>spring-cloud-starter-openfeign</code>依赖：</p>
-<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;&#x2F;artifactId&gt;
-&lt;&#x2F;dependency&gt;</code></pre>
-
-<p>这里主要讲一下fegin。</p>
-<p>首先看一下fegin调用内部已经注册到同一个注册中心上的服务互相调用方式</p>
-<h3 id="3-1-内部微服务互相调用"><a href="#3-1-内部微服务互相调用" class="headerlink" title="3.1 内部微服务互相调用"></a>3.1 内部微服务互相调用</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@FeignClient</span><span class="token punctuation">(</span>contextId <span class="token operator">=</span> <span class="token string">"remoteUserService"</span><span class="token punctuation">,</span> value <span class="token operator">=</span> <span class="token class-name">ServiceNameConstants</span><span class="token punctuation">.</span><span class="token constant">SYSTEM_SERVICE</span><span class="token punctuation">,</span> fallbackFactory <span class="token operator">=</span> <span class="token class-name">RemoteUserFallbackFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">RemoteUserService</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token comment">/**
-     * 通过用户名查询用户信息
-     *
-     * @param username 用户名
-     * @param source 请求来源
-     * @return 结果
-     */</span>
-    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/user/info/&#123;username&#125;"</span><span class="token punctuation">)</span>
-    <span class="token keyword">public</span> <span class="token class-name">R</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">LoginUser</span><span class="token punctuation">></span></span> <span class="token function">getUserInfo</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span><span class="token punctuation">(</span><span class="token string">"username"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> username<span class="token punctuation">,</span> <span class="token annotation punctuation">@RequestHeader</span><span class="token punctuation">(</span><span class="token class-name">SecurityConstants</span><span class="token punctuation">.</span><span class="token constant">FROM_SOURCE</span><span class="token punctuation">)</span> <span class="token class-name">String</span> source<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-</code></pre>
-
-<p>需要指定value为已注册的服务的id</p>
-<h3 id="3-2-调用外部第三方系统"><a href="#3-2-调用外部第三方系统" class="headerlink" title="3.2 调用外部第三方系统"></a>3.2 调用外部第三方系统</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@FeignClient</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"test"</span><span class="token punctuation">,</span>url <span class="token operator">=</span> <span class="token string">"https://timor.tech"</span><span class="token punctuation">,</span> fallbackFactory <span class="token operator">=</span> <span class="token class-name">RemoteVideoFallbackFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span>configuration <span class="token operator">=</span> <span class="token class-name">FeignConfig</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">RemoteTestService</span>
-<span class="token punctuation">&#123;</span>
-
-    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"/api/holiday/year/&#123;year&#125;"</span><span class="token punctuation">)</span>
-    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">test1</span><span class="token punctuation">(</span><span class="token annotation punctuation">@PathVariable</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"year"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> year<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<h4 id="3-2-1-指定请求时默认的请求头"><a href="#3-2-1-指定请求时默认的请求头" class="headerlink" title="3.2.1 指定请求时默认的请求头"></a>3.2.1 指定请求时默认的请求头</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Configuration</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FeignConfig</span> <span class="token keyword">implements</span> <span class="token class-name">RequestInterceptor</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">RequestTemplate</span> requestTemplate<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        requestTemplate<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"User-Agent"</span><span class="token punctuation">,</span> <span class="token string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>添加配置后在@FeignClient注解中指定使用此配置类，configuration &#x3D; FeignConfig.class</p>
-<h2 id="4-HttpClient"><a href="#4-HttpClient" class="headerlink" title="4. HttpClient"></a>4. HttpClient</h2><p>对于直接使用HttpClient，可以添加以下依赖：</p>
-<pre class="language-none"><code class="language-none">xmlCopy code&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.httpcomponents&lt;&#x2F;groupId&gt;
-    &lt;artifactId&gt;httpclient&lt;&#x2F;artifactId&gt;
-    &lt;version&gt;4.5.13&lt;&#x2F;version&gt; &lt;!-- 版本号可能会有更新 --&gt;
-&lt;&#x2F;dependency&gt;</code></pre>
-
-<p>示例代码：</p>
-<pre class="language-none"><code class="language-none">javaCopy codeCloseableHttpClient httpClient &#x3D; HttpClients.createDefault();
-HttpGet httpGet &#x3D; new HttpGet(&quot;http:&#x2F;&#x2F;service-url&#x2F;api&#x2F;resource&quot;);
-try (CloseableHttpResponse response &#x3D; httpClient.execute(httpGet)) &#123;
-    HttpEntity entity &#x3D; response.getEntity();
-    if (entity !&#x3D; null) &#123;
-        String result &#x3D; EntityUtils.toString(entity);
-        &#x2F;&#x2F; 使用结果
-    &#125;
-&#125;</code></pre>
-
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SpringBoot整合Quartz定时任务</title>
-    <url>/2021/09/25/SpringBoot%E6%95%B4%E5%90%88Quartz%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/</url>
-    <content><![CDATA[<p>首先导入quartz依赖，这里我就不演示导入springboot，自己随意导入一个版本就好了</p>
-<pre class="language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-quartz&lt;&#x2F;artifactId&gt;
-&lt;&#x2F;dependency&gt;</code></pre>
-
-<p>然后我们就可以直接编写要执行的任务类了，这里我们选择继承QuartzJobBean这个类</p>
-<span id="more"></span>
-
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestTask</span> <span class="token keyword">extends</span> <span class="token class-name">QuartzJobBean</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">executeInternal</span><span class="token punctuation">(</span><span class="token class-name">JobExecutionContext</span> context<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">JobExecutionException</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"任务执行了。。。。"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>创建好了需要执行的任务我们就需要去创建一个任务调度器，还有一个时间调度器，任务调度器是用来执行你需要执行的哪个类，时间调度器则是用来在你指定的间隔执行 一次任务</p>
-<p>我们创建一个Configuration配置</p>
-<p>然后将任务调度器和时间调度器都注入到bean中</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Configuration</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> config <span class="token punctuation">&#123;</span>
-
-    <span class="token annotation punctuation">@Bean</span>
-    <span class="token keyword">public</span> <span class="token class-name">JobDetail</span> <span class="token function">testJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token keyword">return</span> <span class="token class-name">JobBuilder</span><span class="token punctuation">.</span><span class="token function">newJob</span><span class="token punctuation">(</span><span class="token class-name">TestTask</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withIdentity</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">storeDurably</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token annotation punctuation">@Bean</span>
-    <span class="token keyword">public</span> <span class="token class-name">Trigger</span> <span class="token function">testTrigger</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
-        <span class="token comment">//从第五秒开始每秒执行一次</span>
-        <span class="token class-name">CronScheduleBuilder</span> cronScheduleBuilder <span class="token operator">=</span> <span class="token class-name">CronScheduleBuilder</span><span class="token punctuation">.</span><span class="token function">cronSchedule</span><span class="token punctuation">(</span><span class="token string">"5/1 * * * * ? "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">return</span> <span class="token class-name">TriggerBuilder</span><span class="token punctuation">.</span><span class="token function">newTrigger</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forJob</span><span class="token punctuation">(</span><span class="token function">testJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withIdentity</span><span class="token punctuation">(</span><span class="token string">"testTrigger"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withSchedule</span><span class="token punctuation">(</span>cronScheduleBuilder<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>最后启动springboot即可看到效果</p>
-<h2 id="spring注解Scheduled"><a href="#spring注解Scheduled" class="headerlink" title="spring注解Scheduled"></a>spring注解Scheduled</h2><p>也可以使用spring自带的Scheduled注解来完成简单开发，但是无法指定任务名称,可以直接使用cron表达式，不建议使用这种</p>
-<p>首先还是导入springboot-quartz整合的包</p>
-<pre class="language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-quartz&lt;&#x2F;artifactId&gt;
-&lt;&#x2F;dependency&gt;</code></pre>
-
-<p>为什么要导入quartz整合的包呢，因为springboot和quartz整合的包里面有我们需要的几个依赖，为了方便就直接导入使用就可以了，当然也可以单独导入spring-context包，这个是spring的依赖，要用到@Scheduled需要spring的包</p>
-<p>导入完成后就可以直接在启动类上加上启动Scheduled的注解</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@SpringBootApplication</span>
-<span class="token annotation punctuation">@EnableScheduling</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoApplication</span> <span class="token punctuation">&#123;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">SpringApplication</span><span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">DemoApplication</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>然后再编写一个component类即可启动</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Task2</span> <span class="token punctuation">&#123;</span>
-    <span class="token annotation punctuation">@Scheduled</span><span class="token punctuation">(</span>cron <span class="token operator">=</span> <span class="token string">"55/1 * * * * ? "</span><span class="token punctuation">)</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">process</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"任务在一分钟的55秒后执行，每秒执行一次"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>这种方式虽然便捷，但是没有找到能指定任务名称和调度器名称的注解属性，所以一般只用来做简单的功能，比如我想指定一个任务让他停下来但是又没有名称还是不行的。</p>
-<h2 id="暂停、恢复任务"><a href="#暂停、恢复任务" class="headerlink" title="暂停、恢复任务"></a>暂停、恢复任务</h2><p>首先我们定义好了springboot和quartz整合的任务以及调度器，并且能够正常运行，但是我们中途想让他停下来应该怎么做呢，停止整个项目肯定是不行的，那么我们可以做一个接口，发送请求就可以达到停止和开启的效果</p>
-<p>我们先注入一下Scheduler，Scheduler是quartz提供的</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Autowired</span>
-<span class="token class-name">Scheduler</span> scheduler<span class="token punctuation">;</span></code></pre>
-
-
-
-<p>我们先来了解一下停止的方法pauseJob</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/stop"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">stopJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">JobKey</span> jobKey <span class="token operator">=</span> <span class="token class-name">JobKey</span><span class="token punctuation">.</span><span class="token function">jobKey</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    scheduler<span class="token punctuation">.</span><span class="token function">pauseJob</span><span class="token punctuation">(</span>jobKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>也可以关闭一整个组的任务，我们可以把想要关闭的任务都放在同一个任务组中</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/stopJobs"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">stopJobs</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">GroupMatcher</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">JobKey</span><span class="token punctuation">></span></span> jobKeyGroupMatcher <span class="token operator">=</span> <span class="token class-name">GroupMatcher</span><span class="token punctuation">.</span><span class="token function">jobGroupEquals</span><span class="token punctuation">(</span><span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    scheduler<span class="token punctuation">.</span><span class="token function">pauseJobs</span><span class="token punctuation">(</span>jobKeyGroupMatcher<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-
-
-<p>开启一个任务</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/start"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">startJob</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">JobKey</span> jobKey <span class="token operator">=</span> <span class="token class-name">JobKey</span><span class="token punctuation">.</span><span class="token function">jobKey</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    scheduler<span class="token punctuation">.</span><span class="token function">resumeJob</span><span class="token punctuation">(</span>jobKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-
-
-<p> 开启一个组的任务</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/startJobs"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">startJobs</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SchedulerException</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">GroupMatcher</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">JobKey</span><span class="token punctuation">></span></span> jobKeyGroupMatcher <span class="token operator">=</span> <span class="token class-name">GroupMatcher</span><span class="token punctuation">.</span><span class="token function">jobGroupEquals</span><span class="token punctuation">(</span><span class="token string">"group1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    scheduler<span class="token punctuation">.</span><span class="token function">resumeJobs</span><span class="token punctuation">(</span>jobKeyGroupMatcher<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token string">"ok"</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-]]></content>
-      <tags>
-        <tag>SpringBoot</tag>
-        <tag>Spring</tag>
-        <tag>Quartz</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SpringBoot程序启动或退出时执行操作</title>
     <url>/2021/09/25/SpringBoot%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8%E6%88%96%E9%80%80%E5%87%BA%E6%97%B6%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<h3 id="启动时"><a href="#启动时" class="headerlink" title="启动时"></a>启动时</h3><h4 id="1-实现CommandLineRunner接口"><a href="#1-实现CommandLineRunner接口" class="headerlink" title="1.实现CommandLineRunner接口"></a>1.实现CommandLineRunner接口</h4><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
@@ -789,33 +789,6 @@ try (CloseableHttpResponse response &#x3D; httpClient.execute(httpGet)) &#123;
       </tags>
   </entry>
   <entry>
-    <title>centos7安装jdk8</title>
-    <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85jdk8/</url>
-    <content><![CDATA[<p>首先到官网下载好jdk1.8的tar.gz的压缩包，然后上传到服务器的任意目录，我们这里上传到系统的&#x2F;usr&#x2F;local下</p>
-<p>然后进行解压缩</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> jdk-8u111-linux-x64.tar.gz</code></pre>
-
-<p>文件夹的名称比较长，为了更好的配置环境变量我们可以将文件夹的名称重命名短一点</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mv</span> jdk-8u111-linux-x64 jdk1.8</code></pre>
-
-<span id="more"></span>
-<p>然后配置环境变量，这里配置的是&#x2F;etc&#x2F;profile中的系统环境变量</p>
-<p>打开profile</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
-
-<p>输入i进行插入，然后再末尾添加以下四行内容</p>
-<pre class="language-none"><code class="language-none">export JAVA_HOME&#x3D;&#x2F;usr&#x2F;local&#x2F;jdk1.8
-export JRE_HOME&#x3D;&#x2F;usr&#x2F;local&#x2F;jdk1.8&#x2F;jre
-export CLASSPATH&#x3D;.:$JAVA_HOME&#x2F;lib:$JRE_HOME&#x2F;lib
-export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
-
-<p>这样jdk就装好了，说白了就是解压，配置环境变量，两步即可</p>
-]]></content>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>centos7安装mysql5.7</title>
     <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85mysql5/</url>
     <content><![CDATA[<p>第一步下载mysql5.7安装包</p>
@@ -893,6 +866,33 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>centos7安装jdk8</title>
+    <url>/2021/06/01/centos7%E5%AE%89%E8%A3%85jdk8/</url>
+    <content><![CDATA[<p>首先到官网下载好jdk1.8的tar.gz的压缩包，然后上传到服务器的任意目录，我们这里上传到系统的&#x2F;usr&#x2F;local下</p>
+<p>然后进行解压缩</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> jdk-8u111-linux-x64.tar.gz</code></pre>
+
+<p>文件夹的名称比较长，为了更好的配置环境变量我们可以将文件夹的名称重命名短一点</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mv</span> jdk-8u111-linux-x64 jdk1.8</code></pre>
+
+<span id="more"></span>
+<p>然后配置环境变量，这里配置的是&#x2F;etc&#x2F;profile中的系统环境变量</p>
+<p>打开profile</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/profile</code></pre>
+
+<p>输入i进行插入，然后再末尾添加以下四行内容</p>
+<pre class="language-none"><code class="language-none">export JAVA_HOME&#x3D;&#x2F;usr&#x2F;local&#x2F;jdk1.8
+export JRE_HOME&#x3D;&#x2F;usr&#x2F;local&#x2F;jdk1.8&#x2F;jre
+export CLASSPATH&#x3D;.:$JAVA_HOME&#x2F;lib:$JRE_HOME&#x2F;lib
+export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
+
+<p>这样jdk就装好了，说白了就是解压，配置环境变量，两步即可</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>centos7安装python3</title>
     <url>/2023/04/04/centos7%E5%AE%89%E8%A3%85python3/</url>
     <content><![CDATA[<p>前言：因为liunx安装python和安装其他软件有点不太一样，比如jdk都是下载好压缩包后直接解压配置好环境变量就可以用了，但是安装python需要下载源码重新编译，所以记录一下安装过程以及安装过程中的报错内容</p>
@@ -932,6 +932,60 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
       <tags>
         <tag>centos</tag>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos7普通用户安装mysql</title>
+    <url>/2023/05/25/centos7%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E5%AE%89%E8%A3%85mysql/</url>
+    <content><![CDATA[<p>前言：由于公司的服务器默认都给的是普通用户的权限不能将软件上传至&#x2F;usr&#x2F;local下，又想在测试服务器中安装一个mysql玩一玩，所以需要使用普通用户权限对mysql进行配置及启动，这里我们选择将mysql上传至普通用户的home目录进行启动及安装.</p>
+<span id="more"></span>
+
+<h2 id="第一步：下载mysql压缩包"><a href="#第一步：下载mysql压缩包" class="headerlink" title="第一步：下载mysql压缩包"></a>第一步：下载mysql压缩包</h2><p>官方网址：<a href="https://downloads.mysql.com/archives/community/">https://downloads.mysql.com/archives/community/</a></p>
+<p>Product Version: 5.7.41 （可自行选择其他版本）</p>
+<p>Operating System: Linux-Generic</p>
+<p>OS Version: Linux-Generic （glibc 2.12）（x86,64-bit）</p>
+<p>选择Compressed TAR Archive或TAR进行下载</p>
+<p>这里我选择Compressed TAR Archive</p>
+<p>地址为：<a href="https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.41-linux-glibc2.12-x86_64.tar.gz">https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.41-linux-glibc2.12-x86_64.tar.gz</a></p>
+<p>如果下载过慢可以使用迅雷下载上方地址</p>
+<h2 id="第二步：上传压缩包至服务器"><a href="#第二步：上传压缩包至服务器" class="headerlink" title="第二步：上传压缩包至服务器"></a>第二步：上传压缩包至服务器</h2><p>由于我们是普通用户，所以是没有权限可以上传到&#x2F;usr&#x2F;local路径下，所以我们可以将其上传至普通用户的home目录下，我这里的路径为&#x2F;home&#x2F;appuser</p>
+<h2 id="第三步：解压mysql"><a href="#第三步：解压mysql" class="headerlink" title="第三步：解压mysql"></a>第三步：解压mysql</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> mysql-5.7.41-linux-glibc2.12-x86_64.tar.gz</code></pre>
+
+<h3 id="重命名mysql文件夹"><a href="#重命名mysql文件夹" class="headerlink" title="重命名mysql文件夹"></a>重命名mysql文件夹</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mv</span> mysql-5.7.41-linux-glibc2.12-x86_64 mysql-5.7.41</code></pre>
+
+<h2 id="第四步：创建mysql配置文件"><a href="#第四步：创建mysql配置文件" class="headerlink" title="第四步：创建mysql配置文件"></a>第四步：创建mysql配置文件</h2><h3 id="进入mysql-5-7-41目录"><a href="#进入mysql-5-7-41目录" class="headerlink" title="进入mysql-5.7.41目录"></a>进入mysql-5.7.41目录</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mysql-5.7.41</code></pre>
+
+<h3 id="新建my-cnf配置文件"><a href="#新建my-cnf配置文件" class="headerlink" title="新建my.cnf配置文件"></a>新建my.cnf配置文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">touch</span> my.cnf</code></pre>
+
+<p>写入如下内容：</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">[client]
+default-character-set&#x3D;utf8
+[mysqld]
+default-storage-engine&#x3D;INNODB
+character-set-server&#x3D;utf8
+collation-server&#x3D;utf8_general_ci</code></pre>
+
+
+
+<h2 id="第五步：初始化mysql"><a href="#第五步：初始化mysql" class="headerlink" title="第五步：初始化mysql"></a>第五步：初始化mysql</h2><h3 id="初始化mysql启动用户及配置目录"><a href="#初始化mysql启动用户及配置目录" class="headerlink" title="初始化mysql启动用户及配置目录"></a>初始化mysql启动用户及配置目录</h3><pre class="language-bash" data-language="bash"><code class="language-bash">./bin/mysqld  --defaults-file<span class="token operator">=</span>/home/appuser/mysql-5.7.41/my.cnf <span class="token parameter variable">--initialize</span>  <span class="token parameter variable">--user</span><span class="token operator">=</span>appuser  <span class="token parameter variable">--basedir</span><span class="token operator">=</span>/home/appuser/mysql-5.7.41  <span class="token parameter variable">--datadir</span><span class="token operator">=</span>/home/appuser/mysql-5.7.41/data</code></pre>
+
+<p>初始化完成后最后一行会输出密码</p>
+<p>例如：[Note] A temporary password is generated for appuser@localhost: Vt&#x3D;&gt;;L(;3M_u</p>
+<p>即密码为：Vt&#x3D;&gt;;L(;3M_u</p>
+<h2 id="第六步：启动mysql"><a href="#第六步：启动mysql" class="headerlink" title="第六步：启动mysql"></a>第六步：启动mysql</h2><pre class="language-bash" data-language="bash"><code class="language-bash">./bin/mysqld_safe  --defaults-file<span class="token operator">=</span>/home/appuser/mysql-5.7.41/my.cnf  <span class="token parameter variable">--user</span><span class="token operator">=</span>appuser <span class="token operator">&amp;</span></code></pre>
+
+<h2 id="第七步：进入mysql并修改密码"><a href="#第七步：进入mysql并修改密码" class="headerlink" title="第七步：进入mysql并修改密码"></a>第七步：进入mysql并修改密码</h2><h3 id="登陆mysql"><a href="#登陆mysql" class="headerlink" title="登陆mysql"></a>登陆mysql</h3><pre class="language-bash" data-language="bash"><code class="language-bash">./bin/mysql <span class="token parameter variable">-u</span> root <span class="token parameter variable">-p</span></code></pre>
+
+<h3 id="设置新密码"><a href="#设置新密码" class="headerlink" title="设置新密码"></a>设置新密码</h3><pre class="language-mysql" data-language="mysql"><code class="language-mysql">set password for &#39;root&#39;@&#39;localhost&#39;&#x3D;password(&#39;123456&#39;);</code></pre>
+
+<h2 id="第八步：允许远程访问root用户"><a href="#第八步：允许远程访问root用户" class="headerlink" title="第八步：允许远程访问root用户"></a>第八步：允许远程访问root用户</h2><pre class="language-mysql" data-language="mysql"><code class="language-mysql">GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</code></pre>
+
+<p>123456是刚刚设置的新密码，这个密码不能输错，否则这条命令不会生效.</p>
+<h3 id="刷新mysql缓存配置信息"><a href="#刷新mysql缓存配置信息" class="headerlink" title="刷新mysql缓存配置信息"></a>刷新mysql缓存配置信息</h3><pre class="language-mysql" data-language="mysql"><code class="language-mysql">FLUSH PRIVILEGES;</code></pre>
+]]></content>
+      <tags>
+        <tag>centos</tag>
+        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -993,60 +1047,6 @@ export PATH&#x3D;$JAVA_HOME&#x2F;bin:$PATH</code></pre>
       <tags>
         <tag>centos</tag>
         <tag>liunx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>centos7普通用户安装mysql</title>
-    <url>/2023/05/25/centos7%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E5%AE%89%E8%A3%85mysql/</url>
-    <content><![CDATA[<p>前言：由于公司的服务器默认都给的是普通用户的权限不能将软件上传至&#x2F;usr&#x2F;local下，又想在测试服务器中安装一个mysql玩一玩，所以需要使用普通用户权限对mysql进行配置及启动，这里我们选择将mysql上传至普通用户的home目录进行启动及安装.</p>
-<span id="more"></span>
-
-<h2 id="第一步：下载mysql压缩包"><a href="#第一步：下载mysql压缩包" class="headerlink" title="第一步：下载mysql压缩包"></a>第一步：下载mysql压缩包</h2><p>官方网址：<a href="https://downloads.mysql.com/archives/community/">https://downloads.mysql.com/archives/community/</a></p>
-<p>Product Version: 5.7.41 （可自行选择其他版本）</p>
-<p>Operating System: Linux-Generic</p>
-<p>OS Version: Linux-Generic （glibc 2.12）（x86,64-bit）</p>
-<p>选择Compressed TAR Archive或TAR进行下载</p>
-<p>这里我选择Compressed TAR Archive</p>
-<p>地址为：<a href="https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.41-linux-glibc2.12-x86_64.tar.gz">https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.41-linux-glibc2.12-x86_64.tar.gz</a></p>
-<p>如果下载过慢可以使用迅雷下载上方地址</p>
-<h2 id="第二步：上传压缩包至服务器"><a href="#第二步：上传压缩包至服务器" class="headerlink" title="第二步：上传压缩包至服务器"></a>第二步：上传压缩包至服务器</h2><p>由于我们是普通用户，所以是没有权限可以上传到&#x2F;usr&#x2F;local路径下，所以我们可以将其上传至普通用户的home目录下，我这里的路径为&#x2F;home&#x2F;appuser</p>
-<h2 id="第三步：解压mysql"><a href="#第三步：解压mysql" class="headerlink" title="第三步：解压mysql"></a>第三步：解压mysql</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> mysql-5.7.41-linux-glibc2.12-x86_64.tar.gz</code></pre>
-
-<h3 id="重命名mysql文件夹"><a href="#重命名mysql文件夹" class="headerlink" title="重命名mysql文件夹"></a>重命名mysql文件夹</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">mv</span> mysql-5.7.41-linux-glibc2.12-x86_64 mysql-5.7.41</code></pre>
-
-<h2 id="第四步：创建mysql配置文件"><a href="#第四步：创建mysql配置文件" class="headerlink" title="第四步：创建mysql配置文件"></a>第四步：创建mysql配置文件</h2><h3 id="进入mysql-5-7-41目录"><a href="#进入mysql-5-7-41目录" class="headerlink" title="进入mysql-5.7.41目录"></a>进入mysql-5.7.41目录</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mysql-5.7.41</code></pre>
-
-<h3 id="新建my-cnf配置文件"><a href="#新建my-cnf配置文件" class="headerlink" title="新建my.cnf配置文件"></a>新建my.cnf配置文件</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">touch</span> my.cnf</code></pre>
-
-<p>写入如下内容：</p>
-<pre class="language-mysql" data-language="mysql"><code class="language-mysql">[client]
-default-character-set&#x3D;utf8
-[mysqld]
-default-storage-engine&#x3D;INNODB
-character-set-server&#x3D;utf8
-collation-server&#x3D;utf8_general_ci</code></pre>
-
-
-
-<h2 id="第五步：初始化mysql"><a href="#第五步：初始化mysql" class="headerlink" title="第五步：初始化mysql"></a>第五步：初始化mysql</h2><h3 id="初始化mysql启动用户及配置目录"><a href="#初始化mysql启动用户及配置目录" class="headerlink" title="初始化mysql启动用户及配置目录"></a>初始化mysql启动用户及配置目录</h3><pre class="language-bash" data-language="bash"><code class="language-bash">./bin/mysqld  --defaults-file<span class="token operator">=</span>/home/appuser/mysql-5.7.41/my.cnf <span class="token parameter variable">--initialize</span>  <span class="token parameter variable">--user</span><span class="token operator">=</span>appuser  <span class="token parameter variable">--basedir</span><span class="token operator">=</span>/home/appuser/mysql-5.7.41  <span class="token parameter variable">--datadir</span><span class="token operator">=</span>/home/appuser/mysql-5.7.41/data</code></pre>
-
-<p>初始化完成后最后一行会输出密码</p>
-<p>例如：[Note] A temporary password is generated for appuser@localhost: Vt&#x3D;&gt;;L(;3M_u</p>
-<p>即密码为：Vt&#x3D;&gt;;L(;3M_u</p>
-<h2 id="第六步：启动mysql"><a href="#第六步：启动mysql" class="headerlink" title="第六步：启动mysql"></a>第六步：启动mysql</h2><pre class="language-bash" data-language="bash"><code class="language-bash">./bin/mysqld_safe  --defaults-file<span class="token operator">=</span>/home/appuser/mysql-5.7.41/my.cnf  <span class="token parameter variable">--user</span><span class="token operator">=</span>appuser <span class="token operator">&amp;</span></code></pre>
-
-<h2 id="第七步：进入mysql并修改密码"><a href="#第七步：进入mysql并修改密码" class="headerlink" title="第七步：进入mysql并修改密码"></a>第七步：进入mysql并修改密码</h2><h3 id="登陆mysql"><a href="#登陆mysql" class="headerlink" title="登陆mysql"></a>登陆mysql</h3><pre class="language-bash" data-language="bash"><code class="language-bash">./bin/mysql <span class="token parameter variable">-u</span> root <span class="token parameter variable">-p</span></code></pre>
-
-<h3 id="设置新密码"><a href="#设置新密码" class="headerlink" title="设置新密码"></a>设置新密码</h3><pre class="language-mysql" data-language="mysql"><code class="language-mysql">set password for &#39;root&#39;@&#39;localhost&#39;&#x3D;password(&#39;123456&#39;);</code></pre>
-
-<h2 id="第八步：允许远程访问root用户"><a href="#第八步：允许远程访问root用户" class="headerlink" title="第八步：允许远程访问root用户"></a>第八步：允许远程访问root用户</h2><pre class="language-mysql" data-language="mysql"><code class="language-mysql">GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;%&#39; IDENTIFIED BY &#39;123456&#39; WITH GRANT OPTION;</code></pre>
-
-<p>123456是刚刚设置的新密码，这个密码不能输错，否则这条命令不会生效.</p>
-<h3 id="刷新mysql缓存配置信息"><a href="#刷新mysql缓存配置信息" class="headerlink" title="刷新mysql缓存配置信息"></a>刷新mysql缓存配置信息</h3><pre class="language-mysql" data-language="mysql"><code class="language-mysql">FLUSH PRIVILEGES;</code></pre>
-]]></content>
-      <tags>
-        <tag>centos</tag>
-        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -2236,36 +2236,6 @@ file5.ts
       </tags>
   </entry>
   <entry>
-    <title>git配置ssh</title>
-    <url>/2023/06/30/git%E9%85%8D%E7%BD%AEssh/</url>
-    <content><![CDATA[<p>git是现在代码管理的一个常用工具，采用两种传输方式 http ssh </p>
-<p>SSH 比较安全可靠，也不需要每次都输入账号密码，所以我们在使用git时一般采用ssh,下面介绍ssh简单的配置</p>
-<span id="more"></span>
-
-<h2 id="1、生成公钥私钥"><a href="#1、生成公钥私钥" class="headerlink" title="1、生成公钥私钥"></a>1、生成公钥私钥</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"your_email@example.com"</span></code></pre>
-
-<p>-t 指定生成的密钥类型</p>
-<p>-C 注释</p>
-<h2 id="2、上传公钥"><a href="#2、上传公钥" class="headerlink" title="2、上传公钥"></a>2、上传公钥</h2><p>如果是windows则密钥放在C:\Users\你的用户名\.ssh</p>
-<p>如果是liunx则密钥放在 &#x2F;home&#x2F;你的用户名&#x2F;.ssh</p>
-<p>将id_rsa.pub里面的内容复制后粘贴到github或者gitee仓库配置中</p>
-<h2 id="3、配置账户信息"><a href="#3、配置账户信息" class="headerlink" title="3、配置账户信息"></a>3、配置账户信息</h2><p>如果我们需要上传文件到远程仓库中则必须配置邮箱和用户名，否则无法进行git上传操作</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户邮箱（填自己的邮箱）
-<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.email “your_email@example.com”</code></pre>
-
-<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户名
-<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.name “yourname”</code></pre>
-
-<h2 id="4、访问服务器测试配置是否正常"><a href="#4、访问服务器测试配置是否正常" class="headerlink" title="4、访问服务器测试配置是否正常"></a>4、访问服务器测试配置是否正常</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com</code></pre>
-
-<p>如果你的地址不是github则将后面的github.com替换成你想测试的地址，比如gitee.com</p>
-]]></content>
-      <tags>
-        <tag>git</tag>
-        <tag>ssh</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>hexo+git搭建个人博客</title>
     <url>/2021/11/22/hexo+git%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<p>首先要搭建好node，如果搭建node可以参照哦nvm管理node的教程</p>
@@ -2373,6 +2343,36 @@ file5.ts
       </tags>
   </entry>
   <entry>
+    <title>git配置ssh</title>
+    <url>/2023/06/30/git%E9%85%8D%E7%BD%AEssh/</url>
+    <content><![CDATA[<p>git是现在代码管理的一个常用工具，采用两种传输方式 http ssh </p>
+<p>SSH 比较安全可靠，也不需要每次都输入账号密码，所以我们在使用git时一般采用ssh,下面介绍ssh简单的配置</p>
+<span id="more"></span>
+
+<h2 id="1、生成公钥私钥"><a href="#1、生成公钥私钥" class="headerlink" title="1、生成公钥私钥"></a>1、生成公钥私钥</h2><pre class="language-bash" data-language="bash"><code class="language-bash">ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"your_email@example.com"</span></code></pre>
+
+<p>-t 指定生成的密钥类型</p>
+<p>-C 注释</p>
+<h2 id="2、上传公钥"><a href="#2、上传公钥" class="headerlink" title="2、上传公钥"></a>2、上传公钥</h2><p>如果是windows则密钥放在C:\Users\你的用户名\.ssh</p>
+<p>如果是liunx则密钥放在 &#x2F;home&#x2F;你的用户名&#x2F;.ssh</p>
+<p>将id_rsa.pub里面的内容复制后粘贴到github或者gitee仓库配置中</p>
+<h2 id="3、配置账户信息"><a href="#3、配置账户信息" class="headerlink" title="3、配置账户信息"></a>3、配置账户信息</h2><p>如果我们需要上传文件到远程仓库中则必须配置邮箱和用户名，否则无法进行git上传操作</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户邮箱（填自己的邮箱）
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.email “your_email@example.com”</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">配置用户名
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.name “yourname”</code></pre>
+
+<h2 id="4、访问服务器测试配置是否正常"><a href="#4、访问服务器测试配置是否正常" class="headerlink" title="4、访问服务器测试配置是否正常"></a>4、访问服务器测试配置是否正常</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com</code></pre>
+
+<p>如果你的地址不是github则将后面的github.com替换成你想测试的地址，比如gitee.com</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
+        <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>idea免费无限使用的更替ja-netfilter</title>
     <url>/2023/06/30/idea%E5%85%8D%E8%B4%B9%E6%97%A0%E9%99%90%E4%BD%BF%E7%94%A8%E7%9A%84%E6%9B%B4%E6%9B%BFja-netfilter/</url>
     <content><![CDATA[<p>前言：由于之前IDE Eval Reset插件只能破解idea2021.2版本及以下，但是对于想要使用最新版本的铁子就不太友好，如果追求稳定可以使用之前的IDE Eval Reset插件进行无线续期，如果想要使用新版本idea的可以尝试使用这个新的插件ja-netfilter</p>
@@ -2411,20 +2411,6 @@ file5.ts
       </tags>
   </entry>
   <entry>
-    <title>idea无限试用</title>
-    <url>/2021/11/07/idea%E6%97%A0%E9%99%90%E8%AF%95%E7%94%A8/</url>
-    <content><![CDATA[<p>按照以前的破解方式，我们会在安装好idea后点击试用，然后将破解的jar包丢进idea选择重启就可以破解到2089年了，但是这样的破解方式只能用在老版本的idea上，在新版的idea中，只要官网发布一次更新，那么破解的jar包就会失效，只能去寻找新的jar包继续破解，但是过不了几天就要找新的破解包的方式不免让我们觉得厌烦，那么我们想试用新版本但是又不想频繁的去寻找jar包应该要怎么做呢，其实在前几年就有人想出了idea无限试用的方法，idea安装后会有30天的试用期限，如果我们把这个信息删除那么不就又可以试用30天了吗。后来，又有人专门为idea做了一款插件，只要在idea中装上这个插件就可以达到无限试用的效果。</p>
-<span id="more"></span>
-
-<p>首先这里需要注意，2021.2.3版本开始，官方已经取消了试用的功能，也就是说你想要试用idea就必须登录账号，但是我们破解需要先进入idea才可以安装插件，所以我们可以将idea降级到2021.2.3版本之前即可，比如2021.2.2这个版本，然后我们选择试用30天，接着升级到最新版本即可，虽然2021.2.3版本没有了试用的功能，但是我们可以在之前的版本获得试用资格，然后升级最新版，最新版就可以知道我们还是有试用的天数的，就不会进行拦截。</p>
-<p>我们在idea的插件管理中添加一个插件的地址，<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 我们在搜索中搜索evel就会出现一个名叫IDE Eval Rest的插件，我们选择安装即可，安装完成后可以不用重启idea，我们直接点击主页的help，然后就会出现eval reset的选项，点击后可以选择重置也可以勾选自动重置，然后选择重启idea即可重置25天试用期，当我们勾选了自动重置后当我们每次重新打开idea就会自动重置使用时间，不用我们手动选择重置。是不是很方便呢。</p>
-<p>如果没有网络应该如何安装呢，我们可以直接进入<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 这个网站，然后选择网站内容中的下载安装即可下载idea插件的本地安装jar包，然后去idea中选择插件，并选择从本地磁盘安装插件即可选择jar包安装插件。</p>
-]]></content>
-      <tags>
-        <tag>idea</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>idea配置默认maven的jdk版本</title>
     <url>/2021/05/19/idea%E9%85%8D%E7%BD%AE%E9%BB%98%E8%AE%A4maven%E7%9A%84jdk%E7%89%88%E6%9C%AC/</url>
     <content><![CDATA[<p>前言：每一次我们使用idea创建一个项目时都默认使用的是jkd1.5，那么我们就会发现在代码的编写过程中很多新语法都无法使用，点击配置成1.8之后就只有这一个项目是生效的，再新建一个项目结果又要重新配置特别麻烦，那么有没有一种只要配置一次那么之后创建的每一个版本都使用我设置好的这一个版本</p>
@@ -2457,6 +2443,20 @@ file5.ts
       <tags>
         <tag>idea</tag>
         <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>idea无限试用</title>
+    <url>/2021/11/07/idea%E6%97%A0%E9%99%90%E8%AF%95%E7%94%A8/</url>
+    <content><![CDATA[<p>按照以前的破解方式，我们会在安装好idea后点击试用，然后将破解的jar包丢进idea选择重启就可以破解到2089年了，但是这样的破解方式只能用在老版本的idea上，在新版的idea中，只要官网发布一次更新，那么破解的jar包就会失效，只能去寻找新的jar包继续破解，但是过不了几天就要找新的破解包的方式不免让我们觉得厌烦，那么我们想试用新版本但是又不想频繁的去寻找jar包应该要怎么做呢，其实在前几年就有人想出了idea无限试用的方法，idea安装后会有30天的试用期限，如果我们把这个信息删除那么不就又可以试用30天了吗。后来，又有人专门为idea做了一款插件，只要在idea中装上这个插件就可以达到无限试用的效果。</p>
+<span id="more"></span>
+
+<p>首先这里需要注意，2021.2.3版本开始，官方已经取消了试用的功能，也就是说你想要试用idea就必须登录账号，但是我们破解需要先进入idea才可以安装插件，所以我们可以将idea降级到2021.2.3版本之前即可，比如2021.2.2这个版本，然后我们选择试用30天，接着升级到最新版本即可，虽然2021.2.3版本没有了试用的功能，但是我们可以在之前的版本获得试用资格，然后升级最新版，最新版就可以知道我们还是有试用的天数的，就不会进行拦截。</p>
+<p>我们在idea的插件管理中添加一个插件的地址，<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 我们在搜索中搜索evel就会出现一个名叫IDE Eval Rest的插件，我们选择安装即可，安装完成后可以不用重启idea，我们直接点击主页的help，然后就会出现eval reset的选项，点击后可以选择重置也可以勾选自动重置，然后选择重启idea即可重置25天试用期，当我们勾选了自动重置后当我们每次重新打开idea就会自动重置使用时间，不用我们手动选择重置。是不是很方便呢。</p>
+<p>如果没有网络应该如何安装呢，我们可以直接进入<a href="https://plugins.zhile.io/">https://plugins.zhile.io</a> 这个网站，然后选择网站内容中的下载安装即可下载idea插件的本地安装jar包，然后去idea中选择插件，并选择从本地磁盘安装插件即可选择jar包安装插件。</p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
       </tags>
   </entry>
   <entry>
@@ -3446,177 +3446,6 @@ nginx: configuration <span class="token function">file</span> /usr/local/nginx//
       </tags>
   </entry>
   <entry>
-    <title>nginx部署vue项目</title>
-    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
-    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
-<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
-
-<p>然后安装运行所需要的依赖</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
-
-<p>安装完成后本地运行查看</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
-
-<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
-<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
-<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
-<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
-
-<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
-<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
-]]></content>
-      <tags>
-        <tag>nginx</tag>
-        <tag>vue</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pyinstaller打包python可执行文件</title>
-    <url>/2024/02/05/pyinstaller%E6%89%93%E5%8C%85%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>pyinstaller是一个第三方库，它能够在Windows、Linux、 Mac OS X 等操作系统下将 Python 源文件打包，通过对源文件打包， Python 程序可以在没有安装 Python 的环境中运行，也可以作为一个 独立文件方便传递和管理。</p>
-<p>PyInstaller支持Python 2.7和Python 3.3+。可以在Windows、Mac OS X和Linux上使用，但是并不是跨平台的，而是说你要是希望打包成.exe文件，需要在Windows系统上运行PyInstaller进行打包工作；打包成mac app，需要在Mac OS上使用。</p>
-<span id="more"></span>
-
-<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash">pip <span class="token function">install</span> pyinstaller</code></pre>
-
-<p>该命令会将所需要的依赖安装到python安装目录的script文件夹中，如果你安装python时已经配置了python的环境变量，应该会有script文件夹的环境变量配置，可以直接在cmd中使用pyinstaller命令</p>
-<p>环境变量示例：C:\Users\Administrator\AppData\Local\Programs\Python\Python38\Scripts\</p>
-<h2 id="二、参数帮助"><a href="#二、参数帮助" class="headerlink" title="二、参数帮助"></a>二、参数帮助</h2><table>
-<thead>
-<tr>
-<th>可选参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>-F</td>
-<td>生成单个的可执行文件</td>
-</tr>
-<tr>
-<td>-h</td>
-<td>查看该模块的帮助信息</td>
-</tr>
-<tr>
-<td>-v</td>
-<td>查看该模块的版本信息</td>
-</tr>
-<tr>
-<td>-D</td>
-<td>创建一个包含可执行文件的单文件夹捆绑包</td>
-</tr>
-<tr>
-<td>-n</td>
-<td>指定项目（产生的 spec）名字。如果省略该选项，那么第一个脚本的主文件名将作为 spec 的名字</td>
-</tr>
-<tr>
-<td>-d</td>
-<td>产生 debug 版本的可执行文件</td>
-</tr>
-<tr>
-<td>-w</td>
-<td>指定程序运行时不显示命令行窗口（仅对 Windows 有效）</td>
-</tr>
-<tr>
-<td>-c</td>
-<td>定使用命令行窗口运行程序（仅对 Windows 有效）</td>
-</tr>
-<tr>
-<td>-o</td>
-<td>指定 spec 文件的生成目录。如果没有指定，则默认使用当前目录来生成 spec 文件</td>
-</tr>
-</tbody></table>
-<h2 id="三、生成可执行文件"><a href="#三、生成可执行文件" class="headerlink" title="三、生成可执行文件"></a>三、生成可执行文件</h2><pre class="language-bash" data-language="bash"><code class="language-bash">pyinstaller <span class="token parameter variable">-F</span> <span class="token parameter variable">-w</span> main.py</code></pre>
-
-<p>main.py就是程序启动的类，自行替换</p>
-<p>打包完成后会在当前目录下生成两个目录和一个spec文件</p>
-<p>分别是build、dist、main.spec</p>
-<p>其中dist保存了打包后的可执行文件，spec则是打包时可选的配置文件</p>
-<h2 id="四、打包资源文件"><a href="#四、打包资源文件" class="headerlink" title="四、打包资源文件"></a>四、打包资源文件</h2><p>打包后可执行文件中只有.py文件，程序中的配置文件和资源文件都没有，需要通过spec将所需要打包的文件配置进去。</p>
-<p>sepc中datas选项即为配置文件映射，其格式为[(‘源文件’,’打包后的目录’),(‘源文件’,’打包后的目录’)]</p>
-<p>我的根目录中有两种类型的文件需要打包，我们创建一个数组如下：</p>
-<pre class="language-yaml" data-language="yaml"><code class="language-yaml">resource_data = <span class="token punctuation">[</span>
-('<span class="token important">*.json'</span><span class="token punctuation">,</span>'.')<span class="token punctuation">,</span>
-('<span class="token important">*.yml'</span><span class="token punctuation">,</span>'.')
-<span class="token punctuation">]</span>
-
-a = Analysis(
-    <span class="token punctuation">[</span><span class="token string">'main.py'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    pathex=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    binaries=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    datas=resource_data<span class="token punctuation">,</span>
-    hiddenimports=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    hookspath=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  
-    hooksconfig=<span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-    runtime_hooks=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  
-    excludes=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    win_no_prefer_redirects=False<span class="token punctuation">,</span>
-    win_private_assemblies=False<span class="token punctuation">,</span>
-    cipher=block_cipher<span class="token punctuation">,</span>
-    noarchive=False<span class="token punctuation">,</span>
-)</code></pre>
-
-<h2 id="5、访问打包后的资源文件"><a href="#5、访问打包后的资源文件" class="headerlink" title="5、访问打包后的资源文件"></a>5、访问打包后的资源文件</h2><p>打包后的文件无法直接访问，需要使用特定的访问路径，我们写一个方法传入一个路径返回打包后的真实路径，并判断是否为打包后的文件，如果是则使用打包后的路径如果不是则使用当前路径</p>
-<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">resource_path</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> relative_path<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">if</span> <span class="token builtin">getattr</span><span class="token punctuation">(</span>sys<span class="token punctuation">,</span> <span class="token string">'frozen'</span><span class="token punctuation">,</span><span class="token boolean">False</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment">#是否Bundle Resource</span>
-        base_path <span class="token operator">=</span> sys<span class="token punctuation">.</span>_MEIPASS
-    <span class="token keyword">else</span><span class="token punctuation">:</span>
-        base_path <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>abspath<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span>
-    <span class="token keyword">return</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>base_path<span class="token punctuation">,</span>relative_path<span class="token punctuation">)</span></code></pre>
-
-<h2 id="6、重新打包有资源文件后的可执行文件"><a href="#6、重新打包有资源文件后的可执行文件" class="headerlink" title="6、重新打包有资源文件后的可执行文件"></a>6、重新打包有资源文件后的可执行文件</h2><p>配置完成后我们直接使用spec的配置进行重新打包可执行文件中就有资源文件了</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">pyinstaller main.spec</code></pre>
-
-]]></content>
-      <tags>
-        <tag>python</tag>
-        <tag>pyinstaller</tag>
-        <tag>exe</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>rarcrack破解多种格式压缩包</title>
-    <url>/2021/03/28/rarcrack%E7%A0%B4%E8%A7%A3%E5%A4%9A%E7%A7%8D%E6%A0%BC%E5%BC%8F%E5%8E%8B%E7%BC%A9%E5%8C%85/</url>
-    <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
-<p><a href="https://gitee.com/luoqingBlog/rarcrack.git">https://gitee.com/luoqingBlog/rarcrack.git</a></p>
-<p>点击下载zip即可，也可以使用git工具的clone。</p>
-<p>下载完成后解压得到里面的文件，然后在mac或者Ubuntu上编译此文件</p>
-<p>直接cd切换到文件夹当中然后使用make即可，mac并没有自带编译工具，所以要先去下载安装</p>
-<p>编译</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span></code></pre>
-
-<span id="more"></span>
-<p>编译完成后问价夹里会多一个rarcrack可运行程序，mac版本尽量保持在mac10.x</p>
-<p>我的系统是bigsur11.0.1  使用make编译完成后无法使用。尽管可以使用也是密码只破解了几次就结束了程序，这个问题我在kali中使用apt-get安装rarcrack之后也是这个样子，但是在kali中使用aapt-get rarcrack命令安装的可以破解rar的类型文件，但是其他文件类型都不行，密码走了四行就停止了</p>
-<p>所以只有一个主意事项，mac版本尽量低于11.0</p>
-<p>这里我使用的是kali的最新版本2021来做测试，因为kali和Ubuntu一样使用的是同一个发行版本，命令也不尽相同。</p>
-<p>编译完成后我们就可以使用rarcrack来破解zip、rar、7z等格式的压缩包了，但是这里注意到是rarcrack只能使用暴力破解方式，也就是穷举法，是不支持自己使用字典破解的。</p>
-<p>破解</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">./rarcrack <span class="token parameter variable">--threads</span> <span class="token number">12</span> <span class="token parameter variable">--type</span> <span class="token function">zip</span> test.zip</code></pre>
-
-<p>这里我指定使用文件夹下的rarcrack程序进行破解，这里一定要加上.&#x2F;。 因为这样才会识别是使用你当前文件夹里的程序，而直接输入rarcrack的话会提示你找不到这个命令，因为你没有安装这个程序</p>
-<p>参数解释</p>
-<blockquote>
-<p>–threads 线程数。 最大不超过12。 超过也默认12</p>
-<p>–type   要破解的压缩包类型。 可选zip rar  7z</p>
-</blockquote>
-<p>在运行破解命令之后马上按CTRL+C停止命令。 因为我们要缩小破解的范围</p>
-<p>在压缩包的统计目录下会自动生成一个和压缩包同名的文件并且后缀为.xml</p>
-<p>我们使用记事本打开此文件，然后把<abc></abc>中间的字符串改成0123456789，这里的意思是指定纯数字破解，然后再把 <current></current>中间的内容改为0，表示从0开始破解 然后我们保存在运行一遍破解命令<code>./rarcrack --threads 12 --type zip test.zip</code>就会自动读取你的xml配置文件然后从0开始破解数字</p>
-<p>我们可以使用<code>top -H</code>来查看当前运行的程序，可以看到rarcrack一共有12个正在运行</p>
-<p>最后破解成功了就会显示</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">GOOD: password cracked: <span class="token string">'100'</span></code></pre>
-
-<p>这里成功破解出了密码是100</p>
-<p>如果要破解的文件是zip。可以使用fcrackzip来破解。 因为速度要快很多。其他格式就可以使用rarcrack来破解。但是时间较长。</p>
-]]></content>
-      <tags>
-        <tag>rarcrack</tag>
-        <tag>zip</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>shell脚本</title>
     <url>/2021/10/04/shell%E8%84%9A%E6%9C%AC/</url>
     <content><![CDATA[<h3 id="shell脚本规范"><a href="#shell脚本规范" class="headerlink" title="shell脚本规范"></a>shell脚本规范</h3><ul>
@@ -3802,104 +3631,174 @@ hello</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>springboot工程中使用logback输出实现日志唯一标识</title>
-    <url>/2024/03/12/springboot%E5%B7%A5%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8logback%E8%BE%93%E5%87%BA%E5%AE%9E%E7%8E%B0%E6%97%A5%E5%BF%97%E5%94%AF%E4%B8%80%E6%A0%87%E8%AF%86/</url>
-    <content><![CDATA[<p>在日常排查问题时，log.info输出的日志并没有唯一标识，导致实际排查问题时无法判断某一条日志是否是当前线程请求输出的日志。而我们可以通过拦截器拦截日志输出时设置一个唯一标识到输出中，后续只需要排查一下请求时的报文就可以获取到唯一标识，然后再通过唯一标识拿到所有的请求日志信息，方便排查问题。</p>
+    <title>pyinstaller打包python可执行文件</title>
+    <url>/2024/02/05/pyinstaller%E6%89%93%E5%8C%85%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>pyinstaller是一个第三方库，它能够在Windows、Linux、 Mac OS X 等操作系统下将 Python 源文件打包，通过对源文件打包， Python 程序可以在没有安装 Python 的环境中运行，也可以作为一个 独立文件方便传递和管理。</p>
+<p>PyInstaller支持Python 2.7和Python 3.3+。可以在Windows、Mac OS X和Linux上使用，但是并不是跨平台的，而是说你要是希望打包成.exe文件，需要在Windows系统上运行PyInstaller进行打包工作；打包成mac app，需要在Mac OS上使用。</p>
 <span id="more"></span>
 
-<h2 id="一、工程依赖"><a href="#一、工程依赖" class="headerlink" title="一、工程依赖"></a>一、工程依赖</h2><pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-logging<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
-<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span></code></pre>
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash">pip <span class="token function">install</span> pyinstaller</code></pre>
 
-<h2 id="二、日志输出配置"><a href="#二、日志输出配置" class="headerlink" title="二、日志输出配置"></a>二、日志输出配置</h2><p>日志输出配置通常包含三部分：Level（日志输出级别）、Appender（输出到哪里）、Layout（输出格式）。logback中将Appender的作用放大了，除了指定输出位置之外，还能配置输出策略以及输出格式。这节只需要对appender的子元素pattern进行调整，增加输出%X{logId}。%X可以引用日志上下文的信息，这些信息是保存在MDC中的。示例配置如下：</p>
-<pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>appender</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>console<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ch.qos.logback.core.ConsoleAppender<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>encoder</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ch.qos.logback.classic.encoder.PatternLayoutEncoder<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
-        <span class="token comment">&lt;!--格式化输出：%d表示日期，%X&#123;logId&#125;表示日志唯一编号 %thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pattern</span><span class="token punctuation">></span></span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%X&#123;logId&#125;] [%thread] %-5level %logger&#123;60&#125;[%L] - %msg%n<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>pattern</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>encoder</span><span class="token punctuation">></span></span>
-<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>appender</span><span class="token punctuation">></span></span></code></pre>
+<p>该命令会将所需要的依赖安装到python安装目录的script文件夹中，如果你安装python时已经配置了python的环境变量，应该会有script文件夹的环境变量配置，可以直接在cmd中使用pyinstaller命令</p>
+<p>环境变量示例：C:\Users\Administrator\AppData\Local\Programs\Python\Python38\Scripts\</p>
+<h2 id="二、参数帮助"><a href="#二、参数帮助" class="headerlink" title="二、参数帮助"></a>二、参数帮助</h2><table>
+<thead>
+<tr>
+<th>可选参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-F</td>
+<td>生成单个的可执行文件</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>查看该模块的帮助信息</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>查看该模块的版本信息</td>
+</tr>
+<tr>
+<td>-D</td>
+<td>创建一个包含可执行文件的单文件夹捆绑包</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>指定项目（产生的 spec）名字。如果省略该选项，那么第一个脚本的主文件名将作为 spec 的名字</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>产生 debug 版本的可执行文件</td>
+</tr>
+<tr>
+<td>-w</td>
+<td>指定程序运行时不显示命令行窗口（仅对 Windows 有效）</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>定使用命令行窗口运行程序（仅对 Windows 有效）</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>指定 spec 文件的生成目录。如果没有指定，则默认使用当前目录来生成 spec 文件</td>
+</tr>
+</tbody></table>
+<h2 id="三、生成可执行文件"><a href="#三、生成可执行文件" class="headerlink" title="三、生成可执行文件"></a>三、生成可执行文件</h2><pre class="language-bash" data-language="bash"><code class="language-bash">pyinstaller <span class="token parameter variable">-F</span> <span class="token parameter variable">-w</span> main.py</code></pre>
 
-<h2 id="三、日志拦截器"><a href="#三、日志拦截器" class="headerlink" title="三、日志拦截器"></a>三、日志拦截器</h2><pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">Logger</span></span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">LoggerFactory</span></span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">MDC</span></span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ModelAndView</span></span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>handler<span class="token punctuation">.</span></span><span class="token class-name">HandlerInterceptorAdapter</span></span><span class="token punctuation">;</span>
- 
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span></span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletResponse</span></span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">UUID</span></span><span class="token punctuation">;</span>
- 
+<p>main.py就是程序启动的类，自行替换</p>
+<p>打包完成后会在当前目录下生成两个目录和一个spec文件</p>
+<p>分别是build、dist、main.spec</p>
+<p>其中dist保存了打包后的可执行文件，spec则是打包时可选的配置文件</p>
+<h2 id="四、打包资源文件"><a href="#四、打包资源文件" class="headerlink" title="四、打包资源文件"></a>四、打包资源文件</h2><p>打包后可执行文件中只有.py文件，程序中的配置文件和资源文件都没有，需要通过spec将所需要打包的文件配置进去。</p>
+<p>sepc中datas选项即为配置文件映射，其格式为[(‘源文件’,’打包后的目录’),(‘源文件’,’打包后的目录’)]</p>
+<p>我的根目录中有两种类型的文件需要打包，我们创建一个数组如下：</p>
+<pre class="language-yaml" data-language="yaml"><code class="language-yaml">resource_data = <span class="token punctuation">[</span>
+('<span class="token important">*.json'</span><span class="token punctuation">,</span>'.')<span class="token punctuation">,</span>
+('<span class="token important">*.yml'</span><span class="token punctuation">,</span>'.')
+<span class="token punctuation">]</span>
 
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">LogInterceptor</span> <span class="token keyword">extends</span> <span class="token class-name">HandlerInterceptorAdapter</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">Logger</span> logger <span class="token operator">=</span> <span class="token class-name">LoggerFactory</span><span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span><span class="token class-name">LogInterceptor</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
- 
-    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token constant">LOG_ID_KEY</span> <span class="token operator">=</span> <span class="token string">"logId"</span><span class="token punctuation">;</span>
- 
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">afterCompletion</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> arg0<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> arg1<span class="token punctuation">,</span> <span class="token class-name">Object</span> arg2<span class="token punctuation">,</span> <span class="token class-name">Exception</span> arg3<span class="token punctuation">)</span>
-            <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token comment">// 删除logId</span>
-            <span class="token constant">MDC</span><span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token constant">LOG_ID_KEY</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
- 
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">postHandle</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> arg0<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> arg1<span class="token punctuation">,</span>
-                           <span class="token class-name">Object</span> arg2<span class="token punctuation">,</span> <span class="token class-name">ModelAndView</span> arg3<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-    <span class="token punctuation">&#125;</span>
- 
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">preHandle</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> request<span class="token punctuation">,</span>
-                             <span class="token class-name">HttpServletResponse</span> response<span class="token punctuation">,</span> <span class="token class-name">Object</span> handler<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
- 
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token comment">// 设置logId</span>
-            <span class="token class-name">String</span> logId <span class="token operator">=</span> <span class="token constant">UUID</span><span class="token punctuation">.</span><span class="token function">randomUUID</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"-"</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token constant">MDC</span><span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token constant">LOG_ID_KEY</span><span class="token punctuation">,</span> logId<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+a = Analysis(
+    <span class="token punctuation">[</span><span class="token string">'main.py'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    pathex=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    binaries=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    datas=resource_data<span class="token punctuation">,</span>
+    hiddenimports=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    hookspath=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  
+    hooksconfig=<span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    runtime_hooks=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  
+    excludes=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    win_no_prefer_redirects=False<span class="token punctuation">,</span>
+    win_private_assemblies=False<span class="token punctuation">,</span>
+    cipher=block_cipher<span class="token punctuation">,</span>
+    noarchive=False<span class="token punctuation">,</span>
+)</code></pre>
 
-<h1 id="四、加入拦截器链"><a href="#四、加入拦截器链" class="headerlink" title="四、加入拦截器链"></a>四、加入拦截器链</h1><pre class="language-none"><code class="language-none">@Configuration
-public class WebMvcConfig implements WebMvcConfigurer &#123;
- 
-    &#x2F;**
-     * 把日志拦截器注入为bean
-     *
-     * @return
-     *&#x2F;
-    @Bean
-    public HandlerInterceptor logInterceptor() &#123;
-        return new LogInterceptor();
-    &#125;
- 
-    &#x2F;**
-     * 注册拦截器
-     *
-     * @param registry
-     *&#x2F;
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) &#123;
-        &#x2F;&#x2F; addPathPatterns 用于添加拦截规则, 这里假设拦截 &#x2F;url 后面的全部链接
-        &#x2F;&#x2F; excludePathPatterns 用户排除拦截
-        registry.addInterceptor(logInterceptor()).addPathPatterns(&quot;&#x2F;**&quot;);
-    &#125;
-&#125;</code></pre>
+<h2 id="5、访问打包后的资源文件"><a href="#5、访问打包后的资源文件" class="headerlink" title="5、访问打包后的资源文件"></a>5、访问打包后的资源文件</h2><p>打包后的文件无法直接访问，需要使用特定的访问路径，我们写一个方法传入一个路径返回打包后的真实路径，并判断是否为打包后的文件，如果是则使用打包后的路径如果不是则使用当前路径</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">resource_path</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> relative_path<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> <span class="token builtin">getattr</span><span class="token punctuation">(</span>sys<span class="token punctuation">,</span> <span class="token string">'frozen'</span><span class="token punctuation">,</span><span class="token boolean">False</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment">#是否Bundle Resource</span>
+        base_path <span class="token operator">=</span> sys<span class="token punctuation">.</span>_MEIPASS
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        base_path <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>abspath<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>base_path<span class="token punctuation">,</span>relative_path<span class="token punctuation">)</span></code></pre>
 
-<p>到此，springboot工程可以对每次接口调用产生的日志都标记唯一的编号。</p>
+<h2 id="6、重新打包有资源文件后的可执行文件"><a href="#6、重新打包有资源文件后的可执行文件" class="headerlink" title="6、重新打包有资源文件后的可执行文件"></a>6、重新打包有资源文件后的可执行文件</h2><p>配置完成后我们直接使用spec的配置进行重新打包可执行文件中就有资源文件了</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">pyinstaller main.spec</code></pre>
+
 ]]></content>
       <tags>
-        <tag>java</tag>
-        <tag>springboot</tag>
-        <tag>logback</tag>
+        <tag>python</tag>
+        <tag>pyinstaller</tag>
+        <tag>exe</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>rarcrack破解多种格式压缩包</title>
+    <url>/2021/03/28/rarcrack%E7%A0%B4%E8%A7%A3%E5%A4%9A%E7%A7%8D%E6%A0%BC%E5%BC%8F%E5%8E%8B%E7%BC%A9%E5%8C%85/</url>
+    <content><![CDATA[<p>首先我们要把rarcrack下载好，因为这个软件在kali中也没有自带。 这里提供一个我复制的GitHub的克隆仓库给大家使用：</p>
+<p><a href="https://gitee.com/luoqingBlog/rarcrack.git">https://gitee.com/luoqingBlog/rarcrack.git</a></p>
+<p>点击下载zip即可，也可以使用git工具的clone。</p>
+<p>下载完成后解压得到里面的文件，然后在mac或者Ubuntu上编译此文件</p>
+<p>直接cd切换到文件夹当中然后使用make即可，mac并没有自带编译工具，所以要先去下载安装</p>
+<p>编译</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">make</span></code></pre>
+
+<span id="more"></span>
+<p>编译完成后问价夹里会多一个rarcrack可运行程序，mac版本尽量保持在mac10.x</p>
+<p>我的系统是bigsur11.0.1  使用make编译完成后无法使用。尽管可以使用也是密码只破解了几次就结束了程序，这个问题我在kali中使用apt-get安装rarcrack之后也是这个样子，但是在kali中使用aapt-get rarcrack命令安装的可以破解rar的类型文件，但是其他文件类型都不行，密码走了四行就停止了</p>
+<p>所以只有一个主意事项，mac版本尽量低于11.0</p>
+<p>这里我使用的是kali的最新版本2021来做测试，因为kali和Ubuntu一样使用的是同一个发行版本，命令也不尽相同。</p>
+<p>编译完成后我们就可以使用rarcrack来破解zip、rar、7z等格式的压缩包了，但是这里注意到是rarcrack只能使用暴力破解方式，也就是穷举法，是不支持自己使用字典破解的。</p>
+<p>破解</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">./rarcrack <span class="token parameter variable">--threads</span> <span class="token number">12</span> <span class="token parameter variable">--type</span> <span class="token function">zip</span> test.zip</code></pre>
+
+<p>这里我指定使用文件夹下的rarcrack程序进行破解，这里一定要加上.&#x2F;。 因为这样才会识别是使用你当前文件夹里的程序，而直接输入rarcrack的话会提示你找不到这个命令，因为你没有安装这个程序</p>
+<p>参数解释</p>
+<blockquote>
+<p>–threads 线程数。 最大不超过12。 超过也默认12</p>
+<p>–type   要破解的压缩包类型。 可选zip rar  7z</p>
+</blockquote>
+<p>在运行破解命令之后马上按CTRL+C停止命令。 因为我们要缩小破解的范围</p>
+<p>在压缩包的统计目录下会自动生成一个和压缩包同名的文件并且后缀为.xml</p>
+<p>我们使用记事本打开此文件，然后把<abc></abc>中间的字符串改成0123456789，这里的意思是指定纯数字破解，然后再把 <current></current>中间的内容改为0，表示从0开始破解 然后我们保存在运行一遍破解命令<code>./rarcrack --threads 12 --type zip test.zip</code>就会自动读取你的xml配置文件然后从0开始破解数字</p>
+<p>我们可以使用<code>top -H</code>来查看当前运行的程序，可以看到rarcrack一共有12个正在运行</p>
+<p>最后破解成功了就会显示</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">GOOD: password cracked: <span class="token string">'100'</span></code></pre>
+
+<p>这里成功破解出了密码是100</p>
+<p>如果要破解的文件是zip。可以使用fcrackzip来破解。 因为速度要快很多。其他格式就可以使用rarcrack来破解。但是时间较长。</p>
+]]></content>
+      <tags>
+        <tag>rarcrack</tag>
+        <tag>zip</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nginx部署vue项目</title>
+    <url>/2021/11/22/nginx%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<p>首先我们先本地启动这个vue的项目，mac和liunx建议先安装nvm，然后通过nvm安装nodejs即可。</p>
+<p>启动vue项目，首先切换到项目的根路径，也就是有package.json文件的地方</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">cd</span> mall-admin-web-master</code></pre>
+
+<p>然后安装运行所需要的依赖</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
+
+<p>安装完成后本地运行查看</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run dev</code></pre>
+
+<p>这个dev是在package.json这里面配置的启动名称，一般vue项目也是这个</p>
+<p>启动完成后使用<a href="http://localhost:8090可以进行本地访问">http://localhost:8090可以进行本地访问</a></p>
+<p>但是这只是本地访问，你使用你自己的外网ip进行访问可以看到是访问不通的，我们需要搭建一个nginx服务器来转发到这个网页即可</p>
+<p>然后在使用打包命令对所有要部署在nginx的静态文件打包</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> run build</code></pre>
+
+<p>打包完成后项目下会多出一个dist文件夹，这里面放的就是所有的静态文件，<br>把这个文件夹所有的静态文件放到nginx的静态页面路径下即可访问</p>
+<p>&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</p>
+]]></content>
+      <tags>
+        <tag>nginx</tag>
+        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
@@ -4143,6 +4042,107 @@ public class WebMvcConfig implements WebMvcConfigurer &#123;
       </tags>
   </entry>
   <entry>
+    <title>springboot工程中使用logback输出实现日志唯一标识</title>
+    <url>/2024/03/12/springboot%E5%B7%A5%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8logback%E8%BE%93%E5%87%BA%E5%AE%9E%E7%8E%B0%E6%97%A5%E5%BF%97%E5%94%AF%E4%B8%80%E6%A0%87%E8%AF%86/</url>
+    <content><![CDATA[<p>在日常排查问题时，log.info输出的日志并没有唯一标识，导致实际排查问题时无法判断某一条日志是否是当前线程请求输出的日志。而我们可以通过拦截器拦截日志输出时设置一个唯一标识到输出中，后续只需要排查一下请求时的报文就可以获取到唯一标识，然后再通过唯一标识拿到所有的请求日志信息，方便排查问题。</p>
+<span id="more"></span>
+
+<h2 id="一、工程依赖"><a href="#一、工程依赖" class="headerlink" title="一、工程依赖"></a>一、工程依赖</h2><pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-logging<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span></code></pre>
+
+<h2 id="二、日志输出配置"><a href="#二、日志输出配置" class="headerlink" title="二、日志输出配置"></a>二、日志输出配置</h2><p>日志输出配置通常包含三部分：Level（日志输出级别）、Appender（输出到哪里）、Layout（输出格式）。logback中将Appender的作用放大了，除了指定输出位置之外，还能配置输出策略以及输出格式。这节只需要对appender的子元素pattern进行调整，增加输出%X{logId}。%X可以引用日志上下文的信息，这些信息是保存在MDC中的。示例配置如下：</p>
+<pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>appender</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>console<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ch.qos.logback.core.ConsoleAppender<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>encoder</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ch.qos.logback.classic.encoder.PatternLayoutEncoder<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token comment">&lt;!--格式化输出：%d表示日期，%X&#123;logId&#125;表示日志唯一编号 %thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pattern</span><span class="token punctuation">></span></span>%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125; [%X&#123;logId&#125;] [%thread] %-5level %logger&#123;60&#125;[%L] - %msg%n<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>pattern</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>encoder</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>appender</span><span class="token punctuation">></span></span></code></pre>
+
+<h2 id="三、日志拦截器"><a href="#三、日志拦截器" class="headerlink" title="三、日志拦截器"></a>三、日志拦截器</h2><pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">Logger</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">LoggerFactory</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">MDC</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ModelAndView</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>handler<span class="token punctuation">.</span></span><span class="token class-name">HandlerInterceptorAdapter</span></span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletResponse</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">UUID</span></span><span class="token punctuation">;</span>
+ 
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">LogInterceptor</span> <span class="token keyword">extends</span> <span class="token class-name">HandlerInterceptorAdapter</span> <span class="token punctuation">&#123;</span>
+    <span class="token class-name">Logger</span> logger <span class="token operator">=</span> <span class="token class-name">LoggerFactory</span><span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span><span class="token class-name">LogInterceptor</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token constant">LOG_ID_KEY</span> <span class="token operator">=</span> <span class="token string">"logId"</span><span class="token punctuation">;</span>
+ 
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">afterCompletion</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> arg0<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> arg1<span class="token punctuation">,</span> <span class="token class-name">Object</span> arg2<span class="token punctuation">,</span> <span class="token class-name">Exception</span> arg3<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// 删除logId</span>
+            <span class="token constant">MDC</span><span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token constant">LOG_ID_KEY</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+ 
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">postHandle</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> arg0<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> arg1<span class="token punctuation">,</span>
+                           <span class="token class-name">Object</span> arg2<span class="token punctuation">,</span> <span class="token class-name">ModelAndView</span> arg3<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+    <span class="token punctuation">&#125;</span>
+ 
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">preHandle</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> request<span class="token punctuation">,</span>
+                             <span class="token class-name">HttpServletResponse</span> response<span class="token punctuation">,</span> <span class="token class-name">Object</span> handler<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+ 
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// 设置logId</span>
+            <span class="token class-name">String</span> logId <span class="token operator">=</span> <span class="token constant">UUID</span><span class="token punctuation">.</span><span class="token function">randomUUID</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"-"</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token constant">MDC</span><span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token constant">LOG_ID_KEY</span><span class="token punctuation">,</span> logId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h1 id="四、加入拦截器链"><a href="#四、加入拦截器链" class="headerlink" title="四、加入拦截器链"></a>四、加入拦截器链</h1><pre class="language-none"><code class="language-none">@Configuration
+public class WebMvcConfig implements WebMvcConfigurer &#123;
+ 
+    &#x2F;**
+     * 把日志拦截器注入为bean
+     *
+     * @return
+     *&#x2F;
+    @Bean
+    public HandlerInterceptor logInterceptor() &#123;
+        return new LogInterceptor();
+    &#125;
+ 
+    &#x2F;**
+     * 注册拦截器
+     *
+     * @param registry
+     *&#x2F;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) &#123;
+        &#x2F;&#x2F; addPathPatterns 用于添加拦截规则, 这里假设拦截 &#x2F;url 后面的全部链接
+        &#x2F;&#x2F; excludePathPatterns 用户排除拦截
+        registry.addInterceptor(logInterceptor()).addPathPatterns(&quot;&#x2F;**&quot;);
+    &#125;
+&#125;</code></pre>
+
+<p>到此，springboot工程可以对每次接口调用产生的日志都标记唯一的编号。</p>
+]]></content>
+      <tags>
+        <tag>java</tag>
+        <tag>springboot</tag>
+        <tag>logback</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>typora移除过期提示</title>
     <url>/2023/04/04/typora%E7%A7%BB%E9%99%A4%E8%BF%87%E6%9C%9F%E6%8F%90%E7%A4%BA/</url>
     <content><![CDATA[<p>前言：由于typora在1.0版本正式推出后以前的beta版本都会弹出错误提示“This beta version of Typora is expired, please download and install a newer version.”导致必须升级正式版本付费使用，本次内容教大家如何跳过beta版本的提示信息继续使用typora</p>
@@ -4209,6 +4209,22 @@ public class WebMvcConfig implements WebMvcConfigurer &#123;
       </tags>
   </entry>
   <entry>
+    <title>windows开启卓越性能电源计划</title>
+    <url>/2024/02/05/windows%E5%BC%80%E5%90%AF%E5%8D%93%E8%B6%8A%E6%80%A7%E8%83%BD%E7%94%B5%E6%BA%90%E8%AE%A1%E5%88%92/</url>
+    <content><![CDATA[<h2 id="1、打开cmd输入如下命令创建一个卓越性能计划"><a href="#1、打开cmd输入如下命令创建一个卓越性能计划" class="headerlink" title="1、打开cmd输入如下命令创建一个卓越性能计划"></a>1、打开cmd输入如下命令创建一个卓越性能计划</h2><pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-duplicatescheme</span> e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>
+
+<h2 id="2、自动选择已开启的卓越性能计划"><a href="#2、自动选择已开启的卓越性能计划" class="headerlink" title="2、自动选择已开启的卓越性能计划"></a>2、自动选择已开启的卓越性能计划</h2><p>上述命令执行后会返回一个GUID，例如：电源方案 GUID: 00cac9ad-0e8a-4b9d-a477-d1e0711b5099  (卓越性能)</p>
+<p>我们根据创建的guid执行选择</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-s</span> 00cac9ad-0e8a-4b9d-a477-d1e0711b5099</code></pre>
+
+<p>再次进入电源选项，可以看到已经选择到了新创建的卓越性能计划</p>
+<span id="more"></span>
+]]></content>
+      <tags>
+        <tag>windows</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>win10关闭WIN+SHIFT+S截图快捷键</title>
     <url>/2024/03/05/win10%E5%85%B3%E9%97%ADWIN-SHIFT-S%E6%88%AA%E5%9B%BE%E5%BF%AB%E6%8D%B7%E9%94%AE/</url>
     <content><![CDATA[<p>网上搜了好久，看了不少解答都没有真正解决问题，其实问题很简单就是要禁用Shift+Win+S这组快捷键。</p>
@@ -4237,84 +4253,6 @@ public class WebMvcConfig implements WebMvcConfigurer &#123;
 ]]></content>
       <tags>
         <tag>windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>windows开启卓越性能电源计划</title>
-    <url>/2024/02/05/windows%E5%BC%80%E5%90%AF%E5%8D%93%E8%B6%8A%E6%80%A7%E8%83%BD%E7%94%B5%E6%BA%90%E8%AE%A1%E5%88%92/</url>
-    <content><![CDATA[<h2 id="1、打开cmd输入如下命令创建一个卓越性能计划"><a href="#1、打开cmd输入如下命令创建一个卓越性能计划" class="headerlink" title="1、打开cmd输入如下命令创建一个卓越性能计划"></a>1、打开cmd输入如下命令创建一个卓越性能计划</h2><pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-duplicatescheme</span> e9a42b02-d5df-448d-aa00-03f14749eb61</code></pre>
-
-<h2 id="2、自动选择已开启的卓越性能计划"><a href="#2、自动选择已开启的卓越性能计划" class="headerlink" title="2、自动选择已开启的卓越性能计划"></a>2、自动选择已开启的卓越性能计划</h2><p>上述命令执行后会返回一个GUID，例如：电源方案 GUID: 00cac9ad-0e8a-4b9d-a477-d1e0711b5099  (卓越性能)</p>
-<p>我们根据创建的guid执行选择</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">powercfg <span class="token parameter variable">-s</span> 00cac9ad-0e8a-4b9d-a477-d1e0711b5099</code></pre>
-
-<p>再次进入电源选项，可以看到已经选择到了新创建的卓越性能计划</p>
-<span id="more"></span>
-]]></content>
-      <tags>
-        <tag>windows</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>中国移动rax3000M刷机</title>
-    <url>/2024/04/09/%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8rax3000M%E5%88%B7%E6%9C%BA/</url>
-    <content><![CDATA[<p>只要100左右就能获得一个512M内存+联发科MT7981+AX3000规格的入门神器，还能刷机,本教程仅适用于nand版本</p>
-<span id="more"></span>
-
-<h2 id="区分emmc版本和nand版本"><a href="#区分emmc版本和nand版本" class="headerlink" title="区分emmc版本和nand版本"></a>区分emmc版本和nand版本</h2><p>检查设备背面的标签：<br>“CH EC CMIIT ID: xxxx”是eMMC版本<br>“CH CMIIT ID: xxxx”是NAND版本</p>
-<p>目前算力版是emmc，其余都是nand</p>
-<h2 id="解锁ssh"><a href="#解锁ssh" class="headerlink" title="解锁ssh"></a>解锁ssh</h2><p>连接rax3000M路由器wifi或者使用网线直连路由器lan口，输入192.168.10.1进入路由器后台</p>
-<p>用户和密码在路由器的背面，用户为user</p>
-<p>登录后页面随便设置，进入主页面点击 更多–管理–配置管理</p>
-<p>下载刷机文件：</p>
-<p>链接: <a href="https://pan.baidu.com/s/1v3ChNdbP8gdKZByqDLijpw?pwd=1234">https://pan.baidu.com/s/1v3ChNdbP8gdKZByqDLijpw?pwd=1234</a></p>
-<p>解压刷机文件，点击导入配置，选择<code>rax3000m-ssh.conf</code>文件，等待路由器重启</p>
-<h2 id="刷入不死鸟"><a href="#刷入不死鸟" class="headerlink" title="刷入不死鸟"></a>刷入不死鸟</h2><h3 id="使用ssh连接路由器"><a href="#使用ssh连接路由器" class="headerlink" title="使用ssh连接路由器"></a>使用ssh连接路由器</h3><p>ip：192.168.10.1</p>
-<p>用户：root 密码：1234567890</p>
-<p>使用第三方ssh软件可能无法连接，可以使用cmd自带的ssh命令登录</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> root@192.168.10.1</code></pre>
-
-<h3 id="上传不死鸟固件"><a href="#上传不死鸟固件" class="headerlink" title="上传不死鸟固件"></a>上传不死鸟固件</h3><p>将刷机包内的<code>uboot.bin</code>文件上传至路由器的&#x2F;temp文件夹内，没有第三方软件可使用如下命令：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">scp</span> uboot.bin root@192.168.10.1:/temp</code></pre>
-
-<h3 id="刷入底层"><a href="#刷入底层" class="headerlink" title="刷入底层"></a>刷入底层</h3><pre class="language-bash" data-language="bash"><code class="language-bash">mtd <span class="token function">write</span> uboot.bin FIP</code></pre>
-
-<h2 id="刷入openwrt固件"><a href="#刷入openwrt固件" class="headerlink" title="刷入openwrt固件"></a>刷入openwrt固件</h2><p>刷入底层后将路由器关机</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">init <span class="token number">0</span></code></pre>
-
-
-
-<h3 id="进入不死鸟控制台"><a href="#进入不死鸟控制台" class="headerlink" title="进入不死鸟控制台"></a>进入不死鸟控制台</h3><p>拔掉路由器电源，用卡针顶住路由器的reset按钮，插上电源，看到蓝灯闪烁后松开。</p>
-<p>将电脑设置为静态地址:192.168.1.2 网关：192.168.1.1</p>
-<p>浏览器输入：192.168.1.1进入不死鸟控制台</p>
-<h3 id="刷入固件"><a href="#刷入固件" class="headerlink" title="刷入固件"></a>刷入固件</h3><p>点击选择：选择\firmware_cmcc_rax3000m文件夹下<code>immortalwrt-mediatek-mt7981-cmcc_rax3000m-squashfs-factory.bin</code>文件，点击upload上传</p>
-<p>等待路由器重启后，将电脑ip改为自动获取，浏览器输入192.168.6.1即可进入immortalwrt</p>
-<h2 id="刷入信号加强版immortalwrt"><a href="#刷入信号加强版immortalwrt" class="headerlink" title="刷入信号加强版immortalwrt"></a>刷入信号加强版immortalwrt</h2><p>链接: <a href="https://pan.baidu.com/s/1ScBy8ov5dIE7rc_ciI-i5Q?pwd=1234">https://pan.baidu.com/s/1ScBy8ov5dIE7rc_ciI-i5Q?pwd=1234</a></p>
-<p>输入192.168.6.1进入刚刚刷好的路由器后台界面，点击系统-备份升级，选择不保留配置升级即可。</p>
-]]></content>
-      <tags>
-        <tag>rax3000M</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>佳能MG3080连接WIFi共享打印</title>
-    <url>/2024/03/30/%E4%BD%B3%E8%83%BDMG3080%E8%BF%9E%E6%8E%A5WIFi%E5%85%B1%E4%BA%AB%E6%89%93%E5%8D%B0/</url>
-    <content><![CDATA[<p>佳能MG3080喷墨打印机在家里通过无线路由器连接Wi-Fi就可以,从而连接本地局域网内的电脑或智能设备实现无线打印</p>
-<span id="more"></span>
-
-<h2 id="1、准备工作"><a href="#1、准备工作" class="headerlink" title="1、准备工作"></a>1、准备工作</h2><p>佳能打印app下载：<a href="https://www.canon.com.cn/supports/app/#/id=inkjet&Canon_PRINT">https://www.canon.com.cn/supports/app/#/id=inkjet&amp;Canon_PRINT</a></p>
-<p>选择下载：Canon PRINT</p>
-<h2 id="2、重置打印机网络"><a href="#2、重置打印机网络" class="headerlink" title="2、重置打印机网络"></a>2、重置打印机网络</h2><p>打印机开机就绪状态下，按住“WiFi”键2秒以上，电源灯闪烁时松开</p>
-<p>按一下彩色按钮后网络指示灯会跳到直连</p>
-<p>再次按一下彩色按钮，会从直连跳回网络</p>
-<p>这时会出现一个没有密码的wifi，名称类似：Canon_ij_88871_MG3000series</p>
-<h2 id="3、打印机连接WIFi"><a href="#3、打印机连接WIFi" class="headerlink" title="3、打印机连接WIFi"></a>3、打印机连接WIFi</h2><p>连接刚刚没有密码的打印机WIFi，手机打开佳能打印APP，提示是否连接网络选择是，输入wifi密码即可</p>
-<p><strong>注意：wifi必须是2.4G且加密格式必须有WPA，否则打印机无法连接wifi。</strong></p>
-<p>可能是打印机过于老旧无法支持路由器比较新的加密方式，可以选择路由器的”WPA&#x2F;WPA2”这一个选项作为打印机及其他智能设备的2.4Gwifi加密方式。</p>
-]]></content>
-      <tags>
-        <tag>佳能</tag>
-        <tag>打印机</tag>
       </tags>
   </entry>
   <entry>
@@ -4403,6 +4341,68 @@ driver<span class="token punctuation">.</span>quit<span class="token punctuation
 ]]></content>
       <tags>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>中国移动rax3000M刷机</title>
+    <url>/2024/04/09/%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8rax3000M%E5%88%B7%E6%9C%BA/</url>
+    <content><![CDATA[<p>只要100左右就能获得一个512M内存+联发科MT7981+AX3000规格的入门神器，还能刷机,本教程仅适用于nand版本</p>
+<span id="more"></span>
+
+<h2 id="区分emmc版本和nand版本"><a href="#区分emmc版本和nand版本" class="headerlink" title="区分emmc版本和nand版本"></a>区分emmc版本和nand版本</h2><p>检查设备背面的标签：<br>“CH EC CMIIT ID: xxxx”是eMMC版本<br>“CH CMIIT ID: xxxx”是NAND版本</p>
+<p>目前算力版是emmc，其余都是nand</p>
+<h2 id="解锁ssh"><a href="#解锁ssh" class="headerlink" title="解锁ssh"></a>解锁ssh</h2><p>连接rax3000M路由器wifi或者使用网线直连路由器lan口，输入192.168.10.1进入路由器后台</p>
+<p>用户和密码在路由器的背面，用户为user</p>
+<p>登录后页面随便设置，进入主页面点击 更多–管理–配置管理</p>
+<p>下载刷机文件：</p>
+<p>链接: <a href="https://pan.baidu.com/s/1v3ChNdbP8gdKZByqDLijpw?pwd=1234">https://pan.baidu.com/s/1v3ChNdbP8gdKZByqDLijpw?pwd=1234</a></p>
+<p>解压刷机文件，点击导入配置，选择<code>rax3000m-ssh.conf</code>文件，等待路由器重启</p>
+<h2 id="刷入不死鸟"><a href="#刷入不死鸟" class="headerlink" title="刷入不死鸟"></a>刷入不死鸟</h2><h3 id="使用ssh连接路由器"><a href="#使用ssh连接路由器" class="headerlink" title="使用ssh连接路由器"></a>使用ssh连接路由器</h3><p>ip：192.168.10.1</p>
+<p>用户：root 密码：1234567890</p>
+<p>使用第三方ssh软件可能无法连接，可以使用cmd自带的ssh命令登录</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> root@192.168.10.1</code></pre>
+
+<h3 id="上传不死鸟固件"><a href="#上传不死鸟固件" class="headerlink" title="上传不死鸟固件"></a>上传不死鸟固件</h3><p>将刷机包内的<code>uboot.bin</code>文件上传至路由器的&#x2F;temp文件夹内，没有第三方软件可使用如下命令：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">scp</span> uboot.bin root@192.168.10.1:/temp</code></pre>
+
+<h3 id="刷入底层"><a href="#刷入底层" class="headerlink" title="刷入底层"></a>刷入底层</h3><pre class="language-bash" data-language="bash"><code class="language-bash">mtd <span class="token function">write</span> uboot.bin FIP</code></pre>
+
+<h2 id="刷入openwrt固件"><a href="#刷入openwrt固件" class="headerlink" title="刷入openwrt固件"></a>刷入openwrt固件</h2><p>刷入底层后将路由器关机</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">init <span class="token number">0</span></code></pre>
+
+
+
+<h3 id="进入不死鸟控制台"><a href="#进入不死鸟控制台" class="headerlink" title="进入不死鸟控制台"></a>进入不死鸟控制台</h3><p>拔掉路由器电源，用卡针顶住路由器的reset按钮，插上电源，看到蓝灯闪烁后松开。</p>
+<p>将电脑设置为静态地址:192.168.1.2 网关：192.168.1.1</p>
+<p>浏览器输入：192.168.1.1进入不死鸟控制台</p>
+<h3 id="刷入固件"><a href="#刷入固件" class="headerlink" title="刷入固件"></a>刷入固件</h3><p>点击选择：选择\firmware_cmcc_rax3000m文件夹下<code>immortalwrt-mediatek-mt7981-cmcc_rax3000m-squashfs-factory.bin</code>文件，点击upload上传</p>
+<p>等待路由器重启后，将电脑ip改为自动获取，浏览器输入192.168.6.1即可进入immortalwrt</p>
+<h2 id="刷入信号加强版immortalwrt"><a href="#刷入信号加强版immortalwrt" class="headerlink" title="刷入信号加强版immortalwrt"></a>刷入信号加强版immortalwrt</h2><p>链接: <a href="https://pan.baidu.com/s/1ScBy8ov5dIE7rc_ciI-i5Q?pwd=1234">https://pan.baidu.com/s/1ScBy8ov5dIE7rc_ciI-i5Q?pwd=1234</a></p>
+<p>输入192.168.6.1进入刚刚刷好的路由器后台界面，点击系统-备份升级，选择不保留配置升级即可。</p>
+]]></content>
+      <tags>
+        <tag>rax3000M</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>佳能MG3080连接WIFi共享打印</title>
+    <url>/2024/03/30/%E4%BD%B3%E8%83%BDMG3080%E8%BF%9E%E6%8E%A5WIFi%E5%85%B1%E4%BA%AB%E6%89%93%E5%8D%B0/</url>
+    <content><![CDATA[<p>佳能MG3080喷墨打印机在家里通过无线路由器连接Wi-Fi就可以,从而连接本地局域网内的电脑或智能设备实现无线打印</p>
+<span id="more"></span>
+
+<h2 id="1、准备工作"><a href="#1、准备工作" class="headerlink" title="1、准备工作"></a>1、准备工作</h2><p>佳能打印app下载：<a href="https://www.canon.com.cn/supports/app/#/id=inkjet&Canon_PRINT">https://www.canon.com.cn/supports/app/#/id=inkjet&amp;Canon_PRINT</a></p>
+<p>选择下载：Canon PRINT</p>
+<h2 id="2、重置打印机网络"><a href="#2、重置打印机网络" class="headerlink" title="2、重置打印机网络"></a>2、重置打印机网络</h2><p>打印机开机就绪状态下，按住“WiFi”键2秒以上，电源灯闪烁时松开</p>
+<p>按一下彩色按钮后网络指示灯会跳到直连</p>
+<p>再次按一下彩色按钮，会从直连跳回网络</p>
+<p>这时会出现一个没有密码的wifi，名称类似：Canon_ij_88871_MG3000series</p>
+<h2 id="3、打印机连接WIFi"><a href="#3、打印机连接WIFi" class="headerlink" title="3、打印机连接WIFi"></a>3、打印机连接WIFi</h2><p>连接刚刚没有密码的打印机WIFi，手机打开佳能打印APP，提示是否连接网络选择是，输入wifi密码即可</p>
+<p><strong>注意：wifi必须是2.4G且加密格式必须有WPA，否则打印机无法连接wifi。</strong></p>
+<p>可能是打印机过于老旧无法支持路由器比较新的加密方式，可以选择路由器的”WPA&#x2F;WPA2”这一个选项作为打印机及其他智能设备的2.4Gwifi加密方式。</p>
+]]></content>
+      <tags>
+        <tag>佳能</tag>
+        <tag>打印机</tag>
       </tags>
   </entry>
   <entry>
@@ -4713,6 +4713,28 @@ resp <span class="token operator">=</span> session<span class="token punctuation
       </tags>
   </entry>
   <entry>
+    <title>完美解决MySql出现1366中文错误</title>
+    <url>/2021/04/06/%E5%AE%8C%E7%BE%8E%E8%A7%A3%E5%86%B3MySql%E5%87%BA%E7%8E%B01366%E4%B8%AD%E6%96%87%E9%94%99%E8%AF%AF/</url>
+    <content><![CDATA[<p>在表中插入中文数据出现如下错误：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">Warning Code ：1366 Incorrect string value: <span class="token string">'\xE5\x9C\xA8'</span> <span class="token keyword">for</span> <span class="token function">column</span> <span class="token string">'content'</span> at row <span class="token number">1</span></code></pre>
+
+<p>数据库一般有三个字符编码，一个是数据库，一个是表，一个是列</p>
+<p>首先检查数据库是否为utf8字符集</p>
+<p>打开navicat，选择数据库右键编辑数据库就可以看到数据库的字符集，如果不是utf8我们就把字符集调成utf8，并且排序规则改为<code>utf8_general_ci</code>,这是数据库的utf8默认字符集，如果是utf8就不用改，然后点击确认</p>
+<span id="more"></span>
+
+<p><img src="C:\mysql1366\数据库.png" loading="lazy"></p>
+<p>我们再看一下表是否为utf8的字符集，同样用navicat选择报错的表，右键设计表，然后点击选项就可以看到表的默认字符集，如果不是utf8就改为和刚刚我们修改数据库字符集一样的编码，排序规则也是参照上面修改数据库的字符集和排序规则来</p>
+<p><img src="C:\mysql1366\表.png" alt="表" loading="lazy"></p>
+<p>然后我们再看一下字段的字符集是否为utf8</p>
+<p>我们现在还在设计表的选项中，我们切换回字段的选择，然后点击所有可以插入中文的字段，比如varchar类型的name，选中，然后下面就有这个字段的默认字符集，如果不是utf8我们也将他的字符集改为utf8然后保存就可以解决数据库的所有中文报错问题啦！</p>
+<p><img src="/../../../../mysql1366/%E5%AD%97%E6%AE%B5.png" alt="字段" loading="lazy"></p>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安装CentOS报错dracut-initqueue-timeout</title>
     <url>/2023/04/09/%E5%AE%89%E8%A3%85CentOS%E6%8A%A5%E9%94%99dracut-initqueue-timeout/</url>
     <content><![CDATA[<p>前言：前几天买了一个i5-3475s的小主机准备用来安装centos作为一个服务器每天执行定时任务，但是选择Install CentOS Linux 7时一直弹出dracut-initqueue timeout的报错内容。</p>
@@ -4742,28 +4764,6 @@ resp <span class="token operator">=</span> session<span class="token punctuation
 ]]></content>
       <tags>
         <tag>centos</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>完美解决MySql出现1366中文错误</title>
-    <url>/2021/04/06/%E5%AE%8C%E7%BE%8E%E8%A7%A3%E5%86%B3MySql%E5%87%BA%E7%8E%B01366%E4%B8%AD%E6%96%87%E9%94%99%E8%AF%AF/</url>
-    <content><![CDATA[<p>在表中插入中文数据出现如下错误：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash">Warning Code ：1366 Incorrect string value: <span class="token string">'\xE5\x9C\xA8'</span> <span class="token keyword">for</span> <span class="token function">column</span> <span class="token string">'content'</span> at row <span class="token number">1</span></code></pre>
-
-<p>数据库一般有三个字符编码，一个是数据库，一个是表，一个是列</p>
-<p>首先检查数据库是否为utf8字符集</p>
-<p>打开navicat，选择数据库右键编辑数据库就可以看到数据库的字符集，如果不是utf8我们就把字符集调成utf8，并且排序规则改为<code>utf8_general_ci</code>,这是数据库的utf8默认字符集，如果是utf8就不用改，然后点击确认</p>
-<span id="more"></span>
-
-<p><img src="C:\mysql1366\数据库.png" loading="lazy"></p>
-<p>我们再看一下表是否为utf8的字符集，同样用navicat选择报错的表，右键设计表，然后点击选项就可以看到表的默认字符集，如果不是utf8就改为和刚刚我们修改数据库字符集一样的编码，排序规则也是参照上面修改数据库的字符集和排序规则来</p>
-<p><img src="C:\mysql1366\表.png" alt="表" loading="lazy"></p>
-<p>然后我们再看一下字段的字符集是否为utf8</p>
-<p>我们现在还在设计表的选项中，我们切换回字段的选择，然后点击所有可以插入中文的字段，比如varchar类型的name，选中，然后下面就有这个字段的默认字符集，如果不是utf8我们也将他的字符集改为utf8然后保存就可以解决数据库的所有中文报错问题啦！</p>
-<p><img src="/../../../../mysql1366/%E5%AD%97%E6%AE%B5.png" alt="字段" loading="lazy"></p>
-]]></content>
-      <tags>
-        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
