@@ -2851,6 +2851,48 @@ passwd：已成功更新密码</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>mac启动springboot项目慢解决方案</title>
+    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
+<p>下面就是你的电脑地址.local</p>
+<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
+<span id="more"></span>
+
+<p>然后复制这段地址包括.local</p>
+<p><code>luoqingdeMacBook-Pro.local</code></p>
+<p>再打开本机的hosts，准备修改本地ip映射</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
+
+<p>原内容如下：</p>
+<pre class="language-none"><code class="language-none">##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1             localhost
+255.255.255.255     broadcasthost
+::1                 localhost </code></pre>
+
+<p>修改成如下：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
+<span class="token comment"># Host Database</span>
+<span class="token comment">#</span>
+<span class="token comment"># localhost is used to configure the loopback interface</span>
+<span class="token comment"># when the system is booting.  Do not change this entry.</span>
+<span class="token comment">##</span>
+<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
+<span class="token number">255.255</span>.255.255     broadcasthost
+::1                 localhost 你的机器名.local</code></pre>
+
+<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>springboot</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mac、windows配置maven</title>
     <url>/2021/05/11/mac%E3%80%81windows%E9%85%8D%E7%BD%AEmaven/</url>
     <content><![CDATA[<p>首先下载好maven的压缩包，这里以apache-maven-3.5.4为例</p>
@@ -2915,48 +2957,6 @@ OS name: <span class="token string">"mac os x"</span>, version: <span class="tok
 ]]></content>
       <tags>
         <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>mac启动springboot项目慢解决方案</title>
-    <url>/2021/07/29/mac%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE%E6%85%A2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
-    <content><![CDATA[<p>首先查看自己本机的网络地址，点击系统设置，找到共享 然后就可以看到有这么一句话<code>您的本地网络上的电脑可以通过以下地址访问您的电脑：</code></p>
-<p>下面就是你的电脑地址.local</p>
-<p><img src="/../../../../myImg/mac%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.png" loading="lazy"></p>
-<span id="more"></span>
-
-<p>然后复制这段地址包括.local</p>
-<p><code>luoqingdeMacBook-Pro.local</code></p>
-<p>再打开本机的hosts，准备修改本地ip映射</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/hosts</code></pre>
-
-<p>原内容如下：</p>
-<pre class="language-none"><code class="language-none">##
-# Host Database
-#
-# localhost is used to configure the loopback interface
-# when the system is booting.  Do not change this entry.
-##
-127.0.0.1             localhost
-255.255.255.255     broadcasthost
-::1                 localhost </code></pre>
-
-<p>修改成如下：</p>
-<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment">##</span>
-<span class="token comment"># Host Database</span>
-<span class="token comment">#</span>
-<span class="token comment"># localhost is used to configure the loopback interface</span>
-<span class="token comment"># when the system is booting.  Do not change this entry.</span>
-<span class="token comment">##</span>
-<span class="token number">127.0</span>.0.1             localhost 你的机器名.local
-<span class="token number">255.255</span>.255.255     broadcasthost
-::1                 localhost 你的机器名.local</code></pre>
-
-<p>只需要在127和::1这两个地址后面映射的localhost后面加个空格然后粘贴刚刚我们复制的本地地址即可</p>
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>springboot</tag>
       </tags>
   </entry>
   <entry>
@@ -3223,6 +3223,21 @@ mysql&gt; exit;</code></pre>
 ]]></content>
       <tags>
         <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nacos版本不一致报错</title>
+    <url>/2024/06/03/nacos%E6%8A%A5%E9%94%99/</url>
+    <content><![CDATA[<p>在启动微服务项目时明明配置没有问题但是却一直报错：Server check fail，please check server 127.0.0.1,port 9848 is available，error&#x3D;{}</p>
+<p>还有：java.util.concurrent.TimeoutException: Waited 3000 milliseconds</p>
+<span id="more"></span>
+
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>引入的springcloud和springcloudAlibaba版本分别为：2021.0.5、2021.0.4.0</p>
+<h2 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h2><p>将springcloudAlibaba版本修改为2021.1即可正常启动，特此记录一下</p>
+]]></content>
+      <tags>
+        <tag>nacos</tag>
+        <tag>springcloud</tag>
       </tags>
   </entry>
   <entry>
@@ -3799,6 +3814,94 @@ hello</code></pre>
       <tags>
         <tag>liunx</tag>
         <tag>shell</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>springboot夏令时问题</title>
+    <url>/2024/06/02/springboot%E5%A4%8F%E4%BB%A4%E6%97%B6%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>1986年4月，中国中央有关部门发出“在全国范围内实行夏时制的通知”，具体做法是：每年从四月中旬第一个星期日的凌晨2时整（北京时间），将时钟拨快一小时，即将表针由2时拨至3时，夏令时开始；到九月中旬第一个星期日的凌晨2时整（北京夏令时），再将时钟拨回一小时，即将表针由2时拨至1时，夏令时结束。从1986年到1991年的六个年度，除1986年因是实行夏时制的第一年，从5月4日开始到9月14日结束外，其它年份均按规定的时段施行。在夏令时开始和结束前几天，新闻媒体均刊登有关部门的通告。1992年起，夏令时暂停实行。</p>
+<span id="more"></span>
+
+<h2 id="夏令时具体时间分布"><a href="#夏令时具体时间分布" class="headerlink" title="夏令时具体时间分布"></a>夏令时具体时间分布</h2><table>
+<thead>
+<tr>
+<th>开始时间-结束时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1986年5月4日至9月14日（1986年因是实行夏令时的第一年，从5月4日开始到9月14日结束）</td>
+</tr>
+<tr>
+<td>1987年4月12日至9月13日</td>
+</tr>
+<tr>
+<td>1988年4月10日至9月11日</td>
+</tr>
+<tr>
+<td>1989年4月16日至9月17日</td>
+</tr>
+<tr>
+<td>1990年4月15日至9月16日</td>
+</tr>
+<tr>
+<td>1991年4月14日至9月15日</td>
+</tr>
+</tbody></table>
+<h2 id="问题复现"><a href="#问题复现" class="headerlink" title="问题复现"></a>问题复现</h2><h3 id="创建实体"><a href="#创建实体" class="headerlink" title="创建实体"></a>创建实体</h3><p>我们先创建一个简单的实体类，并只有一个Date类型的属性用于示范</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token keyword">implements</span> <span class="token class-name">Serializable</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@JsonFormat</span><span class="token punctuation">(</span>pattern <span class="token operator">=</span> <span class="token string">"yyyy-MM-dd HH:mm:ss"</span><span class="token punctuation">,</span>timezone <span class="token operator">=</span> <span class="token string">"GMT+8"</span><span class="token punctuation">)</span>
+    <span class="token keyword">private</span> <span class="token class-name">Date</span> date<span class="token punctuation">;</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">Date</span> <span class="token function">getDate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> date<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setDate</span><span class="token punctuation">(</span><span class="token class-name">Date</span> date<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>date <span class="token operator">=</span> date<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h3 id="创建controller"><a href="#创建controller" class="headerlink" title="创建controller"></a>创建controller</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RestController</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestController</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"/test"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">Test</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">// 1986-09-14</span>
+        <span class="token class-name">Date</span> date <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token number">527007600000L</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Test</span> test <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        test<span class="token punctuation">.</span><span class="token function">setDate</span><span class="token punctuation">(</span>date<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> test<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h3 id="发送请求测试"><a href="#发送请求测试" class="headerlink" title="发送请求测试"></a>发送请求测试</h3><p>url：<a href="http://127.0.0.1:8080/test">http://127.0.0.1:8080/test</a></p>
+<p>响应报文：</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"date"</span><span class="token operator">:</span> <span class="token string">"1986-09-13 23:00:00"</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>在使用GMT+8时区时，因为夏令时原因会导致相对于正确的时间会少一个小时</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h3 id="将注解上的时区改为-Asia-Shanghai"><a href="#将注解上的时区改为-Asia-Shanghai" class="headerlink" title="将注解上的时区改为 Asia/Shanghai"></a>将注解上的时区改为 <code>Asia/Shanghai</code></h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@JsonFormat</span><span class="token punctuation">(</span>pattern <span class="token operator">=</span> <span class="token string">"yyyy-MM-dd HH:mm:ss"</span><span class="token punctuation">,</span>timezone <span class="token operator">=</span> <span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span></code></pre>
+
+<h3 id="修改springboot项目全局时区为-Asia-Shanghai"><a href="#修改springboot项目全局时区为-Asia-Shanghai" class="headerlink" title="修改springboot项目全局时区为 Asia/Shanghai"></a>修改springboot项目全局时区为 <code>Asia/Shanghai</code></h3><pre class="language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">spring</span><span class="token punctuation">:</span>
+  <span class="token key atrule">jackson</span><span class="token punctuation">:</span>
+    <span class="token key atrule">time-zone</span><span class="token punctuation">:</span> Asia/Shanghai
+    <span class="token key atrule">date-format</span><span class="token punctuation">:</span> yyyy<span class="token punctuation">-</span>MM<span class="token punctuation">-</span>dd HH<span class="token punctuation">:</span>mm<span class="token punctuation">:</span>ss</code></pre>
+
+<h3 id="项目启动时注入本机时区"><a href="#项目启动时注入本机时区" class="headerlink" title="项目启动时注入本机时区"></a>项目启动时注入本机时区</h3><pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Configuration</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JackSonConfig</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">/**
+     * 时区配置
+     */</span>
+    <span class="token annotation punctuation">@Bean</span>
+    <span class="token keyword">public</span> <span class="token class-name">Jackson2ObjectMapperBuilderCustomizer</span> <span class="token function">jacksonObjectMapperCustomization</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> jacksonObjectMapperBuilder <span class="token operator">-></span> jacksonObjectMapperBuilder<span class="token punctuation">.</span><span class="token function">timeZone</span><span class="token punctuation">(</span><span class="token class-name">TimeZone</span><span class="token punctuation">.</span><span class="token function">getDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+]]></content>
+      <tags>
+        <tag>springboot</tag>
       </tags>
   </entry>
   <entry>
@@ -5228,40 +5331,6 @@ scheduledExecutorService<span class="token punctuation">.</span><span class="tok
       </tags>
   </entry>
   <entry>
-    <title>本地docker离线搭建chatgpt无需api及外网</title>
-    <url>/2023/06/29/%E6%9C%AC%E5%9C%B0docker%E7%A6%BB%E7%BA%BF%E6%90%AD%E5%BB%BAchatgpt%E6%97%A0%E9%9C%80api%E5%8F%8A%E5%A4%96%E7%BD%91/</url>
-    <content><![CDATA[<p>前言：由于chagpt在国外导致经常需要使用梯子才可以访问，本次教程使用docker搭建本地容器，不需要api进行付费，只需要登陆一次账号获取token即可</p>
-<span id="more"></span>
-
-<h2 id="1、准备工作"><a href="#1、准备工作" class="headerlink" title="1、准备工作"></a>1、准备工作</h2><p>centos7服务器（或装有docker的其他服务器）、docker-compose、openai账号一个，临时梯子一个（需要登录一次openai获取token）</p>
-<h2 id="2、拉取镜像"><a href="#2、拉取镜像" class="headerlink" title="2、拉取镜像"></a>2、拉取镜像</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull pengzhile/pandora</code></pre>
-
-<h2 id="3、编辑docker-compose-yml并启动容器"><a href="#3、编辑docker-compose-yml并启动容器" class="headerlink" title="3、编辑docker-compose.yml并启动容器"></a>3、编辑docker-compose.yml并启动容器</h2><pre class="language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">'3'</span>
-<span class="token key atrule">services</span><span class="token punctuation">:</span>
-  <span class="token key atrule">pandora</span><span class="token punctuation">:</span>
-    <span class="token key atrule">image</span><span class="token punctuation">:</span> pengzhile/pandora
-    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> PANDORA_CLOUD=cloud
-      <span class="token punctuation">-</span> PANDORA_SERVER=0.0.0.0<span class="token punctuation">:</span><span class="token number">8899</span>
-    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> 8899<span class="token punctuation">:</span><span class="token number">8899</span>
-    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always</code></pre>
-
-<p>启动容器：<code>docker-compose up -d</code></p>
-<h2 id="4、获取token"><a href="#4、获取token" class="headerlink" title="4、获取token"></a>4、获取token</h2><p>使用梯子登录chatgpt：<a href="https://chat.openai.com/auth/login">https://chat.openai.com/auth/login</a></p>
-<p>登陆后使用浏览器访问链接获取token：<a href="http://chat.openai.com/api/auth/session">http://chat.openai.com/api/auth/session</a></p>
-<p>复制access_token双引号中的所有内容</p>
-<h2 id="5、访问本地chatgpt"><a href="#5、访问本地chatgpt" class="headerlink" title="5、访问本地chatgpt"></a>5、访问本地chatgpt</h2><p>我的centos服务器地址是：192.168.123.27  大家根据自己的地址访问</p>
-<p>我的地址就访问: <a href="http://192.168.123.27:8899/">http://192.168.123.27:8899</a></p>
-<p>点击最后一项 Continue with Access Token</p>
-<p>然后输入我们刚刚获取的access_token即可</p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>chatgpt</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>浅谈慕课网m3u8加密过程</title>
     <url>/2023/07/30/%E6%B5%85%E8%B0%88%E6%85%95%E8%AF%BE%E7%BD%91m3u8%E5%8A%A0%E5%AF%86%E8%BF%87%E7%A8%8B/</url>
     <content><![CDATA[<p>由于慕课网的视频是使用ts文件流格式进行播放，但是下载后发现无法正常播放，说明进行了加密，下载其对应的m3u8文件发现是一个json报文，其m3u8文件和key文件均进行了加密处理。</p>
@@ -5645,6 +5714,40 @@ binary_data <span class="token operator">=</span> <span class="token builtin">by
         <tag>ffmpeg</tag>
         <tag>ts</tag>
         <tag>m3u8</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本地docker离线搭建chatgpt无需api及外网</title>
+    <url>/2023/06/29/%E6%9C%AC%E5%9C%B0docker%E7%A6%BB%E7%BA%BF%E6%90%AD%E5%BB%BAchatgpt%E6%97%A0%E9%9C%80api%E5%8F%8A%E5%A4%96%E7%BD%91/</url>
+    <content><![CDATA[<p>前言：由于chagpt在国外导致经常需要使用梯子才可以访问，本次教程使用docker搭建本地容器，不需要api进行付费，只需要登陆一次账号获取token即可</p>
+<span id="more"></span>
+
+<h2 id="1、准备工作"><a href="#1、准备工作" class="headerlink" title="1、准备工作"></a>1、准备工作</h2><p>centos7服务器（或装有docker的其他服务器）、docker-compose、openai账号一个，临时梯子一个（需要登录一次openai获取token）</p>
+<h2 id="2、拉取镜像"><a href="#2、拉取镜像" class="headerlink" title="2、拉取镜像"></a>2、拉取镜像</h2><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull pengzhile/pandora</code></pre>
+
+<h2 id="3、编辑docker-compose-yml并启动容器"><a href="#3、编辑docker-compose-yml并启动容器" class="headerlink" title="3、编辑docker-compose.yml并启动容器"></a>3、编辑docker-compose.yml并启动容器</h2><pre class="language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">'3'</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">pandora</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> pengzhile/pandora
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> PANDORA_CLOUD=cloud
+      <span class="token punctuation">-</span> PANDORA_SERVER=0.0.0.0<span class="token punctuation">:</span><span class="token number">8899</span>
+    <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> 8899<span class="token punctuation">:</span><span class="token number">8899</span>
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always</code></pre>
+
+<p>启动容器：<code>docker-compose up -d</code></p>
+<h2 id="4、获取token"><a href="#4、获取token" class="headerlink" title="4、获取token"></a>4、获取token</h2><p>使用梯子登录chatgpt：<a href="https://chat.openai.com/auth/login">https://chat.openai.com/auth/login</a></p>
+<p>登陆后使用浏览器访问链接获取token：<a href="http://chat.openai.com/api/auth/session">http://chat.openai.com/api/auth/session</a></p>
+<p>复制access_token双引号中的所有内容</p>
+<h2 id="5、访问本地chatgpt"><a href="#5、访问本地chatgpt" class="headerlink" title="5、访问本地chatgpt"></a>5、访问本地chatgpt</h2><p>我的centos服务器地址是：192.168.123.27  大家根据自己的地址访问</p>
+<p>我的地址就访问: <a href="http://192.168.123.27:8899/">http://192.168.123.27:8899</a></p>
+<p>点击最后一项 Continue with Access Token</p>
+<p>然后输入我们刚刚获取的access_token即可</p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>chatgpt</tag>
       </tags>
   </entry>
   <entry>
