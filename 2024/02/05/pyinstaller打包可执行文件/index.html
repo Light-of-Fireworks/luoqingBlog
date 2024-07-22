@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="luoqing"><meta name="copyright" content="luoqing"><meta name="generator" content="Hexo 6.3.0"><meta name="theme" content="hexo-theme-yun"><title>pyinstaller打包python可执行文件 | luoqing的博客</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"example.com","root":"/","title":"无人扶我青云志 我自踏雪至山巅","version":"1.10.9","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=G-1LL0D86CY9"></script><script>if (CONFIG.hostname === location.hostname) {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1LL0D86CY9');
+}</script><script data-ad-client="ca-pub-2245427233262012" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-M9KWR9L');</script><!-- End Google Tag Manager --><meta name="description" content="pyinstaller是一个第三方库，它能够在Windows、Linux、 Mac OS X 等操作系统下将 Python 源文件打包，通过对源文件打包， Python 程序可以在没有安装 Python 的环境中运行，也可以作为一个 独立文件方便传递和管理。 PyInstaller支持Python 2.7和Python 3.3+。可以在Windows、Mac OS X和Linux上使用，但是并不是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pyinstaller打包python可执行文件">
+<meta property="og:url" content="http://example.com/2024/02/05/pyinstaller%E6%89%93%E5%8C%85%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="luoqing的博客">
+<meta property="og:description" content="pyinstaller是一个第三方库，它能够在Windows、Linux、 Mac OS X 等操作系统下将 Python 源文件打包，通过对源文件打包， Python 程序可以在没有安装 Python 的环境中运行，也可以作为一个 独立文件方便传递和管理。 PyInstaller支持Python 2.7和Python 3.3+。可以在Windows、Mac OS X和Linux上使用，但是并不是">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-02-05T03:59:02.000Z">
+<meta property="article:modified_time" content="2024-02-05T07:57:24.699Z">
+<meta property="article:author" content="luoqing">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="pyinstaller">
+<meta property="article:tag" content="exe">
+<meta name="twitter:card" content="summary"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="luoqing"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="luoqing"><span class="site-author-status" title="Looking for dawn.">😣,</span></a><div class="site-author-name"><a href="/about/">luoqing</a></div><span class="site-name">luoqing的博客</span><sub class="site-subtitle"></sub><div class="site-description"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">86</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">68</span></a></div><a class="site-state-item hty-icon-button" href="/about/#comment" title="留言板"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:clipboard-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="tencent://message/?v=3&amp;uin=792316496&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/Light-of-Fireworks" title="GitHub" target="_blank" style="color:#6e5494"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:qingluo363@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">一、安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%8F%82%E6%95%B0%E5%B8%AE%E5%8A%A9"><span class="toc-number">2.</span> <span class="toc-text">二、参数帮助</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%94%9F%E6%88%90%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">三、生成可执行文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%89%93%E5%8C%85%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">四、打包资源文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E8%AE%BF%E9%97%AE%E6%89%93%E5%8C%85%E5%90%8E%E7%9A%84%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">5、访问打包后的资源文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E9%87%8D%E6%96%B0%E6%89%93%E5%8C%85%E6%9C%89%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E5%90%8E%E7%9A%84%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="toc-number">6.</span> <span class="toc-text">6、重新打包有资源文件后的可执行文件</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="http://example.com/2024/02/05/pyinstaller%E6%89%93%E5%8C%85%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="luoqing"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="luoqing的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">pyinstaller打包python可执行文件</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2024-02-05 11:59:02" itemprop="dateCreated datePublished" datetime="2024-02-05T11:59:02+08:00">2024-02-05</time></div><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/python/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">python</span></a><a class="tag-item" href="/tags/pyinstaller/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">pyinstaller</span></a><a class="tag-item" href="/tags/exe/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">exe</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>pyinstaller是一个第三方库，它能够在Windows、Linux、 Mac OS X 等操作系统下将 Python 源文件打包，通过对源文件打包， Python 程序可以在没有安装 Python 的环境中运行，也可以作为一个 独立文件方便传递和管理。</p>
+<p>PyInstaller支持Python 2.7和Python 3.3+。可以在Windows、Mac OS X和Linux上使用，但是并不是跨平台的，而是说你要是希望打包成.exe文件，需要在Windows系统上运行PyInstaller进行打包工作；打包成mac app，需要在Mac OS上使用。</p>
+<span id="more"></span>
+
+<h2 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h2><pre class="language-bash" data-language="bash"><code class="language-bash">pip <span class="token function">install</span> pyinstaller</code></pre>
+
+<p>该命令会将所需要的依赖安装到python安装目录的script文件夹中，如果你安装python时已经配置了python的环境变量，应该会有script文件夹的环境变量配置，可以直接在cmd中使用pyinstaller命令</p>
+<p>环境变量示例：C:\Users\Administrator\AppData\Local\Programs\Python\Python38\Scripts\</p>
+<h2 id="二、参数帮助"><a href="#二、参数帮助" class="headerlink" title="二、参数帮助"></a>二、参数帮助</h2><table>
+<thead>
+<tr>
+<th>可选参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-F</td>
+<td>生成单个的可执行文件</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>查看该模块的帮助信息</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>查看该模块的版本信息</td>
+</tr>
+<tr>
+<td>-D</td>
+<td>创建一个包含可执行文件的单文件夹捆绑包</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>指定项目（产生的 spec）名字。如果省略该选项，那么第一个脚本的主文件名将作为 spec 的名字</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>产生 debug 版本的可执行文件</td>
+</tr>
+<tr>
+<td>-w</td>
+<td>指定程序运行时不显示命令行窗口（仅对 Windows 有效）</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>定使用命令行窗口运行程序（仅对 Windows 有效）</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>指定 spec 文件的生成目录。如果没有指定，则默认使用当前目录来生成 spec 文件</td>
+</tr>
+</tbody></table>
+<h2 id="三、生成可执行文件"><a href="#三、生成可执行文件" class="headerlink" title="三、生成可执行文件"></a>三、生成可执行文件</h2><pre class="language-bash" data-language="bash"><code class="language-bash">pyinstaller <span class="token parameter variable">-F</span> <span class="token parameter variable">-w</span> main.py</code></pre>
+
+<p>main.py就是程序启动的类，自行替换</p>
+<p>打包完成后会在当前目录下生成两个目录和一个spec文件</p>
+<p>分别是build、dist、main.spec</p>
+<p>其中dist保存了打包后的可执行文件，spec则是打包时可选的配置文件</p>
+<h2 id="四、打包资源文件"><a href="#四、打包资源文件" class="headerlink" title="四、打包资源文件"></a>四、打包资源文件</h2><p>打包后可执行文件中只有.py文件，程序中的配置文件和资源文件都没有，需要通过spec将所需要打包的文件配置进去。</p>
+<p>sepc中datas选项即为配置文件映射，其格式为[(‘源文件’,’打包后的目录’),(‘源文件’,’打包后的目录’)]</p>
+<p>我的根目录中有两种类型的文件需要打包，我们创建一个数组如下：</p>
+<pre class="language-yaml" data-language="yaml"><code class="language-yaml">resource_data = <span class="token punctuation">[</span>
+('<span class="token important">*.json'</span><span class="token punctuation">,</span>'.')<span class="token punctuation">,</span>
+('<span class="token important">*.yml'</span><span class="token punctuation">,</span>'.')
+<span class="token punctuation">]</span>
+
+a = Analysis(
+    <span class="token punctuation">[</span><span class="token string">'main.py'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    pathex=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    binaries=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    datas=resource_data<span class="token punctuation">,</span>
+    hiddenimports=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    hookspath=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  
+    hooksconfig=<span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    runtime_hooks=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>  
+    excludes=<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    win_no_prefer_redirects=False<span class="token punctuation">,</span>
+    win_private_assemblies=False<span class="token punctuation">,</span>
+    cipher=block_cipher<span class="token punctuation">,</span>
+    noarchive=False<span class="token punctuation">,</span>
+)</code></pre>
+
+<h2 id="5、访问打包后的资源文件"><a href="#5、访问打包后的资源文件" class="headerlink" title="5、访问打包后的资源文件"></a>5、访问打包后的资源文件</h2><p>打包后的文件无法直接访问，需要使用特定的访问路径，我们写一个方法传入一个路径返回打包后的真实路径，并判断是否为打包后的文件，如果是则使用打包后的路径如果不是则使用当前路径</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">resource_path</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> relative_path<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> <span class="token builtin">getattr</span><span class="token punctuation">(</span>sys<span class="token punctuation">,</span> <span class="token string">'frozen'</span><span class="token punctuation">,</span><span class="token boolean">False</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment">#是否Bundle Resource</span>
+        base_path <span class="token operator">=</span> sys<span class="token punctuation">.</span>_MEIPASS
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        base_path <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>abspath<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>base_path<span class="token punctuation">,</span>relative_path<span class="token punctuation">)</span></code></pre>
+
+<h2 id="6、重新打包有资源文件后的可执行文件"><a href="#6、重新打包有资源文件后的可执行文件" class="headerlink" title="6、重新打包有资源文件后的可执行文件"></a>6、重新打包有资源文件后的可执行文件</h2><p>配置完成后我们直接使用spec的配置进行重新打包可执行文件中就有资源文件了</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">pyinstaller main.spec</code></pre>
+
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>luoqing</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://example.com/2024/02/05/pyinstaller%E6%89%93%E5%8C%85%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/" title="pyinstaller打包python可执行文件">http://example.com/2024/02/05/pyinstaller%E6%89%93%E5%8C%85%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2024/02/05/windows%E5%BC%80%E5%90%AF%E5%8D%93%E8%B6%8A%E6%80%A7%E8%83%BD%E7%94%B5%E6%BA%90%E8%AE%A1%E5%88%92/" rel="prev" title="windows开启卓越性能电源计划"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">windows开启卓越性能电源计划</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2023/12/15/Spring-Cloud%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/" rel="next" title="Spring-Cloud发送请求的几种方式"><span class="post-nav-text">Spring-Cloud发送请求的几种方式</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>如果您有任何关于博客内容的相关讨论，欢迎前往 <a href="https://github.com/Light-of-Fireworks" target="_blank">GitHub</a> 与我交流。</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2021 – 2024 </span><a class="with-love" id="animate" target="_blank" rel="noopener" href="http://luoqingblog.gitee.io/" title="主页"><span class="icon iconify" data-icon="ri:cloud-line"></span></a><span class="author"> luoqing</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v6.3.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.9</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:search-line"></span></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="https://fastly.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js"></script><script src="/js/search/local-search.js" defer type="module"></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><span class="icon iconify" data-icon="ri:close-line"></span></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div class="search-result-container"></div></div><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>

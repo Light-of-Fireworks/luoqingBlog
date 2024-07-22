@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="luoqing"><meta name="copyright" content="luoqing"><meta name="generator" content="Hexo 6.3.0"><meta name="theme" content="hexo-theme-yun"><title>使用python自动签到扣丁学堂 | luoqing的博客</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"example.com","root":"/","title":"无人扶我青云志 我自踏雪至山巅","version":"1.10.9","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=G-1LL0D86CY9"></script><script>if (CONFIG.hostname === location.hostname) {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1LL0D86CY9');
+}</script><script data-ad-client="ca-pub-2245427233262012" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-M9KWR9L');</script><!-- End Google Tag Manager --><meta name="description" content="首先我们使用python写一个脚本对扣丁学堂进行签到请求，要进行请求肯定要知道请求的是post还是GET。 好的那么我们打开浏览器，进入扣丁学堂个人主页，这里有一个签到按钮，每天点击签到即可获得一个丁豆，可以用来买课，我们先不要点击签到，因为点击了签到后就不可以再次点击了，签到过后就会显示已签到，就无法完成抓包请求了。那么我们先打开浏览器的开发者模式，也就是浏览器的F12健，切换到network模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用python自动签到扣丁学堂">
+<meta property="og:url" content="http://example.com/2021/03/18/%E4%BD%BF%E7%94%A8python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82/index.html">
+<meta property="og:site_name" content="luoqing的博客">
+<meta property="og:description" content="首先我们使用python写一个脚本对扣丁学堂进行签到请求，要进行请求肯定要知道请求的是post还是GET。 好的那么我们打开浏览器，进入扣丁学堂个人主页，这里有一个签到按钮，每天点击签到即可获得一个丁豆，可以用来买课，我们先不要点击签到，因为点击了签到后就不可以再次点击了，签到过后就会显示已签到，就无法完成抓包请求了。那么我们先打开浏览器的开发者模式，也就是浏览器的F12健，切换到network模">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/network.png">
+<meta property="og:image" content="http://example.com/img/sign.png">
+<meta property="og:image" content="http://example.com/img/loginOut.png">
+<meta property="og:image" content="http://example.com/img/loginkouding.png">
+<meta property="og:image" content="http://example.com/img/fillder.png">
+<meta property="og:image" content="http://example.com/img/loginmeta.png">
+<meta property="og:image" content="http://example.com/img/inputkouding.png">
+<meta property="article:published_time" content="2021-03-18T12:55:46.000Z">
+<meta property="article:modified_time" content="2023-11-19T07:21:48.674Z">
+<meta property="article:author" content="luoqing">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="云函数">
+<meta property="article:tag" content="自动签到">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/network.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button sidebar-nav-active" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel sidebar-panel-active" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="luoqing"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="luoqing"><span class="site-author-status" title="Looking for dawn.">😣,</span></a><div class="site-author-name"><a href="/about/">luoqing</a></div><span class="site-name">luoqing的博客</span><sub class="site-subtitle"></sub><div class="site-description"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">86</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">68</span></a></div><a class="site-state-item hty-icon-button" href="/about/#comment" title="留言板"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:clipboard-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="tencent://message/?v=3&amp;uin=792316496&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/Light-of-Fireworks" title="GitHub" target="_blank" style="color:#6e5494"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:qingluo363@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content">此文章未包含目录</div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="http://example.com/2021/03/18/%E4%BD%BF%E7%94%A8python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="luoqing"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="luoqing的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">使用python自动签到扣丁学堂</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2021-03-18 20:55:46" itemprop="dateCreated datePublished" datetime="2021-03-18T20:55:46+08:00">2021-03-18</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-2-line"></span></span> <time title="修改时间：2023-11-19 15:21:48" itemprop="dateModified" datetime="2023-11-19T15:21:48+08:00">2023-11-19</time></div><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/python/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">python</span></a><a class="tag-item" href="/tags/%E4%BA%91%E5%87%BD%E6%95%B0/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">云函数</span></a><a class="tag-item" href="/tags/%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">自动签到</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>首先我们使用python写一个脚本对扣丁学堂进行签到请求，要进行请求肯定要知道请求的是post还是GET。</p>
+<p>好的那么我们打开浏览器，进入扣丁学堂个人主页，这里有一个签到按钮，每天点击签到即可获得一个丁豆，可以用来买课，我们先不要点击签到，因为点击了签到后就不可以再次点击了，签到过后就会显示已签到，就无法完成抓包请求了。那么我们先打开浏览器的开发者模式，也就是浏览器的F12健，切换到network模式，然后再点击签到按钮，这时候再看network里面就有一个网址</p>
+<span id="more"></span>
+<p><img src="/img/network.png" alt="network" loading="lazy"></p>
+<p>然后我们点进去，在进headers里面，可以看到网页刚刚发送的请求头信息，可以看到刚刚发送的请求是GET请求，请求网址是：<a target="_blank" rel="noopener" href="http://www.codingke.com/my/sign?r=0.025347213714072003%EF%BC%8C%E6%88%91%E4%BB%AC%E4%B8%94%E4%B8%8D%E7%9C%8B%E5%90%8E%E9%9D%A2%E7%9A%84%E5%8F%82%E6%95%B0r=0.025347213714072003%EF%BC%8C%E5%9B%A0%E4%B8%BA%E6%88%91%E4%BB%AC%E4%B9%9F%E4%B8%8D%E7%9F%A5%E9%81%93%E8%BF%99%E6%98%AF%E5%95%A5%EF%BC%8C%E9%82%A3%E4%B9%88%E6%88%91%E4%BB%AC%E6%8A%8A%E5%AE%83%E5%88%A0%E9%99%A4%EF%BC%8C%E7%84%B6%E5%90%8E%E5%86%8D%E7%9C%8B%E4%B8%80%E4%B8%8B%E5%88%A0%E9%99%A4%E4%BA%86%E5%8F%82%E6%95%B0%E7%9A%84%E7%BD%91%E5%9D%80%EF%BC%9Ahttp://www.codingke.com/my/sign%EF%BC%8C%E5%9B%A0%E4%B8%BA%E6%98%AFGET%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E6%8A%8A%E8%BF%99%E4%B8%AA%E7%BD%91%E5%9D%80%E7%9B%B4%E6%8E%A5%E6%94%BE%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%9C%B0%E5%9D%80%E6%A0%8F%E5%9B%9E%E8%BD%A6%E5%8F%91%E9%80%81%E5%87%BA%E5%8E%BB%EF%BC%8C%E7%84%B6%E5%90%8E%E7%9C%8B%E7%9C%8B%E4%BC%9A%E5%87%BA%E7%8E%B0%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%E7%BB%93%E6%9E%9C">http://www.codingke.com/my/sign?r=0.025347213714072003，我们且不看后面的参数r=0.025347213714072003，因为我们也不知道这是啥，那么我们把它删除，然后再看一下删除了参数的网址：http://www.codingke.com/my/sign，因为是GET请求，所以我们可以把这个网址直接放在浏览器的地址栏回车发送出去，然后看看会出现什么样的结果</a></p>
+<p><img src="/img/sign.png" alt="image-20210318192437075" loading="lazy"></p>
+<p>发现返回了一个json，然后内容是今天已经签到过了，所以，我们就可以得出，</p>
+<p><a target="_blank" rel="noopener" href="http://www.codingke.com/my/sign%E5%B0%B1%E6%98%AF%E6%88%91%E4%BB%AC%E8%A6%81%E6%89%BE%E7%9A%84%E7%AD%BE%E5%88%B0%E5%9C%B0%E5%9D%80%EF%BC%8C%E9%82%A3%E4%B9%88%E6%84%8F%E6%80%9D%E5%B0%B1%E6%98%AF%E7%9B%B4%E6%8E%A5%E5%86%99%E4%B8%80%E4%B8%AA%E4%BB%A3%E7%A0%81%E5%8F%91%E9%80%81GET%E8%AF%B7%E6%B1%82%E5%B0%B1%E5%AE%8C%E4%BA%86%E5%91%97%EF%BC%8C%E9%82%A3%E6%88%91%E4%BB%AC%E5%BA%94%E8%AF%A5%E6%80%8E%E6%A0%B7%E5%8F%91%E9%80%81%E5%91%A2%EF%BC%9F%E8%BF%99%E9%87%8C%E5%8F%AF%E4%BB%A5%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%8C%E4%B8%80%E7%A7%8D%E6%98%AFcookie%EF%BC%8C%E4%B8%80%E7%A7%8D%E6%98%AF%E5%8F%91%E9%80%81%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95%E5%90%8E%E5%86%8D%E8%BF%9B%E8%A1%8C%E7%AD%BE%E5%88%B0%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%88%91%E4%BB%AC%E9%83%BD%E7%9F%A5%E9%81%93%E5%8F%AA%E8%A6%81%E5%B8%A6%E7%9D%80cookie%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82%E5%B0%B1%E5%8F%AF%E4%BB%A5%E8%B7%B3%E8%BF%87%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81%E8%AF%B7%E6%B1%82%E9%A1%B5%E9%9D%A2%EF%BC%8C%E9%82%A3%E4%B9%88%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E6%9D%A5%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AApython%E4%BB%A3%E7%A0%81%E6%9D%A5%E8%AF%95%E4%B8%80%E4%B8%8B%E3%80%82">http://www.codingke.com/my/sign就是我们要找的签到地址，那么意思就是直接写一个代码发送GET请求就完了呗，那我们应该怎样发送呢？这里可以有两种方法，一种是cookie，一种是发送账号密码登录后再进行签到请求，我们都知道只要带着cookie发送请求就可以跳过账号密码请求页面，那么我们可以来编写一个python代码来试一下。</a></p>
+<p>很简单，因为只要发送简单的GET请求，所以我们只需要写一个GET请求的python代码，如下</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+
+<span class="token comment"># 要请求的网址</span>
+url <span class="token operator">=</span> <span class="token string">'http://www.codingke.com/my/sign'</span>
+header <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> <span class="token string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '</span>
+                  <span class="token string">'Chrome/89.0.4389.90 Safari/537.36 '</span><span class="token punctuation">,</span>
+    <span class="token string">'Cookie'</span><span class="token punctuation">:</span> <span class="token string">'填你的cookie'</span>
+<span class="token punctuation">&#125;</span>
+r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">,</span> headers<span class="token operator">=</span>header<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>r<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+</code></pre>
+
+<p>cookie可以到扣丁学堂首页按F12抓到GET请求查看请求头即可，执行代码后返回到结果如下：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">&#123;</span><span class="token string">"success"</span><span class="token builtin class-name">:</span><span class="token string">"今天已经签到过了"</span>,<span class="token string">"code"</span>:2<span class="token punctuation">&#125;</span>
+进程已结束，退出代码为 <span class="token number">0</span>
+</code></pre>
+
+<p>可以看到，我们成功的进行了请求，并且返回了正确的数据，但是这个方法等到第二天我再去看的时候显示请求失败了，这是为什么呢，我们再回浏览器登录扣丁学堂，发现扣丁学堂的登录状态已经退出了，使用cookie登录的确是一个不长久的办法，但是没想到扣丁学堂的cokkie只能保持很短的一段时间。那么我们只能用第二种方法了，那就是使用账号密码进行登录，幸运的是扣丁学堂的登录方式并没有设置验证码，也为我们写脚本省了不少时间。</p>
+<p>那么我们对扣丁学堂的登录界面进行发送请求，那么首先我们要知道扣丁学堂的登录网址，那么我们在扣丁学堂的首页把鼠标放到我们的头像上，点击安全退出。</p>
+<p><img src="/img/loginOut.png" alt="loginOut" loading="lazy"></p>
+<p>然后我们就可以发现我们成功的来到了扣丁学堂的登录页面</p>
+<p><img src="/img/loginkouding.png" alt="loginkouding" loading="lazy"></p>
+<p>然后浏览器的地址栏有一个地址：<a target="_blank" rel="noopener" href="http://www.codingke.com/login%EF%BC%8C%E8%BF%99%E5%B0%B1%E6%98%AF%E6%88%91%E4%BB%AC%E8%A6%81%E6%89%BE%E7%9A%84%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82%E7%99%BB%E5%BD%95%E5%9C%B0%E5%9D%80%E4%BA%86%EF%BC%8C%E9%82%A3%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%AF%B9%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82%E5%8F%91%E9%80%81%E7%99%BB%E5%BD%95%E8%AF%B7%E6%B1%82%EF%BC%8C%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E7%94%A8Fiddler%E6%9D%A5%E6%9F%A5%E7%9C%8B%E6%89%A3%E4%B8%81%E5%8F%91%E9%80%81%E7%9A%84%E8%AF%B7%E6%B1%82%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8%E8%B0%B7%E6%AD%8C%E7%9A%84F12%E5%91%A2%EF%BC%8C%E4%B9%9F%E6%98%AF%E5%8F%AF%E4%BB%A5%E7%9A%84%EF%BC%8C%E4%BD%86%E6%98%AF%E6%88%91%E4%BB%AC%E6%8C%89F12%E6%9F%A5%E7%9C%8B%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82%E7%9A%84network%E8%AF%B7%E6%B1%82%E5%90%8E%E5%8F%91%E7%8E%B0%E4%BB%96%E6%9C%89%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91%EF%BC%8C%E9%A1%B5%E9%9D%A2%E8%BF%9B%E8%A1%8C%E4%BA%86%E8%B7%B3%E8%BD%AC%E5%90%8Enetwork%E9%A1%B5%E9%9D%A2%E5%B0%B1%E4%BC%9A%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0%EF%BC%8C%E8%80%8C%E4%B8%94%E5%BE%88%E5%BF%AB%EF%BC%8C%E4%BD%A0%E8%A6%81%E7%82%B9%E5%87%BB%E5%81%9C%E6%AD%A2%E7%9A%84%E8%AF%9D%E5%BE%88%E9%9A%BE%E6%9D%A5%E5%BE%97%E5%8F%8A%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E5%B0%B1%E4%BD%BF%E7%94%A8%E8%BF%99%E6%AC%BEFiddler%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E6%9D%A5%E6%9F%A5%E7%9C%8B%E8%AF%B7%E6%B1%82%EF%BC%8C%E8%BF%99%E6%A0%B7%E5%B0%B1%E4%B8%8D%E4%BC%9A%E6%BC%8F%E6%8E%89%E6%88%91%E4%BB%AC%E6%83%B3%E8%A6%81%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BA%86%E3%80%82%E6%88%91%E4%BB%AC%E5%85%88%E6%89%93%E5%BC%80Fiddler%E8%BD%AF%E4%BB%B6%EF%BC%8C%E7%84%B6%E5%90%8E%E6%88%91%E4%BB%AC%E7%82%B9%E5%87%BB%E5%BC%80%E5%A7%8B%EF%BC%8C%E5%B0%B1%E5%8F%AF%E4%BB%A5%E5%8E%BB%E6%B5%8F%E8%A7%88%E5%99%A8%E9%87%8C%E8%BE%93%E5%85%A5%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81%E4%BA%86%EF%BC%8C%E8%BE%93%E5%85%A5%E5%AE%8C%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81%E4%B9%8B%E5%90%8E%E6%88%91%E4%BB%AC%E5%8F%91%E7%8E%B0%E6%9C%89%E4%B8%80%E4%B8%AA%E7%99%BB%E5%BD%95%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80%E6%98%AFhttp://www.codingke.com/login_check%E7%9A%84%E5%8F%91%E9%80%81%E4%BA%86%E6%88%91%E4%BB%AC%E8%B4%A6%E5%8F%B7%E5%92%8C%E5%AF%86%E7%A0%81%E7%9A%84%E5%AD%97%E6%AE%B5">http://www.codingke.com/login，这就是我们要找的扣丁学堂登录地址了，那么我们要对扣丁学堂发送登录请求，我们可以用Fiddler来查看扣丁发送的请求，为什么不用谷歌的F12呢，也是可以的，但是我们按F12查看扣丁学堂的network请求后发现他有一个请求转发，页面进行了跳转后network页面就会自动刷新，而且很快，你要点击停止的话很难来得及，所以我们就使用这款Fiddler抓包工具来查看请求，这样就不会漏掉我们想要的数据了。我们先打开Fiddler软件，然后我们点击开始，就可以去浏览器里输入账号密码了，输入完账号密码之后我们发现有一个登录请求地址是http://www.codingke.com/login_check的发送了我们账号和密码的字段</a></p>
+<p><img src="/img/fillder.png" alt="fillder" loading="lazy"></p>
+<p>在Fiddler中我们可以清楚的看到发送的字段名是_username和_passsword还有一个不知道是什么的一串字符串，我们暂且忽略掉最后一个，前两个我们可以一眼看出就是我们的账号和密码，就算看不出来看后面的值也可以知道就是我们刚刚手动输入的账号密码，不信你再试一遍看看。那么我们就知道要发送这两个字段去给服务器，那么我们编写代码如下：</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+
+<span class="token comment"># 要请求的网址</span>
+url <span class="token operator">=</span> <span class="token string">'http://www.codingke.com/login_check'</span>
+header <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> <span class="token string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '</span>
+                  <span class="token string">'Chrome/89.0.4389.90 Safari/537.36 '</span><span class="token punctuation">,</span>
+    <span class="token string">'Cookie'</span><span class="token punctuation">:</span> <span class="token string">'UM_distinctid=178450d263e148-0bac1bb3c67232-5771031-162ee1-178450d2641c1; '</span>
+              <span class="token string">'CNZZDATA1256018185=436213958-1616065336-null%7C1616065336; '</span>
+              <span class="token string">'Hm_lvt_7d5fe787f1dd300413ad4b53656dc0b1=1616066193; 53gid2=10074621437020; 53gid0=10074621437020; '</span>
+              <span class="token string">'53gid1=10074621437020; 53revisit=1616066205585; 53kf_72165667_from_host=www.codingke.com; '</span>
+              <span class="token string">'53kf_72165667_keyword=https%3A%2F%2Fwww.baidu.com%2Flink%3Furl%3DF-cUml-NIKj2oF5LBx2zwBm'</span>
+              <span class="token string">'-hL1jGE_tuUOhOpqqeQws6TYAghf7oR-wJIDAaZc3%26wd%3D%26eqid%3Dd2f2fed900005682000000066053368a; '</span>
+              <span class="token string">'53kf_72165667_land_page=http%253A%252F%252Fwww.codingke.com%252F; kf_72165667_land_page_ok=1; '</span>
+              <span class="token string">'53uvid=1; onliner_zdfq72165667=0; Invite_code=375108; visitor_type=old; '</span>
+              <span class="token string">'PHPSESSID=n6tj5epaajuicg1912p5dd7572; tgw_l7_route=1da6220a8c6aee8fae7fcb8ec6e1299a; '</span>
+              <span class="token string">'Hm_lpvt_7d5fe787f1dd300413ad4b53656dc0b1=1616070611 '</span><span class="token punctuation">,</span>
+    <span class="token string">'_username'</span><span class="token punctuation">:</span> <span class="token string">'你的账号'</span><span class="token punctuation">,</span>
+    <span class="token string">'_password'</span><span class="token punctuation">:</span> <span class="token string">'你的密码'</span>
+<span class="token punctuation">&#125;</span>
+r <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>url<span class="token punctuation">,</span> headers<span class="token operator">=</span>header<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>r<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+</code></pre>
+
+<p>但是运行过后我们通过输出结果可以看到，并没有登录，还是停在登录的界面，所以我们用Fiddler尝试一下，是不是我们缺少了其他的字段值就请求不成功呢。</p>
+<p>于是我们对每一次的请求都进行修改，先把最后一个不知道是什么的字符串删除，结果请求成功，我们再把其他的请求头中的字段一一删除，但是每次不管是删除哪一个都返回一个错误，也就是说我们必须保证字段的完整性再发送请求即可，那么我们怎么才能获取到这么多的字段值呢？获取到了又该怎么保存，重新发送请求的话之前的请求获取的字段就会失效。那么这时候就要请出我们的Session了，Session可以保持我们在同一个窗口下进行请求，也就是说你所有的请求都是基于同一页面的，所以数据一般不会发生改变，那么我们就可以进行操作了</p>
+<p>经过不断的尝试我们可以发现，字段中那个不知道是干嘛的字符串在login界面也有存在，我们按F12来查看一下</p>
+<p><img src="/img/loginmeta.png" alt="loginmeta" loading="lazy"></p>
+<p>而且不止这一处，再往下找找发现还有一处隐藏起来的input标签里也有相同的字段</p>
+<p><img src="/img/inputkouding.png" alt="inputkouding" loading="lazy"></p>
+<p>那么我们只要可以获取其中一处的值就可以了，然后其他的字段值因为都是固定的所以我们可以写成常量，那么我们就可以编写如下python代码</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token comment"># -*- coding: utf8 -*-</span>
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> re
+session <span class="token operator">=</span> requests<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span>
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> <span class="token string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '</span>
+                <span class="token string">'Chrome/89.0.4389.82 '</span>
+                <span class="token string">'Safari/537.36 '</span>
+<span class="token punctuation">&#125;</span>
+res <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://www.codingke.com/login'</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+pattern <span class="token operator">=</span> re<span class="token punctuation">.</span><span class="token builtin">compile</span><span class="token punctuation">(</span><span class="token string">'name="_csrf_token" value="(.*)"'</span><span class="token punctuation">)</span>
+token <span class="token operator">=</span> pattern<span class="token punctuation">.</span>search<span class="token punctuation">(</span>res<span class="token punctuation">.</span>text<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">'_username'</span><span class="token punctuation">:</span> <span class="token string">'你的账号（手机号）'</span><span class="token punctuation">,</span>
+    <span class="token string">'_password'</span><span class="token punctuation">:</span> <span class="token string">'你的密码'</span><span class="token punctuation">,</span>
+    <span class="token string">'_csrf_token'</span><span class="token punctuation">:</span> token<span class="token punctuation">,</span>
+    <span class="token string">'Host'</span><span class="token punctuation">:</span> <span class="token string">'www.codingke.com'</span><span class="token punctuation">,</span>
+    <span class="token string">'Proxy-Connection'</span><span class="token punctuation">:</span> <span class="token string">'keep-alive'</span><span class="token punctuation">,</span>
+    <span class="token string">'Content-Length'</span><span class="token punctuation">:</span> <span class="token string">'95'</span><span class="token punctuation">,</span>
+    <span class="token string">'Accept'</span><span class="token punctuation">:</span> <span class="token string">'*/*'</span><span class="token punctuation">,</span>
+    <span class="token string">'X-CSRF-Token'</span><span class="token punctuation">:</span> token<span class="token punctuation">,</span>
+    <span class="token string">'X-Requested-With'</span><span class="token punctuation">:</span> <span class="token string">'XMLHttpRequest'</span><span class="token punctuation">,</span>
+    <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> headers<span class="token punctuation">[</span><span class="token string">'User-Agent'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token string">'Content-Type'</span><span class="token punctuation">:</span> <span class="token string">'application/x-www-form-urlencoded; charset=UTF-8'</span><span class="token punctuation">,</span>
+    <span class="token string">'Origin'</span><span class="token punctuation">:</span> <span class="token string">'http://www.codingke.com'</span><span class="token punctuation">,</span>
+    <span class="token string">'Referer'</span><span class="token punctuation">:</span> <span class="token string">'http://www.codingke.com/login'</span><span class="token punctuation">,</span>
+    <span class="token string">'Accept-Encoding'</span><span class="token punctuation">:</span> <span class="token string">'gzip, deflate'</span><span class="token punctuation">,</span>
+    <span class="token string">'Accept-Language'</span><span class="token punctuation">:</span> <span class="token string">'zh-CN,zh;q=0.9'</span>
+<span class="token punctuation">&#125;</span>
+resp <span class="token operator">=</span> session<span class="token punctuation">.</span>post<span class="token punctuation">(</span><span class="token string">"http://www.codingke.com/login_check"</span><span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">)</span>
+<span class="token keyword">try</span><span class="token punctuation">:</span>
+        response <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.codingke.com/my/sign"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+        rJson <span class="token operator">=</span> response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> rJson<span class="token punctuation">[</span><span class="token string">'code'</span><span class="token punctuation">]</span><span class="token operator">==</span><span class="token number">1</span><span class="token punctuation">:</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'签到成功'</span><span class="token punctuation">)</span>
+        <span class="token keyword">elif</span> rJson<span class="token punctuation">[</span><span class="token string">'code'</span><span class="token punctuation">]</span><span class="token operator">==</span><span class="token number">2</span><span class="token punctuation">:</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'已经签到过了'</span><span class="token punctuation">)</span>
+<span class="token keyword">except</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'账号或密码错误'</span><span class="token punctuation">)</span></code></pre>
+
+<p>这里使用了正则表达式去匹配input当中的字符串值，然后发送post登录请求，再使用session在同一窗口下去请求签到页面，因为签到页面返回一个json，所以我们直接接收json类型的数据再进行判断，如果异常也就是没有返回json就是登录失败了</p>
+<p>最后再提供一个云函数的版本，一天白嫖一个豆，一百天就可以免费买一套课程啦</p>
+<p>腾讯云函数版本：</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token comment"># -*- coding: utf8 -*-</span>
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> re
+
+
+<span class="token keyword">def</span> <span class="token function">main_handler</span><span class="token punctuation">(</span>event<span class="token punctuation">,</span> context<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    session <span class="token operator">=</span> requests<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> <span class="token string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '</span>
+                      <span class="token string">'Chrome/89.0.4389.82 '</span>
+                      <span class="token string">'Safari/537.36 '</span>
+    <span class="token punctuation">&#125;</span>
+    res <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://www.codingke.com/login'</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+    pattern <span class="token operator">=</span> re<span class="token punctuation">.</span><span class="token builtin">compile</span><span class="token punctuation">(</span><span class="token string">'name="_csrf_token" value="(.*)"'</span><span class="token punctuation">)</span>
+    token <span class="token operator">=</span> pattern<span class="token punctuation">.</span>search<span class="token punctuation">(</span>res<span class="token punctuation">.</span>text<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+    data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">'_username'</span><span class="token punctuation">:</span> <span class="token string">'你的手机号'</span><span class="token punctuation">,</span>
+        <span class="token string">'_password'</span><span class="token punctuation">:</span> <span class="token string">'你的密码'</span><span class="token punctuation">,</span>
+        <span class="token string">'_csrf_token'</span><span class="token punctuation">:</span> token<span class="token punctuation">,</span>
+        <span class="token string">'Host'</span><span class="token punctuation">:</span> <span class="token string">'www.codingke.com'</span><span class="token punctuation">,</span>
+        <span class="token string">'Proxy-Connection'</span><span class="token punctuation">:</span> <span class="token string">'keep-alive'</span><span class="token punctuation">,</span>
+        <span class="token string">'Content-Length'</span><span class="token punctuation">:</span> <span class="token string">'95'</span><span class="token punctuation">,</span>
+        <span class="token string">'Accept'</span><span class="token punctuation">:</span> <span class="token string">'*/*'</span><span class="token punctuation">,</span>
+        <span class="token string">'X-CSRF-Token'</span><span class="token punctuation">:</span> token<span class="token punctuation">,</span>
+        <span class="token string">'X-Requested-With'</span><span class="token punctuation">:</span> <span class="token string">'XMLHttpRequest'</span><span class="token punctuation">,</span>
+        <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> headers<span class="token punctuation">[</span><span class="token string">'User-Agent'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token string">'Content-Type'</span><span class="token punctuation">:</span> <span class="token string">'application/x-www-form-urlencoded; charset=UTF-8'</span><span class="token punctuation">,</span>
+        <span class="token string">'Origin'</span><span class="token punctuation">:</span> <span class="token string">'http://www.codingke.com'</span><span class="token punctuation">,</span>
+        <span class="token string">'Referer'</span><span class="token punctuation">:</span> <span class="token string">'http://www.codingke.com/login'</span><span class="token punctuation">,</span>
+        <span class="token string">'Accept-Encoding'</span><span class="token punctuation">:</span> <span class="token string">'gzip, deflate'</span><span class="token punctuation">,</span>
+        <span class="token string">'Accept-Language'</span><span class="token punctuation">:</span> <span class="token string">'zh-CN,zh;q=0.9'</span>
+    <span class="token punctuation">&#125;</span>
+    resp <span class="token operator">=</span> session<span class="token punctuation">.</span>post<span class="token punctuation">(</span><span class="token string">"http://www.codingke.com/login_check"</span><span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">)</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        response <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.codingke.com/my/sign"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+        rJson <span class="token operator">=</span> response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> rJson<span class="token punctuation">[</span><span class="token string">'code'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">:</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'签到成功'</span><span class="token punctuation">)</span>
+        <span class="token keyword">elif</span> rJson<span class="token punctuation">[</span><span class="token string">'code'</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">:</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'已经签到过了'</span><span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'账号或密码错误'</span><span class="token punctuation">)</span>
+</code></pre>
+
+
+
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>luoqing</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://example.com/2021/03/18/%E4%BD%BF%E7%94%A8python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82/" title="使用python自动签到扣丁学堂">http://example.com/2021/03/18/%E4%BD%BF%E7%94%A8python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0%E6%89%A3%E4%B8%81%E5%AD%A6%E5%A0%82/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2021/03/23/kali%E6%9C%80%E6%96%B0%E7%89%88%E5%A6%82%E4%BD%95%E5%BC%80%E5%90%AFroot%E5%8F%8Assh/" rel="prev" title="kali最新版如何开启root及ssh"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">kali最新版如何开启root及ssh</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/03/18/%E5%A6%82%E4%BD%95%E5%9C%A8centos7%E5%AE%89%E8%A3%85vnc/" rel="next" title="如何在centos7安装vnc"><span class="post-nav-text">如何在centos7安装vnc</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>如果您有任何关于博客内容的相关讨论，欢迎前往 <a href="https://github.com/Light-of-Fireworks" target="_blank">GitHub</a> 与我交流。</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2021 – 2024 </span><a class="with-love" id="animate" target="_blank" rel="noopener" href="http://luoqingblog.gitee.io/" title="主页"><span class="icon iconify" data-icon="ri:cloud-line"></span></a><span class="author"> luoqing</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v6.3.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.9</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:search-line"></span></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="https://fastly.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js"></script><script src="/js/search/local-search.js" defer type="module"></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><span class="icon iconify" data-icon="ri:close-line"></span></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div class="search-result-container"></div></div><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
