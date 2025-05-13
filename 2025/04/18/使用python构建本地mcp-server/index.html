@@ -1,0 +1,229 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="luoqing"><meta name="copyright" content="luoqing"><meta name="generator" content="Hexo 6.3.0"><meta name="theme" content="hexo-theme-yun"><title>使用python快速构建本地mcp-server | luoqing的博客</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"example.com","root":"/","title":"无人扶我青云志 我自踏雪至山巅","version":"1.10.9","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=G-1LL0D86CY9"></script><script>if (CONFIG.hostname === location.hostname) {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1LL0D86CY9');
+}</script><script data-ad-client="ca-pub-2245427233262012" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-M9KWR9L');</script><!-- End Google Tag Manager --><meta name="description" content="MCP（Model Context Protocol）全称模型上下文协议，是由 Anthropic 推出的一种开放标准，旨在统一大型语言模型（LLM）与外部数据源和工具之间的通信协议。 在 MCP 出现之前，如果大模型需要访问外部数据的时候了，通常使用 Function Calling 的方式。Function Calling 是通过给模型预设函数描述（包括函数名、参数说明、返回值格式等），让模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用python快速构建本地mcp-server">
+<meta property="og:url" content="http://example.com/2025/04/18/%E4%BD%BF%E7%94%A8python%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0mcp-server/index.html">
+<meta property="og:site_name" content="luoqing的博客">
+<meta property="og:description" content="MCP（Model Context Protocol）全称模型上下文协议，是由 Anthropic 推出的一种开放标准，旨在统一大型语言模型（LLM）与外部数据源和工具之间的通信协议。 在 MCP 出现之前，如果大模型需要访问外部数据的时候了，通常使用 Function Calling 的方式。Function Calling 是通过给模型预设函数描述（包括函数名、参数说明、返回值格式等），让模型">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-18T09:33:29.000Z">
+<meta property="article:modified_time" content="2025-05-13T10:25:13.251Z">
+<meta property="article:author" content="luoqing">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="mcp">
+<meta property="article:tag" content="fastmcp">
+<meta name="twitter:card" content="summary"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="luoqing"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="luoqing"><span class="site-author-status" title="Looking for dawn.">😣,</span></a><div class="site-author-name"><a href="/about/">luoqing</a></div><span class="site-name">luoqing的博客</span><sub class="site-subtitle"></sub><div class="site-description"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">96</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">76</span></a></div><a class="site-state-item hty-icon-button" href="/about/#comment" title="留言板"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:clipboard-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="tencent://message/?v=3&amp;uin=792316496&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/Light-of-Fireworks" title="GitHub" target="_blank" style="color:#6e5494"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:qingluo363@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MCP%E5%AE%98%E7%BD%91"><span class="toc-number">1.</span> <span class="toc-text">MCP官网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85uv"><span class="toc-number">2.</span> <span class="toc-text">安装uv</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#liunx-or-mac"><span class="toc-number">2.1.</span> <span class="toc-text">liunx or mac</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#windows"><span class="toc-number">2.2.</span> <span class="toc-text">windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85fastmcp"><span class="toc-number">3.</span> <span class="toc-text">安装fastmcp</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B0%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.1.</span> <span class="toc-text">初始化新项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0fastmcp%E5%8F%8A%E6%89%80%E9%9C%80%E4%BE%9D%E8%B5%96%E5%88%B0%E5%BD%93%E5%89%8D%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">3.2.</span> <span class="toc-text">添加fastmcp及所需依赖到当前虚拟环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81fastmcp%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F"><span class="toc-number">3.3.</span> <span class="toc-text">验证fastmcp是否安装成功</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mcp-server%E5%BC%80%E5%8F%91"><span class="toc-number">4.</span> <span class="toc-text">mcp server开发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#STDIO-Transport-Default"><span class="toc-number">4.1.</span> <span class="toc-text">STDIO Transport (Default)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSE-Transport-Server-Sent-Events"><span class="toc-number">4.2.</span> <span class="toc-text">SSE Transport (Server-Sent Events)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Streamable-HTTP"><span class="toc-number">4.3.</span> <span class="toc-text">Streamable HTTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">4.4.</span> <span class="toc-text">注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E8%BF%90%E8%A1%8C"><span class="toc-number">5.</span> <span class="toc-text">测试运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cline%E8%BF%9E%E6%8E%A5%E5%88%B0mcp-server"><span class="toc-number">6.</span> <span class="toc-text">cline连接到mcp server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#STDIO-Transport-Default-1"><span class="toc-number">6.1.</span> <span class="toc-text">STDIO Transport (Default)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSE-Transport-Server-Sent-Events-1"><span class="toc-number">6.2.</span> <span class="toc-text">SSE Transport (Server-Sent Events)</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="http://example.com/2025/04/18/%E4%BD%BF%E7%94%A8python%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0mcp-server/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="luoqing"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="luoqing的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">使用python快速构建本地mcp-server</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2025-04-18 17:33:29" itemprop="dateCreated datePublished" datetime="2025-04-18T17:33:29+08:00">2025-04-18</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-2-line"></span></span> <time title="修改时间：2025-05-13 18:25:13" itemprop="dateModified" datetime="2025-05-13T18:25:13+08:00">2025-05-13</time></div><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/python/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">python</span></a><a class="tag-item" href="/tags/mcp/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">mcp</span></a><a class="tag-item" href="/tags/fastmcp/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">fastmcp</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>MCP（Model Context Protocol）全称模型上下文协议，是由 Anthropic 推出的一种开放标准，旨在统一大型语言模型（LLM）与外部数据源和工具之间的通信协议。</p>
+<p>在 MCP 出现之前，如果大模型需要访问外部数据的时候了，通常使用 Function Calling 的方式。Function Calling 是通过给模型预设函数描述（包括函数名、参数说明、返回值格式等），让模型在合适的时候返回一个符合结构的 JSON 格式，外部系统再解析这个 JSON，调用实际的后端函数。</p>
+<p>但 Function Calling 的方式没有一个统一的开发规范，你开发的函数我不能用，我开发的函数你不能用，而且开发起来很麻烦，为了解决这个问题，MCP 出现了。</p>
+<p>MCP就是AI大模型的标准化工具箱，大模型可以通过MCP调用外界的AI工具，而AI工具在开发的时候也需要遵循MCP协议。MCP 允许应用程序以标准化方式为 LLM 提供上下文，将提供上下文的问题与实际的 LLM 交互分开</p>
+<p>我们本地的数据，例如数据库、github上的代码，需要粘贴给AI工具的对话框中，他们获取到这样的数据。有了MCP之后，可以开发一个 MCP Server 来完成某个特定的功能，例如读取数据库，操作github以及获取当前时间等。</p>
+<span id="more"></span>
+
+<h2 id="MCP官网"><a href="#MCP官网" class="headerlink" title="MCP官网"></a>MCP官网</h2><p><a target="_blank" rel="noopener" href="https://mcpservers.org/">https://mcpservers.org/</a></p>
+<h2 id="安装uv"><a href="#安装uv" class="headerlink" title="安装uv"></a>安装uv</h2><p>uv官网：<a target="_blank" rel="noopener" href="https://docs.astral.sh/uv/getting-started/installation/">https://docs.astral.sh/uv/getting-started/installation/</a></p>
+<p>uv是一个非常快的Python包和项目管理器，用Rust编写，以取代pip， pip-tools, pipx，诗歌，pyenv, twine, virtualenv，等等。比pip快10-100倍。</p>
+<h3 id="liunx-or-mac"><a href="#liunx-or-mac" class="headerlink" title="liunx or mac"></a>liunx or mac</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> <span class="token parameter variable">-LsSf</span> https://astral.sh/uv/install.sh <span class="token operator">|</span> <span class="token function">sh</span></code></pre>
+
+<h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><pre class="language-powershell" data-language="powershell"><code class="language-powershell">powershell <span class="token operator">-</span>ExecutionPolicy ByPass <span class="token operator">-</span>c <span class="token string">"irm https://astral.sh/uv/install.ps1 | iex"</span></code></pre>
+
+
+
+<h2 id="安装fastmcp"><a href="#安装fastmcp" class="headerlink" title="安装fastmcp"></a>安装fastmcp</h2><p>fastmcp官方文档：<a target="_blank" rel="noopener" href="https://gofastmcp.com/getting-started/installation">https://gofastmcp.com/getting-started/installation</a></p>
+<h3 id="初始化新项目"><a href="#初始化新项目" class="headerlink" title="初始化新项目"></a>初始化新项目</h3><pre class="language-python" data-language="python"><code class="language-python">uv init</code></pre>
+
+<h3 id="添加fastmcp及所需依赖到当前虚拟环境"><a href="#添加fastmcp及所需依赖到当前虚拟环境" class="headerlink" title="添加fastmcp及所需依赖到当前虚拟环境"></a>添加fastmcp及所需依赖到当前虚拟环境</h3><pre class="language-bash" data-language="bash"><code class="language-bash">uv <span class="token function">add</span> fastmcp</code></pre>
+
+<h3 id="验证fastmcp是否安装成功"><a href="#验证fastmcp是否安装成功" class="headerlink" title="验证fastmcp是否安装成功"></a>验证fastmcp是否安装成功</h3><p>在当前项目下执行：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">fastmcp version</code></pre>
+
+<p>如出现以下信息则成功，如果有其他以外的错误信息则失败</p>
+<pre class="language-none"><code class="language-none">FastMCP version:                                       2.3.3
+MCP version:                                           1.8.1
+Python version:                                       3.13.3
+Platform:                          Windows-10-10.0.19045-SP0
+FastMCP root path: ~&#x2F;PycharmProjects\pythonProject\.venv\Lib</code></pre>
+
+
+
+<h2 id="mcp-server开发"><a href="#mcp-server开发" class="headerlink" title="mcp server开发"></a>mcp server开发</h2><h3 id="STDIO-Transport-Default"><a href="#STDIO-Transport-Default" class="headerlink" title="STDIO Transport (Default)"></a>STDIO Transport (Default)</h3><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> fastmcp <span class="token keyword">import</span> FastMCP
+<span class="token keyword">from</span> datetime <span class="token keyword">import</span> datetime
+
+<span class="token comment"># 创建 MCP 实例</span>
+mcp <span class="token operator">=</span> FastMCP<span class="token punctuation">(</span><span class="token string">"time_server"</span><span class="token punctuation">,</span>log_level<span class="token operator">=</span><span class="token string">"ERROR"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 示例工具</span>
+<span class="token decorator annotation punctuation">@mcp<span class="token punctuation">.</span>tool</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">get_time</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> <span class="token builtin">str</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    用于获取当前系统时间 格式：yyyy-MM-dd hh:mm:ss
+    :return: 格式化后的时间 例如：2025-01-01 16:49:00
+    """</span>
+    current_time <span class="token operator">=</span> datetime<span class="token punctuation">.</span>now<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    formatted_time <span class="token operator">=</span> current_time<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">"%Y-%m-%d %H:%M:%S"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> formatted_time
+
+
+<span class="token comment"># 启动服务</span>
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Starting MCP server..."</span><span class="token punctuation">)</span>
+    mcp<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<h3 id="SSE-Transport-Server-Sent-Events"><a href="#SSE-Transport-Server-Sent-Events" class="headerlink" title="SSE Transport (Server-Sent Events)"></a>SSE Transport (Server-Sent Events)</h3><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> fastmcp <span class="token keyword">import</span> FastMCP
+<span class="token keyword">from</span> datetime <span class="token keyword">import</span> datetime
+
+<span class="token comment"># 创建 MCP 实例</span>
+mcp <span class="token operator">=</span> FastMCP<span class="token punctuation">(</span><span class="token string">"time_server"</span><span class="token punctuation">,</span>log_level<span class="token operator">=</span><span class="token string">"ERROR"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 示例工具</span>
+<span class="token decorator annotation punctuation">@mcp<span class="token punctuation">.</span>tool</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">get_time</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> <span class="token builtin">str</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    用于获取当前系统时间 格式：yyyy-MM-dd hh:mm:ss
+    :return: 格式化后的时间 例如：2025-01-01 16:49:00
+    """</span>
+    current_time <span class="token operator">=</span> datetime<span class="token punctuation">.</span>now<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    formatted_time <span class="token operator">=</span> current_time<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">"%Y-%m-%d %H:%M:%S"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> formatted_time
+
+
+<span class="token comment"># 启动服务</span>
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Starting MCP server..."</span><span class="token punctuation">)</span>
+    mcp<span class="token punctuation">.</span>run<span class="token punctuation">(</span>transport<span class="token operator">=</span><span class="token string">"sse"</span><span class="token punctuation">,</span> host<span class="token operator">=</span><span class="token string">"127.0.0.1"</span><span class="token punctuation">,</span> port<span class="token operator">=</span><span class="token number">9000</span><span class="token punctuation">)</span></code></pre>
+
+<h3 id="Streamable-HTTP"><a href="#Streamable-HTTP" class="headerlink" title="Streamable HTTP"></a>Streamable HTTP</h3><p>2025 年 3 月 26 日，模型上下文协议（Model Context Protocol，简称 MCP）引入了一项关键更新：用 Streamable HTTP 替代原先的 HTTP + SSE 作为默认传输方式。<br>这一变更在解决原有方案中连接不可恢复、服务端长连接压力大等问题的同时，依然保留了 SSE 带来的流式响应优势。</p>
+<p>fastmcp从2.3.0版本开始支持Streamable HTTP。</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> fastmcp <span class="token keyword">import</span> FastMCP
+<span class="token keyword">from</span> datetime <span class="token keyword">import</span> datetime
+
+<span class="token comment"># 创建 MCP 实例</span>
+mcp <span class="token operator">=</span> FastMCP<span class="token punctuation">(</span><span class="token string">"time_server"</span><span class="token punctuation">,</span>log_level<span class="token operator">=</span><span class="token string">"ERROR"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 示例工具</span>
+<span class="token decorator annotation punctuation">@mcp<span class="token punctuation">.</span>tool</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">get_time</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> <span class="token builtin">str</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    用于获取当前系统时间 格式：yyyy-MM-dd hh:mm:ss
+    :return: 格式化后的时间 例如：2025-01-01 16:49:00
+    """</span>
+    current_time <span class="token operator">=</span> datetime<span class="token punctuation">.</span>now<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    formatted_time <span class="token operator">=</span> current_time<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">"%Y-%m-%d %H:%M:%S"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> formatted_time
+
+
+<span class="token comment"># 启动服务</span>
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Starting MCP server..."</span><span class="token punctuation">)</span>
+    mcp<span class="token punctuation">.</span>run<span class="token punctuation">(</span>transport<span class="token operator">=</span><span class="token string">"streamable-http"</span><span class="token punctuation">,</span> host<span class="token operator">=</span><span class="token string">"127.0.0.1"</span><span class="token punctuation">,</span> port<span class="token operator">=</span><span class="token number">9000</span><span class="token punctuation">)</span></code></pre>
+
+
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>log_level&#x3D;”ERROR”这段代码不添加的话 客户端连接mcp server时会输出info日志，会导致看起来存在异常</p>
+<h2 id="测试运行"><a href="#测试运行" class="headerlink" title="测试运行"></a>测试运行</h2><pre class="language-bash" data-language="bash"><code class="language-bash">uv <span class="token parameter variable">--directory</span> /Users/luoqing/PycharmProjects/pythonProject run main.py</code></pre>
+
+<p>如果是sse连接方式，则可以通过浏览器访问：<a target="_blank" rel="noopener" href="http://127.0.0.1:9000/sse">http://127.0.0.1:9000/sse</a></p>
+<p>如果输出如下内容则表示运行成功</p>
+<pre class="language-markup" data-language="markup"><code class="language-markup">event: endpoint
+data: /messages/?session_id=5e12606243284e1ca0fd6833b0c83d53</code></pre>
+
+<p>如果是Streamable HTTP连接方式，可以访问：<a target="_blank" rel="noopener" href="http://127.0.0.1:9000/mcp">http://127.0.0.1:9000/mcp</a></p>
+<h2 id="cline连接到mcp-server"><a href="#cline连接到mcp-server" class="headerlink" title="cline连接到mcp server"></a>cline连接到mcp server</h2><h3 id="STDIO-Transport-Default-1"><a href="#STDIO-Transport-Default-1" class="headerlink" title="STDIO Transport (Default)"></a>STDIO Transport (Default)</h3><p>在&#x2F;Users&#x2F;luoqing&#x2F;Library&#x2F;Application Support&#x2F;Code&#x2F;User&#x2F;globalStorage&#x2F;hybridtalentcomputing.cline-chinese&#x2F;settings&#x2F;cline_mcp_settings.json中添加如下配置</p>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"mcpServers"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"time_server"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      <span class="token property">"command"</span><span class="token operator">:</span> <span class="token string">"uv"</span><span class="token punctuation">,</span>
+      <span class="token property">"args"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"--directory"</span><span class="token punctuation">,</span>
+        <span class="token string">"/Users/luoqing/PycharmProjects/pythonProject"</span><span class="token punctuation">,</span>
+        <span class="token string">"run"</span><span class="token punctuation">,</span>
+        <span class="token string">"main.py"</span>
+      <span class="token punctuation">]</span><span class="token punctuation">,</span>
+      <span class="token property">"autoApprove"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"get_time"</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h3 id="SSE-Transport-Server-Sent-Events-1"><a href="#SSE-Transport-Server-Sent-Events-1" class="headerlink" title="SSE Transport (Server-Sent Events)"></a>SSE Transport (Server-Sent Events)</h3><pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"mcpServers"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"time_server"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      <span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"http://127.0.0.1:9000/sse"</span><span class="token punctuation">,</span>
+      <span class="token property">"disabled"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+      <span class="token property">"autoApprove"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"get_time"</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>luoqing</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://example.com/2025/04/18/%E4%BD%BF%E7%94%A8python%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0mcp-server/" title="使用python快速构建本地mcp-server">http://example.com/2025/04/18/%E4%BD%BF%E7%94%A8python%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0mcp-server/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2025/04/17/JetBrainsIDEsCrack/" rel="next" title="JetBrainsIDEsCrack"><span class="post-nav-text">JetBrainsIDEsCrack</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>如果您有任何关于博客内容的相关讨论，欢迎前往 <a href="https://github.com/Light-of-Fireworks" target="_blank">GitHub</a> 与我交流。</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2021 – 2025 </span><a class="with-love" id="animate" target="_blank" rel="noopener" href="http://luoqingblog.gitee.io/" title="主页"><span class="icon iconify" data-icon="ri:cloud-line"></span></a><span class="author"> luoqing</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v6.3.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.9</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:search-line"></span></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="https://fastly.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js"></script><script src="/js/search/local-search.js" defer type="module"></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><span class="icon iconify" data-icon="ri:close-line"></span></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div class="search-result-container"></div></div><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
